@@ -46,25 +46,9 @@ int lineNo = 1;
 
 %%
 
-cfg : productions { ; }
+cfg : { ; }
 ;
 
-productions : /* empty */
-            | productions production
-;
-
-production : NEWLINE { lineNo++; }
-           | COMMENT { lineNo++; }
-           | prule   { lineNo++; }
-
-prule : TERM ARROW TERM NEWLINE {
-            delete $1;
-            delete $3;
-        }
-      | TERM ARROW NEWLINE {
-            delete $1;
-        }
-;
 
 %%
 

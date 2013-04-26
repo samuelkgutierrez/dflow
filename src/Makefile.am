@@ -17,19 +17,19 @@
 AM_YFLAGS=-d -t
 
 BUILT_SOURCES = \
-ProgramParser.cc ProgramParser.h ProgramScanner.cc
+SourceParser.cc SourceParser.h SourceScanner.cc
 
 CLEANFILES = \
-${BUILT_SOURCES} ProgramParser.h
+${BUILT_SOURCES} SourceParser.h
 
 bin_PROGRAMS = \
 dflow
 
-PARSER_FILES = ProgramParser.yy ProgramParser.h ProgramScanner.ll
+PARSER_FILES = SourceParser.yy SourceParser.h SourceScanner.ll
 
 BASE_SRC = \
 ${PARSER_FILES}
 
-dialect_SOURCES = \
+dflow_SOURCES = \
 ${BASE_SRC} \
 dflow.cxx
