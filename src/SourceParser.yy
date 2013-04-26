@@ -39,8 +39,12 @@ int lineNo = 1;
 %}
 
 %union {
+    int integer;
+    double dfloat;
     std::string *str;
 }
+
+%token <integer> TINT;
 
 %start cfg
 

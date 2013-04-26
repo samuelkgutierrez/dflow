@@ -37,22 +37,14 @@ do {                                                                           \
 
 %}
 
-/* range of valid term ascii characters in octal */
-ASCII [\45-\176]
-
-WS [ \t]
-
 %%
 
-{WS}+ { ; }
+[ \t\n] { ; }
 
-"\n" { return NEWLINE; }
-
-"#".*"\n" { return COMMENT; }
-
-"-->" { return ARROW; }
-
-{ASCII}+ { SAVE_TOKEN; return TERM; }
+[0-9]+ {
+           SAVE_TOKEN;
+           return TINT;
+       }
 
 . { std::cerr << "invalid token encountered during source scan... bye!"
               << std::endl;

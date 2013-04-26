@@ -28,6 +28,9 @@ dflow
 PARSER_FILES = SourceParser.yy SourceParser.h SourceScanner.ll
 
 BASE_SRC = \
+Constants.hxx \
+Base.hxx Base.cxx \
+DFlowException.hxx DFlowException.cxx \
 ${PARSER_FILES}
 
 dflow_SOURCES = \
