@@ -22,10 +22,22 @@
 #include "config.h"
 #endif
 
+#include "Base.hxx"
+
 #include <string>
 #include <vector>
 
-class Identifier {
+/* ////////////////////////////////////////////////////////////////////////// */
+/* nodes will be the basic building block of a program */
+class Node {
+public:
+    Node(void) { ; }
+
+    ~Node(void) { ; }
+};
+
+/* ////////////////////////////////////////////////////////////////////////// */
+class Identifier : public Node {
 private:
     std::string _id;
 
@@ -39,15 +51,40 @@ public:
     std::string id(void) const { return this->_id; }
 };
 
-class Expression {
+/* ////////////////////////////////////////////////////////////////////////// */
+class Expression : public Node {
 private:
 
 public:
     Expression(void) { ; }
 
     ~Expression(void) { ; }
+};
 
-    //virtual bool evaluate(void);
+class Int : public Expression {
+private:
+    int _value;
+
+public:
+    Int(void) { ; }
+
+    ~Int(void) { ; }
+
+    Int(std::string svalue) : _value(Base::string2int(svalue)) { ; }
+
+};
+
+class Float : public Expression {
+private:
+    float _value;
+
+public:
+    Float(void) { ; }
+
+    ~Float(void) { ; }
+
+    Float(std::string svalue) : _value(Base::string2int(svalue)) { ; }
+
 };
 
 class AssignmentExpression : public Expression {
@@ -73,7 +110,7 @@ private:
 public:
 };
 
-class Statement {
+class Statement : public Node {
 private:
 
 public:
@@ -85,16 +122,14 @@ public:
 };
 typedef std::vector<Statement> Statements;
 
-class Program {
+class Block : public Expression {
 private:
     Statements _statements;
 
 public:
-    Program(void) { ; }
+    Block(void) { ; }
 
-    ~Program(void) { ; }
-
-    Program(const Statements &statements) : _statements(statements) { ; }
+    void add(const Statement &s) { this->_statements.push_back(s); }
 };
 
 #endif

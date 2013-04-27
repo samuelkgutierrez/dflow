@@ -31,8 +31,8 @@ int yylex(void);
 extern "C" int yyerror(const char *s);
 extern "C" FILE *yyin;
 
-/* pointer to the newly created program grammar instance */
-//Program *program = NULL;
+/* pointer to the top-level program block */
+Block *programRoot;
 
 /* input line number used for nice error messages */
 static int lineNo = 1;
@@ -40,57 +40,49 @@ static int lineNo = 1;
 %}
 
 %union {
-    int intt;
-    float floatt;
     std::string *str;
+    Block *block;
     Identifier *ident;
     Expression *expression;
     Statement *statement;
     Statements *statements;
-    Program *program;
 }
 
-%token <str> TID;
-
-%token <intt> TINT;
-
-%token <floatt> TFLOAT;
+%token <str> TID TINT TFLOAT;
 
 %token TOPPLUS TOPMIN TOPMUL TOPDIV
        TASSIGN TEQ TLT TLTE TGT TGTE
        TOR TAND TNOT TSEND;
 
-%type <program> program;
+%type <block> program statements;
 %type <ident> ident;
-%type <expression> expr;
+%type <expression> expr num;
 %type <statement> statement;
-%type <statements> statements;
 
 %start program
 
 %%
 
-program : statements { $$ = new Program(*$1); }
+program : statements { programRoot = $1; }
 ;
 
-statements : statement { $$ = new Statements(); }
-           | statements statement { ; }
+statements : statement { $$ = new Block(); $$->add(*$1); }
+           | statements statement { $1->add(*$2); }
 ;
 
-statement : expr { $$ = new Statement(*$1); }
+statement : expr { $$ = new Statement(); }
 ;
 
 expr : ident TASSIGN expr { $$ = new AssignmentExpression(*$1, *$3); }
      | expr arithmeticbinop expr
-     | numeric
-     | ident
+     | num
 ;
 
 ident : TID { $$ = new Identifier(*$1); delete $1; } 
 ;
 
-numeric : TINT
-        | TFLOAT
+num : TINT { $$ = new Int(*$1); delete $1; }
+    | TFLOAT { $$ = new Float(*$1); delete $1; }
 ;
 
 arithmeticbinop : TOPPLUS

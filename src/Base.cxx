@@ -24,6 +24,7 @@
 #include <fstream>
 #include <cstdio>
 #include <algorithm>
+#include <sstream>
 
 #include <string.h>
 #include <ctype.h>
@@ -39,4 +40,22 @@ Base::int2string(int i)
     fill_n(tmpBuf, sizeof(tmpBuf), '\0');
     snprintf(tmpBuf, sizeof(tmpBuf) - 1, "%d", i);
     return string(tmpBuf);
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+int
+Base::string2int(const string &str)
+{
+    int num = 0;
+    istringstream(str) >> num;
+    return num;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+float
+Base::string2float(const string &str)
+{
+    float num = 0;
+    istringstream(str) >> num;
+    return num;
 }

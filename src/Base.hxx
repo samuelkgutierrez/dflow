@@ -32,6 +32,10 @@ private:
 
 public:
     static std::string int2string(int i);
+
+    static int string2int(const std::string &str);
+
+    static float string2float(const std::string &str);
 };
 
 #endif

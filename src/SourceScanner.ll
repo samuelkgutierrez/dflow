@@ -52,9 +52,9 @@ do {                                                                           \
 
 [ \t\n] { ; }
 
-[0-9]+ { SAVE_ITOKEN; return TINT; }
+[0-9]+ { SAVE_STOKEN; return TINT; }
 
-[0-9]+\.[0-9]* { SAVE_FTOKEN; return TFLOAT; }
+[0-9]+\.[0-9]* { SAVE_STOKEN; return TFLOAT; }
 
 [a-zA-Z][a-zA-Z]* { SAVE_STOKEN; return TID; }
 
