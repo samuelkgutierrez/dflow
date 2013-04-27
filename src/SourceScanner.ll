@@ -30,9 +30,19 @@
 
 #include "SourceParser.h"
 
-#define SAVE_TOKEN                                                             \
+#define SAVE_STOKEN                                                            \
 do {                                                                           \
     yylval.str = new std::string(yytext, yyleng);                              \
+} while (0)
+
+#define SAVE_ITOKEN                                                            \
+do {                                                                           \
+    yylval.intt = (int)strtol(yytext, (char **)NULL, 10);                      \
+} while (0)
+
+#define SAVE_FTOKEN                                                            \
+do {                                                                           \
+    yylval.floatt = strtof(yytext, (char **)NULL);                             \
 } while (0)
 
 %}
@@ -41,12 +51,30 @@ do {                                                                           \
 
 [ \t\n] { ; }
 
-[0-9]+ {
-           SAVE_TOKEN;
-           return TINT;
-       }
+[0-9]+ { SAVE_ITOKEN; return TINT; }
 
-. { std::cerr << "invalid token encountered during source scan... bye!"
+[0-9]+\.[0-9]* { SAVE_FTOKEN; return TFLOAT; }
+
+"+" { SAVE_STOKEN; return TOPPLUS; }
+
+"-" { SAVE_STOKEN; return TOPMIN; }
+
+"*" { SAVE_STOKEN; return TOPMUL; }
+
+"=" { SAVE_STOKEN; return TASSIGN; }
+
+"==" { SAVE_STOKEN; return TEQ; }
+
+"<" { SAVE_STOKEN; return TLT; }
+
+"<=" { SAVE_STOKEN; return TLTE; }
+
+">" { SAVE_STOKEN; return TGT; }
+
+">=" { SAVE_STOKEN; return TGTE; }
+
+. { std::cerr << "invalid token encountered during source scan: "
+              << "\'" << std::string(yytext, yyleng) << "\'"
               << std::endl;
     yyterminate();
   }

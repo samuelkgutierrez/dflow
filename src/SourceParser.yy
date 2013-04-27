@@ -34,17 +34,19 @@ extern "C" FILE *yyin;
 /* pointer to the newly created program grammar instance */
 
 /* input line number used for nice error messages */
-int lineNo = 1;
+static int lineNo = 1;
 
 %}
 
 %union {
-    int integer;
-    double dfloat;
+    int intt;
+    float floatt;
     std::string *str;
 }
 
-%token <integer> TINT;
+%token <str> TOPPLUS TOPMIN TOPMUL TASSIGN TEQ TLT TLTE TGT TGTE
+%token <intt> TINT;
+%token <floatt> TFLOAT;
 
 %start cfg
 
