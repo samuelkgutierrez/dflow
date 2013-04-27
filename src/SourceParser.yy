@@ -44,9 +44,12 @@ static int lineNo = 1;
     std::string *str;
 }
 
-%token <str> TOPPLUS TOPMIN TOPMUL TASSIGN TEQ TLT TLTE TGT TGTE
+%token <str> TID;
 %token <intt> TINT;
 %token <floatt> TFLOAT;
+%token TOPPLUS TOPMIN TOPMUL TOPDIV
+       TASSIGN TEQ TLT TLTE TGT TGTE
+       TOR TAND TNOT;
 
 %start cfg
 

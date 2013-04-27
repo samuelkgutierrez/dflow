@@ -55,23 +55,33 @@ do {                                                                           \
 
 [0-9]+\.[0-9]* { SAVE_FTOKEN; return TFLOAT; }
 
-"+" { SAVE_STOKEN; return TOPPLUS; }
+[a-zA-Z][a-zA-Z]* { SAVE_STOKEN; return TID; }
 
-"-" { SAVE_STOKEN; return TOPMIN; }
+"+" { return TOPPLUS; }
 
-"*" { SAVE_STOKEN; return TOPMUL; }
+"-" { return TOPMIN; }
 
-"=" { SAVE_STOKEN; return TASSIGN; }
+"*" { return TOPMUL; }
 
-"==" { SAVE_STOKEN; return TEQ; }
+"/" { return TOPDIV; }
 
-"<" { SAVE_STOKEN; return TLT; }
+"=" { return TASSIGN; }
 
-"<=" { SAVE_STOKEN; return TLTE; }
+"==" { return TEQ; }
 
-">" { SAVE_STOKEN; return TGT; }
+"<" { return TLT; }
 
-">=" { SAVE_STOKEN; return TGTE; }
+"<=" { return TLTE; }
+
+">" { return TGT; }
+
+">=" { return TGTE; }
+
+"||" { return TOR; }
+
+"&&" { return TAND; }
+
+"!" { return TNOT; }
 
 . { std::cerr << "invalid token encountered during source scan: "
               << "\'" << std::string(yytext, yyleng) << "\'"
