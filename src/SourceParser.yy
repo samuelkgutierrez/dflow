@@ -48,11 +48,11 @@ static int lineNo = 1;
     Statements *statements;
 }
 
-%token <str> TID TINT TFLOAT;
+%token <str> TID TINT TFLOAT TSEND;
 
 %token TOPPLUS TOPMIN TOPMUL TOPDIV
        TASSIGN TEQ TLT TLTE TGT TGTE
-       TOR TAND TNOT TSEND;
+       TOR TAND TNOT;
 
 %type <block> program statements;
 %type <ident> ident;
@@ -66,16 +66,17 @@ static int lineNo = 1;
 program : statements { programRoot = $1; }
 ;
 
-statements : statement { $$ = new Block(); $$->add(*$1); }
-           | statements statement { $1->add(*$2); }
+statements : statement TSEND { $$ = new Block(); $$->add(*$1); }
+           | statements statement TSEND { $1->add(*$2); }
 ;
 
 statement : expr { $$ = new Statement(); }
 ;
 
 expr : ident TASSIGN expr { $$ = new AssignmentExpression(*$1, *$3); }
-     | expr arithmeticbinop expr
+     | expr matbinop expr
      | num
+     | ident
 ;
 
 ident : TID { $$ = new Identifier(*$1); delete $1; } 
@@ -85,10 +86,10 @@ num : TINT { $$ = new Int(*$1); delete $1; }
     | TFLOAT { $$ = new Float(*$1); delete $1; }
 ;
 
-arithmeticbinop : TOPPLUS
-                | TOPMIN
-                | TOPMUL
-                | TOPDIV
+matbinop : TOPPLUS
+         | TOPMIN
+         | TOPMUL
+         | TOPDIV
 ;
 
 %%
