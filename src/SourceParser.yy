@@ -80,8 +80,8 @@ statements : statement { $$ = new Statements(); }
 statement : expr { $$ = new Statement(*$1); }
 ;
 
-expr : ident TASSIGN expr { $$ = new Expression(); }
-     | expr TOPPLUS expr
+expr : ident TASSIGN expr { $$ = new AssignmentExpression(*$1, *$3); }
+     | expr arithmeticbinop expr
      | numeric
      | ident
 ;
@@ -91,6 +91,12 @@ ident : TID { $$ = new Identifier(*$1); delete $1; }
 
 numeric : TINT
         | TFLOAT
+;
+
+arithmeticbinop : TOPPLUS
+                | TOPMIN
+                | TOPMUL
+                | TOPDIV
 ;
 
 %%

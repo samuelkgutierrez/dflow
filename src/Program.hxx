@@ -35,6 +35,8 @@ public:
     ~Identifier(void) { ; }
 
     Identifier(std::string id) : _id(id) { ; }
+
+    std::string id(void) const { return this->_id; }
 };
 
 class Expression {
@@ -56,7 +58,7 @@ public:
 
     ~AssignmentExpression(void) { ; }
 
-    AssignmentExpression(Identifier id, Expression expr) { ; }
+    AssignmentExpression(Identifier id, Expression expr);
 };
 
 class ArithmeticExpression : public Expression {

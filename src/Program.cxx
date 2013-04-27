@@ -16,3 +16,13 @@
  */
 
 #include "Program.hxx"
+
+#include <iostream>
+
+using namespace std;
+
+AssignmentExpression::AssignmentExpression(Identifier id,
+                                           Expression expr)
+{
+    cout << "ID: " << id.id() << endl;
+}
