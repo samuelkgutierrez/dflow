@@ -28,6 +28,7 @@
 #include <cstdlib>
 #include <string>
 
+#include "Program.hxx"
 #include "SourceParser.h"
 
 #define SAVE_STOKEN                                                            \
@@ -82,6 +83,8 @@ do {                                                                           \
 "&&" { return TAND; }
 
 "!" { return TNOT; }
+
+";" { return TSEND; }
 
 . { std::cerr << "invalid token encountered during source scan: "
               << "\'" << std::string(yytext, yyleng) << "\'"

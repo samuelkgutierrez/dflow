@@ -22,7 +22,77 @@
 #include "config.h"
 #endif
 
+#include <string>
+#include <vector>
+
+class Identifier {
+private:
+    std::string _id;
+
+public:
+    Identifier(void) { ; }
+
+    ~Identifier(void) { ; }
+
+    Identifier(std::string id) : _id(id) { ; }
+};
+
+class Expression {
+private:
+
+public:
+    Expression(void);
+
+    ~Expression(void);
+
+    //virtual bool evaluate(void);
+};
+
+class AssignmentExpression : public Expression {
+private:
+
+public:
+    AssignmentExpression(void);
+
+    ~AssignmentExpression(void);
+
+    AssignmentExpression(Identifier id, Expression expr);
+};
+
+class ArithmeticExpression : public Expression {
+private:
+
+public:
+};
+
+class BooleanExpression : public Expression {
+private:
+
+public:
+};
+
+class Statement {
+private:
+
+public:
+    Statement(void) { ; }
+
+    ~Statement(void) { ; }
+
+    Statement(Expression expression) { ; }
+};
+typedef std::vector<Statement> Statements;
+
 class Program {
+private:
+    Statements _statements;
+
+public:
+    Program(void) { ; }
+
+    ~Program(void) { ; }
+
+    Program(const Statements &statements) : _statements(statements) { ; }
 };
 
 #endif

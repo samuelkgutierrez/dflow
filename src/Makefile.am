@@ -31,6 +31,7 @@ BASE_SRC = \
 Constants.hxx \
 Base.hxx Base.cxx \
 DFlowException.hxx DFlowException.cxx \
+Program.hxx Program.cxx \
 ${PARSER_FILES}
 
 dflow_SOURCES = \

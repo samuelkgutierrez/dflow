@@ -32,6 +32,7 @@ extern "C" int yyerror(const char *s);
 extern "C" FILE *yyin;
 
 /* pointer to the newly created program grammar instance */
+//Program *program = NULL;
 
 /* input line number used for nice error messages */
 static int lineNo = 1;
@@ -42,6 +43,11 @@ static int lineNo = 1;
     int intt;
     float floatt;
     std::string *str;
+    Identifier *ident;
+    Expression *expression;
+    Statement *statement;
+    Statements *statements;
+    Program *program;
 }
 
 %token <str> TID;
@@ -52,15 +58,38 @@ static int lineNo = 1;
 
 %token TOPPLUS TOPMIN TOPMUL TOPDIV
        TASSIGN TEQ TLT TLTE TGT TGTE
-       TOR TAND TNOT;
+       TOR TAND TNOT TSEND;
 
-%start cfg
+%type <program> program;
+%type <ident> ident;
+%type <expression> expr;
+%type <statement> statement;
+%type <statements> statements;
+
+%start program
 
 %%
 
-cfg : { ; }
+program : statements { $$ = new Program(*$1); }
 ;
 
+statements : statement { $$ = new Statements(); }
+           | statements statement { ; }
+;
+
+statement : expr { $$ = new Statement(*$1); }
+;
+
+expr : ident TEQ expr { $$ = new Expression(); }
+     | numeric
+;
+
+ident : TID { $$ = new Identifier(*$1); delete $1; } 
+;
+
+numeric : TINT
+        | TFLOAT
+;
 
 %%
 

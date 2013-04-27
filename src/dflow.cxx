@@ -66,18 +66,13 @@ parseAppSource(string what)
 int
 main(int argc, char **argv)
 {
-    string appSource;
-
     if (2 != argc) {
         usage();
         return EXIT_FAILURE;
     }
-    else {
-        appSource = string(argv[1]);
-    }
     try {
         /* do this before we ever touch contextFreeGrammar */
-        parseAppSource(appSource);
+        parseAppSource(string(argv[1]));
     }
     catch (DFlowException &e) {
         cerr << e.what() << endl;
