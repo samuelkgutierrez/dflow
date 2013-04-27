@@ -28,29 +28,22 @@
 #include "DFlowException.hxx"
 
 extern int parserParse(FILE *fp);
-/* can safely be used AFTER call to parseCFG */
+/* can safely be used AFTER call to parseAppSource */
 //extern CFG *contextFreeGrammar;
 
 using namespace std;
 
 /* ////////////////////////////////////////////////////////////////////////// */
 static void
-echoHeader(void)
-{
-    ;
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-static void
 usage(void)
 {
     cout << endl << "usage:" << endl;
-    cout << "dflow [-q] appsrc" << endl;
+    cout << "dflow appsrc" << endl;
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
 static void
-parseCFG(string what)
+parseAppSource(string what)
 {
     FILE *fp = NULL;
 
@@ -73,32 +66,18 @@ parseCFG(string what)
 int
 main(int argc, char **argv)
 {
-    bool verboseMode = true;
-    string cfgDescription, fileToParse;
+    string appSource;
 
-    if (3 != argc && 4 != argc) {
+    if (2 != argc) {
         usage();
         return EXIT_FAILURE;
     }
-    else if (3 == argc) {
-        cfgDescription = string(argv[1]);
-        fileToParse = string(argv[2]);
-    }
     else {
-        if ("-q" != string(argv[1])) {
-            usage();
-            return EXIT_FAILURE;
-        }
-        cfgDescription = string(argv[2]);
-        fileToParse = string(argv[3]);
-        verboseMode = false;
+        appSource = string(argv[1]);
     }
     try {
-        echoHeader();
         /* do this before we ever touch contextFreeGrammar */
-        parseCFG(cfgDescription);
-        if (verboseMode) {
-        }
+        parseAppSource(appSource);
     }
     catch (DFlowException &e) {
         cerr << e.what() << endl;

@@ -28,7 +28,7 @@
 #include <vector>
 
 int yylex(void);
-extern "C" int yyerror(const char * s);
+extern "C" int yyerror(const char *s);
 extern "C" FILE *yyin;
 
 /* pointer to the newly created program grammar instance */
@@ -45,8 +45,11 @@ static int lineNo = 1;
 }
 
 %token <str> TID;
+
 %token <intt> TINT;
+
 %token <floatt> TFLOAT;
+
 %token TOPPLUS TOPMIN TOPMUL TOPDIV
        TASSIGN TEQ TLT TLTE TGT TGTE
        TOR TAND TNOT;
