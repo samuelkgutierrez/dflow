@@ -80,8 +80,10 @@ statements : statement { $$ = new Statements(); }
 statement : expr { $$ = new Statement(*$1); }
 ;
 
-expr : ident TEQ expr { $$ = new Expression(); }
+expr : ident TASSIGN expr { $$ = new Expression(); }
+     | expr TOPPLUS expr
      | numeric
+     | ident
 ;
 
 ident : TID { $$ = new Identifier(*$1); delete $1; } 

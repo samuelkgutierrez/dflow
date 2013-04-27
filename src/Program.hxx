@@ -41,9 +41,9 @@ class Expression {
 private:
 
 public:
-    Expression(void);
+    Expression(void) { ; }
 
-    ~Expression(void);
+    ~Expression(void) { ; }
 
     //virtual bool evaluate(void);
 };
@@ -52,11 +52,11 @@ class AssignmentExpression : public Expression {
 private:
 
 public:
-    AssignmentExpression(void);
+    AssignmentExpression(void) { ; }
 
-    ~AssignmentExpression(void);
+    ~AssignmentExpression(void) { ; }
 
-    AssignmentExpression(Identifier id, Expression expr);
+    AssignmentExpression(Identifier id, Expression expr) { ; }
 };
 
 class ArithmeticExpression : public Expression {
