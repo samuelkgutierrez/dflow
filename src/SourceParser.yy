@@ -75,7 +75,8 @@ statements : statement { $$ = new Block(); $$->add(*$1); }
 statement : expr SEND { $$ = new Statement(); }
 ;
 
-expr : ID ASSIGN expr { $$ = new AssignmentExpression(Identifier(*$1), *$3); }
+expr : /* empty */
+     ID ASSIGN expr { $$ = new AssignmentExpression(Identifier(*$1), *$3); }
      | num mathbinop expr { $$ = new ArithmeticExpression(*$1, *$2, *$3); }
      | ID { $$ = new Identifier(*$1); }
      | num { $$ = $1; }
