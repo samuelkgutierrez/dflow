@@ -62,6 +62,7 @@ static int lineNo = 1;
 %type <expression> expr num;
 %type <statement> statement;
 %type <str> mathbinop;
+%type <ident> ident;
 
 %start program
 
@@ -75,16 +76,19 @@ statements : statement { $$ = new Block(); $$->add(*$1); }
 ;
 
 statement : expr SEND { $$ = new Statement(); }
-          | IF expr THEN statement ELSE statement FI
-            { std::cout << "if" << std::endl;
+          | IF expr THEN statements ELSE statements FI {
+                std::cout << "if" << std::endl;
             }
 ;
 
-expr : /* empty */
-     ID ASSIGN expr { $$ = new AssignmentExpression(Identifier(*$1), *$3); }
+expr : ident ASSIGN expr { $$ = new AssignmentExpression(*$1, *$3); }
      | num mathbinop expr { $$ = new ArithmeticExpression(*$1, *$2, *$3); }
-     | ID { $$ = new Identifier(*$1); }
+     | ident mathbinop expr { $$ = new ArithmeticExpression(*$1, *$2, *$3); }
      | num { $$ = $1; }
+     | ident { $$ = $1; }
+;
+
+ident : ID { $$ = new Identifier(*$1); }
 ;
 
 num : INT { $$ = new Int(*$1); delete $1; }

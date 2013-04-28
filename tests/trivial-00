@@ -1,8 +1,2 @@
-a = 5 + 3 + 4;
+a = 5 + 3 + 4 + a;
 b = a;
-
-if a then
-    b = a;
-else
-    b = 1;
-fi

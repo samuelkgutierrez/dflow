@@ -94,7 +94,7 @@ public:
 
     ~AssignmentExpression(void) { ; }
 
-    AssignmentExpression(Identifier id, Expression expr);
+    AssignmentExpression(const Identifier &id, const Expression &expr);
 };
 
 class ArithmeticExpression : public Expression {

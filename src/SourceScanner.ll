@@ -20,7 +20,7 @@
 %option interactive noyywrap nounput noinput
 
 /* uncomment for tons of flex output */
-%option debug
+/* %option debug */
 
 %{
 
