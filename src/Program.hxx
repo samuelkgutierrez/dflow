@@ -101,6 +101,9 @@ class ArithmeticExpression : public Expression {
 private:
 
 public:
+    ArithmeticExpression(const Expression &l,
+                         const std::string &op,
+                         const Expression &r) { ; }
 };
 
 class BooleanExpression : public Expression {

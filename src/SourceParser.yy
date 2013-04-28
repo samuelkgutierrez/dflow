@@ -48,16 +48,18 @@ static int lineNo = 1;
     Statements *statements;
 }
 
-%token <str> TID TINT TFLOAT TSEND;
+%token <str> ID INT FLOAT SEND
+             OPPLUS OPMIN OPMUL OPDIV
+             ASSIGN EQ LT LTE GT GTE
+             OR AND NOT;
 
-%token TOPPLUS TOPMIN TOPMUL TOPDIV
-       TASSIGN TEQ TLT TLTE TGT TGTE
-       TOR TAND TNOT;
+%left OPPLUS OPMIN
+%left OPMUL OPDIV
 
 %type <block> program statements;
-%type <ident> ident;
 %type <expression> expr num;
 %type <statement> statement;
+%type <str> mathbinop;
 
 %start program
 
@@ -66,30 +68,27 @@ static int lineNo = 1;
 program : statements { programRoot = $1; }
 ;
 
-statements : statement TSEND { $$ = new Block(); $$->add(*$1); }
-           | statements statement TSEND { $1->add(*$2); }
+statements : statement { $$ = new Block(); $$->add(*$1); }
+           | statements statement { $1->add(*$2); }
 ;
 
-statement : expr { $$ = new Statement(); }
+statement : expr SEND { $$ = new Statement(); }
 ;
 
-expr : ident TASSIGN expr { $$ = new AssignmentExpression(*$1, *$3); }
-     | expr matbinop expr
-     | ident { $$ = $1; }
-     | num
+expr : ID ASSIGN expr { $$ = new AssignmentExpression(Identifier(*$1), *$3); }
+     | num mathbinop expr { $$ = new ArithmeticExpression(*$1, *$2, *$3); }
+     | ID { $$ = new Identifier(*$1); }
+     | num { $$ = $1; }
 ;
 
-ident : TID { $$ = new Identifier(*$1); delete $1; } 
+num : INT { $$ = new Int(*$1); delete $1; }
+    | FLOAT { $$ = new Float(*$1); delete $1; }
 ;
 
-num : TINT { $$ = new Int(*$1); delete $1; }
-    | TFLOAT { $$ = new Float(*$1); delete $1; }
-;
-
-matbinop : TOPPLUS
-         | TOPMIN
-         | TOPMUL
-         | TOPDIV
+mathbinop : OPPLUS
+          | OPMIN
+          | OPMUL
+          | OPDIV
 ;
 
 %%

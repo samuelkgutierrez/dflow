@@ -36,55 +36,45 @@ do {                                                                           \
     yylval.str = new std::string(yytext, yyleng);                              \
 } while (0)
 
-#define SAVE_ITOKEN                                                            \
-do {                                                                           \
-    yylval.intt = (int)strtol(yytext, (char **)NULL, 10);                      \
-} while (0)
-
-#define SAVE_FTOKEN                                                            \
-do {                                                                           \
-    yylval.floatt = strtof(yytext, (char **)NULL);                             \
-} while (0)
-
 %}
 
 %%
 
 [ \t\n] { ; }
 
-[0-9]+ { SAVE_STOKEN; return TINT; }
+[0-9]+ { SAVE_STOKEN; return INT; }
 
-[0-9]+\.[0-9]* { SAVE_STOKEN; return TFLOAT; }
+[0-9]+\.[0-9]* { SAVE_STOKEN; return FLOAT; }
 
-[a-zA-Z][a-zA-Z]* { SAVE_STOKEN; return TID; }
+[a-zA-Z][a-zA-Z]* { SAVE_STOKEN; return ID; }
 
-"+" { return TOPPLUS; }
+"+" { SAVE_STOKEN; return OPPLUS; }
 
-"-" { return TOPMIN; }
+"-" { SAVE_STOKEN; return OPMIN; }
 
-"*" { return TOPMUL; }
+"*" { SAVE_STOKEN; return OPMUL; }
 
-"/" { return TOPDIV; }
+"/" { SAVE_STOKEN; return OPDIV; }
 
-"=" { return TASSIGN; }
+"=" { SAVE_STOKEN; return ASSIGN; }
 
-"==" { return TEQ; }
+"==" { SAVE_STOKEN; return EQ; }
 
-"<" { return TLT; }
+"<" { SAVE_STOKEN; return LT; }
 
-"<=" { return TLTE; }
+"<=" { SAVE_STOKEN; return LTE; }
 
-">" { return TGT; }
+">" { SAVE_STOKEN; return GT; }
 
-">=" { return TGTE; }
+">=" { SAVE_STOKEN; return GTE; }
 
-"||" { return TOR; }
+"||" { SAVE_STOKEN; return OR; }
 
-"&&" { return TAND; }
+"&&" { SAVE_STOKEN; return AND; }
 
-"!" { return TNOT; }
+"!" { SAVE_STOKEN; return NOT; }
 
-";" { return TSEND; }
+";" { return SEND; }
 
 . { std::cerr << "invalid token encountered during source scan: "
               << "\'" << std::string(yytext, yyleng) << "\'"
