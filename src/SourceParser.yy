@@ -75,8 +75,8 @@ statement : expr { $$ = new Statement(); }
 
 expr : ident TASSIGN expr { $$ = new AssignmentExpression(*$1, *$3); }
      | expr matbinop expr
+     | ident { $$ = $1; }
      | num
-     | ident
 ;
 
 ident : TID { $$ = new Identifier(*$1); delete $1; } 

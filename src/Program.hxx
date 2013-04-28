@@ -37,7 +37,16 @@ public:
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
-class Identifier : public Node {
+class Expression : public Node {
+private:
+
+public:
+    Expression(void) { ; }
+
+    ~Expression(void) { ; }
+};
+
+class Identifier : public Expression {
 private:
     std::string _id;
 
@@ -49,16 +58,6 @@ public:
     Identifier(std::string id) : _id(id) { ; }
 
     std::string id(void) const { return this->_id; }
-};
-
-/* ////////////////////////////////////////////////////////////////////////// */
-class Expression : public Node {
-private:
-
-public:
-    Expression(void) { ; }
-
-    ~Expression(void) { ; }
 };
 
 class Int : public Expression {
