@@ -20,7 +20,7 @@
 %option interactive noyywrap nounput noinput
 
 /* uncomment for tons of flex output */
-/* %option debug */
+%option debug
 
 %{
 
@@ -41,6 +41,14 @@ do {                                                                           \
 %%
 
 [ \t\n] { ; }
+
+"if" { return IF; }
+
+"then" { return THEN; }
+
+"else" { return ELSE; }
+
+"fi" { return FI; }
 
 [0-9]+ { SAVE_STOKEN; return INT; }
 

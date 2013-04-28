@@ -53,6 +53,8 @@ static int lineNo = 1;
              ASSIGN EQ LT LTE GT GTE
              OR AND NOT;
 
+%token IF THEN ELSE FI
+
 %left OPPLUS OPMIN
 %left OPMUL OPDIV
 
@@ -73,6 +75,9 @@ statements : statement { $$ = new Block(); $$->add(*$1); }
 ;
 
 statement : expr SEND { $$ = new Statement(); }
+          | IF expr THEN statement ELSE statement FI
+            { std::cout << "if" << std::endl;
+            }
 ;
 
 expr : /* empty */
