@@ -22,7 +22,8 @@
 using namespace std;
 
 AssignmentExpression::AssignmentExpression(const Identifier &id,
-                                           const Expression &expr)
+                                           const Expression &expr) :
+    _id(id), _expr(expr)
 {
-    cout << "ID: " << id.id() << endl;
+    ;
 }

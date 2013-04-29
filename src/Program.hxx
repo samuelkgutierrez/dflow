@@ -30,10 +30,15 @@
 /* ////////////////////////////////////////////////////////////////////////// */
 /* nodes will be the basic building block of a program */
 class Node {
+protected:
+    std::string _str;
+
 public:
     Node(void) { ; }
 
     ~Node(void) { ; }
+
+    virtual std::string str(void) const = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -44,6 +49,9 @@ public:
     Expression(void) { ; }
 
     ~Expression(void) { ; }
+
+    virtual std::string str(void) const { return this->_str; }
+
 };
 
 class Identifier : public Expression {
@@ -58,6 +66,8 @@ public:
     Identifier(std::string id) : _id(id) { ; }
 
     std::string id(void) const { return this->_id; }
+
+    std::string str(void) const { return this->id(); }
 };
 
 class Int : public Expression {
@@ -70,6 +80,8 @@ public:
     ~Int(void) { ; }
 
     Int(std::string svalue) : _value(Base::string2int(svalue)) { ; }
+
+    std::string str(void) const { return Base::int2string(this->_value); }
 
 };
 
@@ -84,10 +96,14 @@ public:
 
     Float(std::string svalue) : _value(Base::string2int(svalue)) { ; }
 
+    std::string str(void) const { return "FLOAT"; }
+
 };
 
 class AssignmentExpression : public Expression {
 private:
+    Identifier _id;
+    Expression _expr;
 
 public:
     AssignmentExpression(void) { ; }
@@ -95,15 +111,23 @@ public:
     ~AssignmentExpression(void) { ; }
 
     AssignmentExpression(const Identifier &id, const Expression &expr);
+
+    std::string str(void) const { return this->_id.str() + this->_expr.str(); }
 };
 
 class ArithmeticExpression : public Expression {
 private:
+    Expression _lhs;
+    std::string _op;
+    Expression _rhs;
 
 public:
     ArithmeticExpression(const Expression &l,
                          const std::string &op,
-                         const Expression &r) { ; }
+                         const Expression &r) : _lhs(l), _op(op), _rhs(r) { ; }
+
+    std::string str(void) const { return this->_lhs.str() + this->_op + this->_rhs.str(); }
+
 };
 
 class BooleanExpression : public Expression {
@@ -121,6 +145,8 @@ public:
     ~Statement(void) { ; }
 
     Statement(Expression expression) { ; }
+
+    std::string str(void) const { return "Statement" ; } 
 };
 typedef std::vector<Statement> Statements;
 
