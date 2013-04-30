@@ -16,7 +16,7 @@
  */
 
 #ifndef PROGRAM_H_INCLUDED
-#define PROGRAM_H_INCLUDED 
+#define PROGRAM_H_INCLUDED
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -31,10 +31,11 @@
 /* nodes will be the basic building block of a program */
 class Node {
 protected:
-    std::string _str;
+    Node *l;
+    Node *r;
 
 public:
-    Node(void) { ; }
+    Node(void) { this->l = NULL; this->r = NULL; }
 
     ~Node(void) { ; }
 
@@ -46,11 +47,11 @@ class Expression : public Node {
 private:
 
 public:
-    Expression(void) { ; }
+    Expression(void) : Node() { ; }
 
     ~Expression(void) { ; }
 
-    virtual std::string str(void) const { return this->_str; }
+    virtual std::string str(void) const = 0;
 
 };
 
@@ -63,11 +64,9 @@ public:
 
     ~Identifier(void) { ; }
 
-    Identifier(std::string id) : _id(id) { ; }
+    Identifier(std::string id) : Expression(), _id(id) { ; }
 
-    std::string id(void) const { return this->_id; }
-
-    std::string str(void) const { return this->id(); }
+    std::string str(void) const { return this->_id; }
 };
 
 class Int : public Expression {
@@ -79,10 +78,10 @@ public:
 
     ~Int(void) { ; }
 
-    Int(std::string svalue) : _value(Base::string2int(svalue)) { ; }
+    Int(std::string svalue) :
+        Expression(), _value(Base::string2int(svalue)) { ; }
 
     std::string str(void) const { return Base::int2string(this->_value); }
-
 };
 
 class Float : public Expression {
@@ -94,39 +93,36 @@ public:
 
     ~Float(void) { ; }
 
-    Float(std::string svalue) : _value(Base::string2int(svalue)) { ; }
+    Float(std::string svalue) :
+        Expression(), _value(Base::string2float(svalue)) { ; }
 
-    std::string str(void) const { return "FLOAT"; }
+    std::string str(void) const { return Base::float2string(this->_value); }
 
 };
 
 class AssignmentExpression : public Expression {
 private:
-    Identifier _id;
-    Expression _expr;
 
 public:
     AssignmentExpression(void) { ; }
 
     ~AssignmentExpression(void) { ; }
 
-    AssignmentExpression(const Identifier &id, const Expression &expr);
+    AssignmentExpression(Identifier *id, Expression *expr);
 
-    std::string str(void) const { return this->_id.str() + this->_expr.str(); }
+    std::string str(void) const;
 };
 
 class ArithmeticExpression : public Expression {
 private:
-    Expression _lhs;
     std::string _op;
-    Expression _rhs;
 
 public:
-    ArithmeticExpression(const Expression &l,
-                         const std::string &op,
-                         const Expression &r) : _lhs(l), _op(op), _rhs(r) { ; }
+    ArithmeticExpression(Expression *l,
+                         std::string *op,
+                         Expression *r);
 
-    std::string str(void) const { return this->_lhs.str() + this->_op + this->_rhs.str(); }
+    std::string str(void) const;
 
 };
 
@@ -138,15 +134,16 @@ public:
 
 class Statement : public Node {
 private:
+    Expression *_expr;
 
 public:
     Statement(void) { ; }
 
     ~Statement(void) { ; }
 
-    Statement(Expression expression) { ; }
+    Statement(Expression *expression);
 
-    std::string str(void) const { return "Statement" ; } 
+    std::string str(void) const { return (this->_expr->str() + "\n"); }
 };
 typedef std::vector<Statement> Statements;
 
@@ -158,6 +155,8 @@ public:
     Block(void) { ; }
 
     void add(const Statement &s) { this->_statements.push_back(s); }
+
+    std::string str(void) const;
 };
 
 #endif

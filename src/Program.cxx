@@ -21,9 +21,59 @@
 
 using namespace std;
 
-AssignmentExpression::AssignmentExpression(const Identifier &id,
-                                           const Expression &expr) :
-    _id(id), _expr(expr)
+/* ////////////////////////////////////////////////////////////////////////// */
+string
+Block::str(void) const
 {
-    ;
+    string out = "";
+    for (const Statement &s : this->_statements) {
+        out += s.str();
+    }
+    return out;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+AssignmentExpression::AssignmentExpression(Identifier *id,
+                                           Expression *expr)
+{
+    this->l = id;
+    this->r = expr;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+ArithmeticExpression::ArithmeticExpression(Expression *l,
+                                           std::string *op,
+                                           Expression *r)
+{
+    this->l = l;
+    this->_op = string(*op);
+    this->r = r;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+string
+AssignmentExpression::str(void) const
+{
+    string out;
+    out = this->l->str();
+    out += " = ";
+    out += this->r->str();
+    return out;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+string
+ArithmeticExpression::str(void) const
+{
+    string out;
+    out = this->l->str();
+    out += " " + this->_op + " ";
+    out += this->r->str();
+    return out;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+Statement::Statement(Expression *expression)
+{
+    this->_expr = expression;
 }

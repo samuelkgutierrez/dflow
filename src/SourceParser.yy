@@ -68,24 +68,24 @@ static int lineNo = 1;
 
 %%
 
-program : statements { programRoot = $1; }
+program : statements { programRoot = $1; std::cout << programRoot->str(); }
 ;
 
 statements : statement { $$ = new Block(); $$->add(*$1); }
            | statements statement { $1->add(*$2); }
 ;
 
-statement : expr SEND { $$ = new Statement(); }
+statement : expr SEND { $$ = new Statement($1); }
           | IF expr THEN statements ELSE statements FI {
-                std::cout << "if" << std::endl;
+                $$ = new Statement();
             }
 ;
 
-expr : ident ASSIGN expr { $$ = new AssignmentExpression(*$1, *$3); }
-     | num mathbinop expr { $$ = new ArithmeticExpression(*$1, *$2, *$3); }
-     | ident mathbinop expr { $$ = new ArithmeticExpression(*$1, *$2, *$3); }
-     | num { $$ = $1; }
-     | ident { $$ = $1; }
+expr : ident ASSIGN expr { $$ = new AssignmentExpression($1, $3); }
+     | num mathbinop expr { $$ = new ArithmeticExpression($1, $2, $3); }
+     | ident mathbinop expr { $$ = new ArithmeticExpression($1, $2, $3); }
+     | num { ; }
+     | ident { ; }
 ;
 
 ident : ID { $$ = new Identifier(*$1); }

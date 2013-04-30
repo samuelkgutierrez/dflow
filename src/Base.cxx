@@ -52,6 +52,17 @@ Base::string2int(const string &str)
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
+string
+Base::float2string(float f)
+{
+    char tmpBuf[256];
+
+    fill_n(tmpBuf, sizeof(tmpBuf), '\0');
+    snprintf(tmpBuf, sizeof(tmpBuf) - 1, "%f", f);
+    return string(tmpBuf);
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
 float
 Base::string2float(const string &str)
 {

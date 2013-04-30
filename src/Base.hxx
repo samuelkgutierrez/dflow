@@ -35,6 +35,8 @@ public:
 
     static int string2int(const std::string &str);
 
+    static std::string float2string(float f);
+
     static float string2float(const std::string &str);
 };
 
