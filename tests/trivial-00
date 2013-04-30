@@ -5,3 +5,4 @@ e = 8.675309;
 f = a + b - c * 12 / 2;
 g = x && y || z;
 h = true && a == b;
+i = false || a > c && true;
