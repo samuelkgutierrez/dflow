@@ -38,6 +38,10 @@ public:
     static std::string float2string(float f);
 
     static float string2float(const std::string &str);
+
+    static bool string2bool(const std::string &str);
+
+    static std::string bool2string(bool b);
 };
 
 #endif

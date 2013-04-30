@@ -100,6 +100,21 @@ public:
 
 };
 
+class Logical : public Expression {
+private:
+    bool _value;
+
+public:
+    Logical(void) { ; }
+
+    ~Logical(void) { ; }
+
+    Logical(const std::string &svalue) : _value(Base::string2bool(svalue)) { ; }
+
+    std::string str(void) const { return Base::bool2string(this->_value); }
+
+};
+
 class AssignmentExpression : public Expression {
 private:
 

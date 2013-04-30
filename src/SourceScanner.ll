@@ -50,6 +50,10 @@ do {                                                                           \
 
 "fi" { return FI; }
 
+"true" { SAVE_STOKEN; return TRUE; }
+
+"false" { SAVE_STOKEN; return FALSE; }
+
 [0-9]+ { SAVE_STOKEN; return INT; }
 
 [0-9]+\.[0-9]* { SAVE_STOKEN; return FLOAT; }

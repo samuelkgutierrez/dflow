@@ -70,3 +70,17 @@ Base::string2float(const string &str)
     istringstream(str) >> num;
     return num;
 }
+
+/* ////////////////////////////////////////////////////////////////////////// */
+bool
+Base::string2bool(const std::string &str)
+{
+    return str == "true";
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+std::string
+Base::bool2string(bool b)
+{
+    return b ? "true" : "false";
+}

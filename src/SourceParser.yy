@@ -51,7 +51,7 @@ static int lineNo = 1;
 %token <str> ID INT FLOAT SEND
              OPPLUS OPMIN OPMUL OPDIV
              ASSIGN EQ LT LTE GT GTE
-             OR AND NOT;
+             OR AND NOT TRUE FALSE;
 
 %token IF THEN ELSE FI
 
@@ -59,7 +59,7 @@ static int lineNo = 1;
 %left OPMUL OPDIV
 
 %type <block> program statements;
-%type <expression> expr num;
+%type <expression> expr num logical;
 %type <statement> statement;
 %type <str> mathbinop logicbinop;
 %type <ident> ident;
@@ -83,6 +83,7 @@ statement : expr SEND { $$ = new Statement($1); }
 
 expr : ident ASSIGN expr { $$ = new AssignmentExpression($1, $3); }
      | num mathbinop expr { $$ = new ArithmeticExpression($1, $2, $3); }
+     | logical logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
      | ident mathbinop expr { $$ = new ArithmeticExpression($1, $2, $3); }
      | ident logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
      | num { ; }
@@ -95,6 +96,9 @@ ident : ID { $$ = new Identifier(*$1); }
 num : INT { $$ = new Int(*$1); delete $1; }
     | FLOAT { $$ = new Float(*$1); delete $1; }
 ;
+
+logical : TRUE { $$ = new Logical(*$1); delete $1; }
+        | FALSE { $$ = new Logical(*$1); delete $1; }
 
 mathbinop : OPPLUS | OPMIN | OPMUL | OPDIV;
 
