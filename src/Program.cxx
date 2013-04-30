@@ -62,6 +62,27 @@ AssignmentExpression::str(void) const
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
+LogicalExpression::LogicalExpression(Expression *l,
+                                     std::string *op,
+                                     Expression *r)
+{
+    this->l = l;
+    this->_op = string(*op);
+    this->r = r;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+string
+LogicalExpression::str(void) const
+{
+    string out;
+    out = this->l->str();
+    out += " " + this->_op + " ";
+    out += this->r->str();
+    return out;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
 string
 ArithmeticExpression::str(void) const
 {

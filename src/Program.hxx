@@ -126,10 +126,20 @@ public:
 
 };
 
-class BooleanExpression : public Expression {
+class LogicalExpression : public Expression {
 private:
+    std::string _op;
 
 public:
+    LogicalExpression(void);
+
+    ~LogicalExpression(void);
+
+    LogicalExpression(Expression *l,
+                      std::string *op,
+                      Expression *r);
+
+    std::string str(void) const;
 };
 
 class Statement : public Node {

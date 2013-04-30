@@ -61,7 +61,7 @@ static int lineNo = 1;
 %type <block> program statements;
 %type <expression> expr num;
 %type <statement> statement;
-%type <str> mathbinop;
+%type <str> mathbinop logicbinop;
 %type <ident> ident;
 
 %start program
@@ -77,13 +77,14 @@ statements : statement { $$ = new Block(); $$->add(*$1); }
 
 statement : expr SEND { $$ = new Statement($1); }
           | IF expr THEN statements ELSE statements FI {
-                $$ = new Statement();
+                ;
             }
 ;
 
 expr : ident ASSIGN expr { $$ = new AssignmentExpression($1, $3); }
      | num mathbinop expr { $$ = new ArithmeticExpression($1, $2, $3); }
      | ident mathbinop expr { $$ = new ArithmeticExpression($1, $2, $3); }
+     | ident logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
      | num { ; }
      | ident { ; }
 ;
@@ -95,11 +96,9 @@ num : INT { $$ = new Int(*$1); delete $1; }
     | FLOAT { $$ = new Float(*$1); delete $1; }
 ;
 
-mathbinop : OPPLUS
-          | OPMIN
-          | OPMUL
-          | OPDIV
-;
+mathbinop : OPPLUS | OPMIN | OPMUL | OPDIV;
+
+logicbinop : EQ | LT | LTE | GT | GTE | OR | AND | NOT;
 
 %%
 
