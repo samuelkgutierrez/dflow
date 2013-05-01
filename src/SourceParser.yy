@@ -31,8 +31,7 @@ int yylex(void);
 extern "C" int yyerror(const char *s);
 extern "C" FILE *yyin;
 
-Statements stats;
-/* XXX pointer to the top-level program block */
+/* pointer to the top-level program block */
 Block *programRoot = NULL;
 
 /* input line number used for nice error messages */
@@ -56,9 +55,6 @@ static int lineNo = 1;
 
 %token IF THEN ELSE FI SKIP;
 
-%left OPPLUS OPMIN;
-%left OPMUL OPDIV;
-
 %type <block> program statements;
 %type <expression> aexpr bexpr assignexpr expr num logical;
 %type <statement> skipstat statement;
@@ -69,25 +65,24 @@ static int lineNo = 1;
 
 %%
 
-program : statements { programRoot = $1; std::cout << programRoot->str(); }
+program : statements { programRoot = $1; }
         ;
-
 
 statements : statement { $$ = new Block(); $$->add($1); }
            | statements statement { $1->add($2); }
-;
+           ;
 
 statement  : assignexpr SEND { $$ = new Statement($1); }
            | skipstat { $$ = $1; }
            | IF bexpr THEN statements ELSE statements FI {
-                 Block *block = new Block();
-                 block->add(new Statement($2));
-                 $$ = new IfStatement(block, $4, $6);
+                 Block *exprBlock = new Block();
+                 exprBlock->add(new Statement($2));
+                 $$ = new IfStatement(exprBlock, $4, $6);
              }
            ;
 
-expr : aexpr
-     | bexpr
+expr : aexpr { $$ = $1; }
+     | bexpr { $$ = $1; }
      | ident { $$ = $1; }
      | NOT bexpr { $$ = $2; }
      ;
@@ -154,4 +149,3 @@ yyerror(const char *s)
     /* ignored */
     return 42;
 }
-

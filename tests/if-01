@@ -1,0 +1,7 @@
+if true then
+    a = true;
+    b = false;
+    c = a && b;
+else
+    skip;
+fi

@@ -26,10 +26,11 @@
 
 #include "Constants.hxx"
 #include "DFlowException.hxx"
+#include "Program.hxx"
 
 extern int parserParse(FILE *fp);
 /* can safely be used AFTER call to parseAppSource */
-//extern CFG *contextFreeGrammar;
+extern Block *programRoot;
 
 using namespace std;
 
@@ -53,7 +54,7 @@ parseAppSource(string what)
         throw DFlowException(DFLOW_WHERE, estr);
     }
     if (0 != parserParse(fp)) {
-        string estr = "error encountered during CFG parse. cannot continue.";
+        string estr = "error encountered during source parse. cannot continue.";
         throw DFlowException(DFLOW_WHERE, estr);
     }
     if (NULL != fp) {
@@ -71,8 +72,9 @@ main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     try {
-        /* do this before we ever touch contextFreeGrammar */
+        /* do this before we ever touch programRoot */
         parseAppSource(string(argv[1]));
+        cout << programRoot->str();
     }
     catch (DFlowException &e) {
         cerr << e.what() << endl;

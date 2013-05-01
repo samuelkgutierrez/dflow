@@ -31,15 +31,18 @@
 /* nodes will be the basic building block of a program */
 class Node {
 protected:
+    unsigned _depth;
     Node *l;
     Node *r;
 
 public:
-    Node(void) { this->l = NULL; this->r = NULL; }
+    Node(void) { this->l = NULL; this->r = NULL; this->_depth = 0; }
 
-    ~Node(void) { ; }
+    virtual ~Node(void) { ; }
 
     virtual std::string str(void) const = 0;
+
+    virtual unsigned depth(void) const = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -49,7 +52,7 @@ private:
 public:
     Expression(void) : Node() { ; }
 
-    ~Expression(void) { ; }
+    virtual ~Expression(void) { ; }
 
     virtual std::string str(void) const = 0;
 
@@ -132,6 +135,10 @@ private:
     std::string _op;
 
 public:
+    ArithmeticExpression(void) { ; }
+
+    ~ArithmeticExpression(void) { ; }
+
     ArithmeticExpression(Expression *l,
                          std::string *op,
                          Expression *r);
@@ -147,7 +154,7 @@ private:
 public:
     LogicalExpression(void);
 
-    ~LogicalExpression(void);
+    virtual ~LogicalExpression(void) { ; }
 
     LogicalExpression(Expression *l,
                       std::string *op,
@@ -161,7 +168,7 @@ protected:
     Expression *_expr;
 
 public:
-    Statement(void) { ; }
+    Statement(void) : Node() { ; }
 
     ~Statement(void) { ; }
 
@@ -177,7 +184,9 @@ protected:
     Statementps _statements;
 
 public:
-    Block(void) { ; }
+    Block(void) : Node() { ; }
+
+    virtual ~Block(void) { ; }
 
     virtual void add(Statement *s) { this->_statements.push_back(s); }
 
@@ -191,7 +200,7 @@ public:
 
     ~Skip(void) { ; }
 
-    std::string str(void) const { return "skip"; }
+    std::string str(void) const { return "skip\n"; }
 };
 
 class IfStatement : public Statement {
@@ -199,7 +208,7 @@ private:
     Block *_exprBlock;
     Block *_ifBlock;
     Block *_elseBlock;
-    
+
 public:
     IfStatement(void) { ; }
 
