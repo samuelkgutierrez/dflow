@@ -196,6 +196,7 @@ public:
 
 class IfStatement : public Statement {
 private:
+    Block *_exprBlock;
     Block *_ifBlock;
     Block *_elseBlock;
     
@@ -204,7 +205,7 @@ public:
 
     ~IfStatement(void) { ; }
 
-    IfStatement(Expression *expr, Block *ifBlock, Block *elseBlock);
+    IfStatement(Block *expr, Block *ifBlock, Block *elseBlock);
 
     std::string str(void) const;
 };

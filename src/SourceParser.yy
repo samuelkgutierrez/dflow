@@ -80,7 +80,9 @@ statements : statement { $$ = new Block(); $$->add($1); }
 statement  : assignexpr SEND { $$ = new Statement($1); }
            | skipstat { $$ = $1; }
            | IF bexpr THEN statements ELSE statements FI {
-                 $$ = new IfStatement($2, $4, $6);
+                 Block *block = new Block();
+                 block->add(new Statement($2));
+                 $$ = new IfStatement(block, $4, $6);
              }
            ;
 

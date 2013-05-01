@@ -25,10 +25,11 @@ using namespace std;
 string
 Block::str(void) const
 {
-    string out = "";
+    string out = "NEW BLOCK\n";
     for (Statement *s : this->_statements) {
         out += s->str();
     }
+    out += "END NEW BLOCK\n";
     return out;
 }
 
@@ -100,11 +101,11 @@ Statement::Statement(Expression *expression)
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
-IfStatement::IfStatement(Expression *expr,
+IfStatement::IfStatement(Block *expr,
                          Block *ifBlock,
                          Block *elseBlock)
 {
-    this->_expr = expr;
+    this->_exprBlock = expr;
     this->_ifBlock = ifBlock;
     this->_elseBlock = elseBlock;
 }
@@ -114,7 +115,7 @@ string
 IfStatement::str(void) const
 {
     string out = "if ";
-    out += this->_expr->str() + " then\n";
+    out += this->_exprBlock->str() + " then\n";
     out += "  " + this->_ifBlock->str();
     out += "else\n";
     out += "  " + this->_elseBlock->str();
