@@ -26,8 +26,8 @@ string
 Block::str(void) const
 {
     string out = "";
-    for (const Statement &s : this->_statements) {
-        out += s.str();
+    for (Statement *s : this->_statements) {
+        out += s->str();
     }
     return out;
 }
@@ -113,10 +113,10 @@ IfStatement::IfStatement(Expression *expr,
 string
 IfStatement::str(void) const
 {
-    cout << "HERE"<<endl;
     string out = "if ";
     out += this->_expr->str() + " then\n";
     out += "  " + this->_ifBlock->str();
+    out += "else\n";
     out += "  " + this->_elseBlock->str();
     out += "fi\n";
     return out;

@@ -1,5 +1,6 @@
-if a then
-    a = 1;
-else
+if true == true then
     b = 1;
+    c = 1;
+else
+    d = 1;
 fi

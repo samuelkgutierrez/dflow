@@ -73,8 +73,8 @@ program : statements { programRoot = $1; std::cout << programRoot->str(); }
         ;
 
 
-statements : statement { $$ = new Block(); $$->add(*$1); }
-           | statements statement { $1->add(*$2); }
+statements : statement { $$ = new Block(); $$->add($1); }
+           | statements statement { $1->add($2); }
 ;
 
 statement  : assignexpr SEND { $$ = new Statement($1); }
@@ -88,7 +88,7 @@ expr : aexpr
      | bexpr
      ;
 
-skipstat: SKIP SEND { $$ = new Skip(); }
+skipstat : SKIP SEND { $$ = new Skip(); }
          ;
 
 assignexpr : ident ASSIGN expr { $$ = new AssignmentExpression($1, $3); }
@@ -102,8 +102,8 @@ bexpr : logical logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
 
 aexpr : num mathbinop aexpr { $$ = new ArithmeticExpression($1, $2, $3); }
       | ident mathbinop aexpr { $$ = new ArithmeticExpression($1, $2, $3); }
-      | ident { $$ = $1; }
       | num { $$ = $1; }
+      | ident { $$ = $1; }
       ;
 
 ident : ID { $$ = new Identifier(*$1); delete $1; }

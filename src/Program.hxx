@@ -170,15 +170,16 @@ public:
     virtual std::string str(void) const { return (this->_expr->str() + "\n"); }
 };
 typedef std::vector<Statement> Statements;
+typedef std::vector<Statement *> Statementps;
 
 class Block : public Node {
 protected:
-    Statements _statements;
+    Statementps _statements;
 
 public:
     Block(void) { ; }
 
-    virtual void add(const Statement &s) { this->_statements.push_back(s); }
+    virtual void add(Statement *s) { this->_statements.push_back(s); }
 
     std::string str(void) const;
 };
