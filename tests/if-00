@@ -1,13 +1,5 @@
-a = 5 + 3 + 4;
-
 if a then
-    if b then
-        a = a;
-        b = b;
-    else
-        a = a + 5;
-    fi
-    b = a;
+    a = 1;
 else
     b = 1;
 fi

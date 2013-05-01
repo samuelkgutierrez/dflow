@@ -98,3 +98,26 @@ Statement::Statement(Expression *expression)
 {
     this->_expr = expression;
 }
+
+/* ////////////////////////////////////////////////////////////////////////// */
+IfStatement::IfStatement(Expression *expr,
+                         Block *ifBlock,
+                         Block *elseBlock)
+{
+    this->_expr = expr;
+    this->_ifBlock = ifBlock;
+    this->_elseBlock = elseBlock;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+string
+IfStatement::str(void) const
+{
+    cout << "HERE"<<endl;
+    string out = "if ";
+    out += this->_expr->str() + " then\n";
+    out += "  " + this->_ifBlock->str();
+    out += "  " + this->_elseBlock->str();
+    out += "fi\n";
+    return out;
+}

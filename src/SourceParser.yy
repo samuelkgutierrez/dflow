@@ -31,8 +31,8 @@ int yylex(void);
 extern "C" int yyerror(const char *s);
 extern "C" FILE *yyin;
 
-/* pointer to the top-level program block */
-Block *programRoot;
+/* XXX pointer to the top-level program block */
+Block *programRoot = NULL;
 
 /* input line number used for nice error messages */
 static int lineNo = 1;
@@ -77,7 +77,7 @@ statements : statement { $$ = new Block(); $$->add(*$1); }
 
 statement : expr SEND { $$ = new Statement($1); }
           | IF expr THEN statements ELSE statements FI {
-                ;
+                $$ = new IfStatement($2, $4, $6);
             }
 ;
 
@@ -91,7 +91,7 @@ expr : ident ASSIGN expr { $$ = new AssignmentExpression($1, $3); }
      | logical { ; }
 ;
 
-ident : ID { $$ = new Identifier(*$1); }
+ident : ID { $$ = new Identifier(*$1); delete $1; }
 ;
 
 num : INT { $$ = new Int(*$1); delete $1; }
@@ -104,8 +104,7 @@ logical : TRUE { $$ = new Logical(*$1); delete $1; }
 
 mathbinop : OPPLUS | OPMIN | OPMUL | OPDIV;
 
-logicbinop : EQ | LT | LTE | GT | GTE | OR | AND | NOT;
-
+logicbinop : EQ | LT | LTE | GT | GTE | OR | AND;
 
 %%
 

@@ -112,7 +112,6 @@ public:
     Logical(const std::string &svalue) : _value(Base::string2bool(svalue)) { ; }
 
     std::string str(void) const { return Base::bool2string(this->_value); }
-
 };
 
 class AssignmentExpression : public Expression {
@@ -158,7 +157,7 @@ public:
 };
 
 class Statement : public Node {
-private:
+protected:
     Expression *_expr;
 
 public:
@@ -168,18 +167,34 @@ public:
 
     Statement(Expression *expression);
 
-    std::string str(void) const { return (this->_expr->str() + "\n"); }
+    virtual std::string str(void) const { return (this->_expr->str() + "\n"); }
 };
 typedef std::vector<Statement> Statements;
 
-class Block : public Expression {
-private:
+class Block : public Node {
+protected:
     Statements _statements;
 
 public:
     Block(void) { ; }
 
-    void add(const Statement &s) { this->_statements.push_back(s); }
+    virtual void add(const Statement &s) { this->_statements.push_back(s); }
+
+    std::string str(void) const;
+};
+typedef std::vector<Block> Blocks;
+
+class IfStatement : public Statement {
+private:
+    Block *_ifBlock;
+    Block *_elseBlock;
+    
+public:
+    IfStatement(void) { ; }
+
+    ~IfStatement(void) { ; }
+
+    IfStatement(Expression *expr, Block *ifBlock, Block *elseBlock);
 
     std::string str(void) const;
 };
