@@ -31,6 +31,7 @@ int yylex(void);
 extern "C" int yyerror(const char *s);
 extern "C" FILE *yyin;
 
+Statements stats;
 /* XXX pointer to the top-level program block */
 Block *programRoot = NULL;
 
@@ -59,8 +60,8 @@ static int lineNo = 1;
 %left OPMUL OPDIV;
 
 %type <block> program statements;
-%type <expression> aexpr bexpr assignexpr expr num logical skipexpr;
-%type <statement> statement;
+%type <expression> aexpr bexpr assignexpr expr num logical;
+%type <statement> skipstat statement;
 %type <str> mathbinop logicbinop;
 %type <ident> ident;
 
@@ -69,57 +70,58 @@ static int lineNo = 1;
 %%
 
 program : statements { programRoot = $1; std::cout << programRoot->str(); }
-;
+        ;
+
 
 statements : statement { $$ = new Block(); $$->add(*$1); }
            | statements statement { $1->add(*$2); }
 ;
 
-statement : expr SEND { $$ = new Statement($1); }
-          | IF expr THEN statements ELSE statements FI {
-                $$ = new IfStatement($2, $4, $6);
-            }
-;
+statement  : assignexpr SEND { $$ = new Statement($1); }
+           | skipstat { $$ = $1; }
+           | IF bexpr THEN statements ELSE statements FI {
+                 $$ = new IfStatement($2, $4, $6);
+             }
+           ;
 
-expr : assignexpr 
-     | aexpr
+expr : aexpr
      | bexpr
-     | skipexpr
-;
+     ;
 
-skipexpr: SKIP { $$ = new Skip(); }
-;
+skipstat: SKIP SEND { $$ = new Skip(); }
+         ;
 
 assignexpr : ident ASSIGN expr { $$ = new AssignmentExpression($1, $3); }
-;
+           ;
 
 bexpr : logical logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
       | ident logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
-      | logical
-;
+      | logical { $$ = $1; }
+      | ident { $$ = $1; }
+      ;
 
 aexpr : num mathbinop aexpr { $$ = new ArithmeticExpression($1, $2, $3); }
       | ident mathbinop aexpr { $$ = new ArithmeticExpression($1, $2, $3); }
       | ident { $$ = $1; }
       | num { $$ = $1; }
-;
+      ;
 
 ident : ID { $$ = new Identifier(*$1); delete $1; }
-;
+      ;
 
 num : INT { $$ = new Int(*$1); delete $1; }
     | FLOAT { $$ = new Float(*$1); delete $1; }
-;
+    ;
 
 logical : TRUE { $$ = new Logical(*$1); delete $1; }
         | FALSE { $$ = new Logical(*$1); delete $1; }
-;
+        ;
 
 mathbinop : OPPLUS | OPMIN | OPMUL | OPDIV
-;
+          ;
 
 logicbinop : EQ | LT | LTE | GT | GTE | OR | AND
-;
+           ;
 
 %%
 

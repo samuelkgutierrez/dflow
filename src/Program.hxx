@@ -114,15 +114,6 @@ public:
     std::string str(void) const { return Base::bool2string(this->_value); }
 };
 
-class Skip : public Expression {
-public:
-    Skip(void) { ; }
-
-    ~Skip(void) { ; }
-
-    std::string str(void) const { return "skip"; }
-};
-
 class AssignmentExpression : public Expression {
 private:
 
@@ -192,6 +183,15 @@ public:
     std::string str(void) const;
 };
 typedef std::vector<Block> Blocks;
+
+class Skip : public Statement {
+public:
+    Skip(void) { ; }
+
+    ~Skip(void) { ; }
+
+    std::string str(void) const { return "skip"; }
+};
 
 class IfStatement : public Statement {
 private:
