@@ -54,6 +54,8 @@ do {                                                                           \
 
 "false" { SAVE_STOKEN; return FALSE; }
 
+"skip" { return SKIP; }
+
 [0-9]+ { SAVE_STOKEN; return INT; }
 
 [0-9]+\.[0-9]* { SAVE_STOKEN; return FLOAT; }

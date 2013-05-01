@@ -53,13 +53,13 @@ static int lineNo = 1;
              ASSIGN EQ LT LTE GT GTE
              OR AND NOT TRUE FALSE;
 
-%token IF THEN ELSE FI;
+%token IF THEN ELSE FI SKIP;
 
 %left OPPLUS OPMIN;
 %left OPMUL OPDIV;
 
 %type <block> program statements;
-%type <expression> expr num logical;
+%type <expression> aexpr bexpr assignexpr expr num logical skipexpr;
 %type <statement> statement;
 %type <str> mathbinop logicbinop;
 %type <ident> ident;
@@ -81,14 +81,27 @@ statement : expr SEND { $$ = new Statement($1); }
             }
 ;
 
-expr : ident ASSIGN expr { $$ = new AssignmentExpression($1, $3); }
-     | num mathbinop expr { $$ = new ArithmeticExpression($1, $2, $3); }
-     | logical logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
-     | ident mathbinop expr { $$ = new ArithmeticExpression($1, $2, $3); }
-     | ident logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
-     | num { ; }
-     | ident { ; }
-     | logical { ; }
+expr : assignexpr 
+     | aexpr
+     | bexpr
+     | skipexpr
+;
+
+skipexpr: SKIP { $$ = new Skip(); }
+;
+
+assignexpr : ident ASSIGN expr { $$ = new AssignmentExpression($1, $3); }
+;
+
+bexpr : logical logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
+      | ident logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
+      | logical
+;
+
+aexpr : num mathbinop aexpr { $$ = new ArithmeticExpression($1, $2, $3); }
+      | ident mathbinop aexpr { $$ = new ArithmeticExpression($1, $2, $3); }
+      | ident { $$ = $1; }
+      | num { $$ = $1; }
 ;
 
 ident : ID { $$ = new Identifier(*$1); delete $1; }
@@ -102,9 +115,11 @@ logical : TRUE { $$ = new Logical(*$1); delete $1; }
         | FALSE { $$ = new Logical(*$1); delete $1; }
 ;
 
-mathbinop : OPPLUS | OPMIN | OPMUL | OPDIV;
+mathbinop : OPPLUS | OPMIN | OPMUL | OPDIV
+;
 
-logicbinop : EQ | LT | LTE | GT | GTE | OR | AND;
+logicbinop : EQ | LT | LTE | GT | GTE | OR | AND
+;
 
 %%
 
