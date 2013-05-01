@@ -1,11 +1,12 @@
 a = b;
-b = c;
-d = 7;
-e = 8.675309;
-f = a + b - c * 12 / 2;
-z = true;
-g = x && y || z;
-h = true && a == b;
-i = false || a > c && true;
-
-aa = false;
+c = d + 1;
+e = 1.0 + f;
+g = 7;
+h = 8.675309;
+i = j + k;
+l = true;
+m = false || true;
+n = o || false;
+p = false && q;
+r = ! false;
+s = ! false && t;

@@ -87,6 +87,7 @@ statement  : assignexpr SEND { $$ = new Statement($1); }
 expr : aexpr
      | bexpr
      | ident { $$ = $1; }
+     | NOT bexpr { $$ = $2; }
      ;
 
 skipstat : SKIP SEND { $$ = new Skip(); }
@@ -95,14 +96,18 @@ skipstat : SKIP SEND { $$ = new Skip(); }
 assignexpr : ident ASSIGN expr { $$ = new AssignmentExpression($1, $3); }
            ;
 
-bexpr : logical logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
-      | ident logicbinop expr { $$ = new LogicalExpression($1, $2, $3); }
+bexpr : logical logicbinop logical { $$ = new LogicalExpression($1, $2, $3); }
+      | logical logicbinop ident { $$ = new LogicalExpression($1, $2, $3); }
+      | ident logicbinop ident { $$ = new LogicalExpression($1, $2, $3); }
+      | ident logicbinop logical { $$ = new LogicalExpression($1, $2, $3); }
       | logical { $$ = $1; }
       ;
 
-aexpr : num mathbinop aexpr { $$ = new ArithmeticExpression($1, $2, $3); }
-      | ident mathbinop aexpr { $$ = new ArithmeticExpression($1, $2, $3); }
-      | num { $$ = $1; }
+aexpr : num mathbinop num { $$ = new ArithmeticExpression($1, $2, $3); }
+      | num mathbinop ident { $$ = new ArithmeticExpression($1, $2, $3); }
+      | ident mathbinop ident { $$ = new ArithmeticExpression($1, $2, $3); }
+      | ident mathbinop num { $$ = new ArithmeticExpression($1, $2, $3); }
+      | num { $$ = $1;  }
       ;
 
 ident : ID { $$ = new Identifier(*$1); delete $1; }

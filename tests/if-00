@@ -1,6 +1,10 @@
 if true == true then
-    b = 1;
-    c = 1;
+    a = b;
+    if false then
+        c = d;
+    else
+        z = 1;
+    fi
 else
     d = 1;
 fi
