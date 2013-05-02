@@ -189,7 +189,8 @@ public:
 
     Statement(Expression *expression);
 
-    virtual std::string str(void) const { return (this->_expr->str() + "\n"); }
+    virtual std::string str(void) const { return (Base::pad(this->depth()) +
+                                                  this->_expr->str() + "\n"); }
 
 };
 typedef std::vector<Statement> Statements;

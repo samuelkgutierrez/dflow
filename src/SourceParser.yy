@@ -65,7 +65,7 @@ static int lineNo = 1;
 
 %%
 
-program : statements { programRoot = $1; programRoot->depth(0); }
+program : statements { programRoot = $1; }
         ;
 
 statements : statement { $$ = new Block(); $$->add($1); }

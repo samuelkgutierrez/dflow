@@ -26,11 +26,10 @@ using namespace std;
 string
 Block::str(void) const
 {
-    string out = Base::int2string((int)this->depth()) + " NEW BLOCK\n";
+    string out = "";
     for (Statement *s : this->_statements) {
         out += s->str();
     }
-    out += "END NEW BLOCK\n";
     return out;
 }
 
@@ -117,9 +116,9 @@ IfStatement::str(void) const
 {
     string out = "if ";
     out += this->_exprBlock->str() + " then\n";
-    out += "  " + this->_ifBlock->str();
+    out += this->_ifBlock->str();
     out += "else\n";
-    out += "  " + this->_elseBlock->str();
+    out += this->_elseBlock->str();
     out += "fi\n";
     return out;
 }

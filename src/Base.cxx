@@ -84,3 +84,12 @@ Base::bool2string(bool b)
 {
     return b ? "true" : "false";
 }
+
+/* ////////////////////////////////////////////////////////////////////////// */
+string
+Base::pad(unsigned pad)
+{
+    string out = "";
+    for (unsigned i = 0; i < pad; ++i) out += " ";
+    return out;
+}

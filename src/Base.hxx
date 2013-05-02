@@ -42,6 +42,8 @@ public:
     static bool string2bool(const std::string &str);
 
     static std::string bool2string(bool b);
+
+    static std::string pad(unsigned pad);
 };
 
 #endif
