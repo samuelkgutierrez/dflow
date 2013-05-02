@@ -26,6 +26,7 @@
 
 #include "Constants.hxx"
 #include "DFlowException.hxx"
+#include "Painter.hxx"
 #include "Program.hxx"
 
 extern int parserParse(FILE *fp);
@@ -76,6 +77,7 @@ main(int argc, char **argv)
         parseAppSource(string(argv[1]));
         programRoot->depth(0);
         cout << programRoot->str();
+        Painter p(argc, argv);
     }
     catch (DFlowException &e) {
         cerr << e.what() << endl;

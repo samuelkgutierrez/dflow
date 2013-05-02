@@ -32,12 +32,14 @@ class Painter {
 private:
     /* context */
     GVC_t *gvc;
-    Agraph_t *g;
+    Agraph_t *graph;
 
 public:
     Painter(void);
 
-    ~Painter(void);
+    Painter(int argc, char **argv);
+
+    ~Painter(void) { ; }
 };
 
 #endif

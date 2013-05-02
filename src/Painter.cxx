@@ -33,10 +33,28 @@
 
 using namespace std;
 
-Painter::Painter(void)
+
+Painter::Painter(int argc, char **argv)
 {
+    Agnode_t *n, *m;
+    Agedge_t *e;
+char * args[] = {
+    "dot",
+    "-Tgif", /* gif output */
+    "-oabc.gif" /* output to file abc.gif */
+};
+
     this->gvc = gvContext();
-    this->g = agopen((char *)"ast", Agdirected, 0);
+    gvParseArgs (gvc, sizeof(args)/sizeof(char*), args);
+
+    this->graph = agopen((char *)"ast", Agdirected, 0);
+    n = agnode(graph, "n", 1);
+    m = agnode(graph, "m", 1);
+    e = agedge(graph, n, m, 0, 1);
+    agsafeset(n, "color", "red", "");
+    gvLayoutJobs(gvc, graph);
+    gvRenderJobs(gvc, graph);
+    gvFreeLayout(gvc, graph);
+    agclose(graph);
+    gvFreeContext(gvc);
 }
-
-
