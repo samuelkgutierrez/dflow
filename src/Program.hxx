@@ -257,6 +257,8 @@ public:
 
     void draw(void);
 
+    unsigned nstatements(void) const { return this->_statements.size(); }
+
 };
 typedef std::vector<Block> Blocks;
 
@@ -268,7 +270,10 @@ public:
 
     virtual ~Skip(void) { ; }
 
-    std::string str(void) const { return Base::pad(this->depth()) + "skip;\n"; }
+    std::string str(void) const {
+        return Base::pad(this->depth()) + "[skip]" +
+               Base::int2string(this->label()) + ";\n";
+    }
 
     virtual void *draw(Painter *p) const { ; }
 };
