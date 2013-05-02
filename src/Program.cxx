@@ -94,6 +94,13 @@ AssignmentExpression::draw(Painter *p) const
     ;
 }
 
+/* ////////////////////////////////////////////////////////////////////////// */
+void
+Block::draw(void)
+{
+    this->painter = new Painter();
+    this->draw(this->painter);
+}
 
 /* ////////////////////////////////////////////////////////////////////////// */
 LogicalExpression::LogicalExpression(Expression *l,
@@ -199,12 +206,6 @@ IfStatement::label(int label)
     int next = this->_ifBlock->label() +
                (int)this->_ifBlock->nstatements() + 1;
     this->_elseBlock->label(next);
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-void
-Block::draw(void)
-{
 }
 
 void

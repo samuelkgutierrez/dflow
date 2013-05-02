@@ -85,3 +85,9 @@ Painter::newNode(Painter *p, std::string label, int i)
 {
     return agnode(p->graph, (char *)label.c_str(), i);
 }
+
+PEdge
+Painter::newNode(Painter *p, PNode n1, PNode n2, int i, int j)
+{
+    return agedge(p->graph, n1, n2, 0, j);
+}
