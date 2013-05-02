@@ -183,7 +183,7 @@ public:
 
     std::string str(void) const;
 
-    virtual void *draw(Painter *p) const { ; }
+    virtual void *draw(Painter *p) const;
 
 };
 
@@ -203,7 +203,7 @@ public:
 
     std::string str(void) const;
 
-    virtual void *draw(Painter *p) const { ; }
+    virtual void *draw(Painter *p) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -225,7 +225,7 @@ public:
 
     virtual void exprStatement(bool is) { this->_exprStatement = is; }
 
-    virtual void *draw(Painter *p) const { ; }
+    virtual void *draw(Painter *p) const;
 
 };
 typedef std::vector<Statement> Statements;
@@ -253,7 +253,7 @@ public:
 
     virtual void label(int label);
 
-    virtual void *draw(Painter *p) const { ; }
+    virtual void *draw(Painter *p) const;
 
     void draw(void);
 
@@ -275,7 +275,7 @@ public:
                Base::int2string(this->label()) + ";\n";
     }
 
-    virtual void *draw(Painter *p) const { ; }
+    virtual void *draw(Painter *p) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -303,7 +303,7 @@ public:
 
     virtual void label(int label);
 
-    virtual void *draw(Painter *p) const { ; }
+    virtual void *draw(Painter *p) const;
 };
 
 #endif

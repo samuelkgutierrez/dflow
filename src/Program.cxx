@@ -88,10 +88,55 @@ Logical::draw(Painter *p) const
     return Painter::newNode(p, Base::bool2string(this->_value), 1);
 }
 
+/* XXX */
 void *
 AssignmentExpression::draw(Painter *p) const
 {
-    ;
+    return this->l->draw(p);
+}
+
+/* XXX */
+void *
+ArithmeticExpression::draw(Painter *p) const
+{
+    return this->l->draw(p);
+}
+
+/* XXX */
+void *
+LogicalExpression::draw(Painter *p) const
+{
+    return this->l->draw(p);
+}
+
+/* XXX */
+void *
+Statement::draw(Painter *p) const
+{
+    return this->_expr->draw(p);
+}
+
+/* XXX */
+void *
+Block::draw(Painter *p) const
+{
+    for (Statement *s : this->_statements) {
+        return s->draw(p);
+    }
+    return  NULL;
+}
+
+void *
+Skip::draw(Painter *p) const
+{
+    return Painter::newNode(p, "skip", 1);
+}
+
+/* XXX */
+void *
+IfStatement::draw(Painter *p) const
+{
+    return this->_exprBlock->draw(p);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
