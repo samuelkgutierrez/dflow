@@ -31,6 +31,7 @@ BASE_SRC = \
 Constants.hxx \
 Base.hxx Base.cxx \
 DFlowException.hxx DFlowException.cxx \
+Painter.hxx Painter.cxx \
 Program.hxx Program.cxx \
 ${PARSER_FILES}
 

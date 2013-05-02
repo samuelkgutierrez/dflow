@@ -46,7 +46,9 @@ AC_PROG_YACC
 AC_PROG_LIBTOOL
 
 # checks for libraries.
-# none at this point
+dnl AC_CHECK_LIB([gvc], [gvContext], [],
+dnl             [AC_MSG_ERROR([** libcgraph (DOT libraries) required.])],
+dnl             [-lcgraph -lcdt])
 
 # checks for header files.
 AC_CHECK_HEADERS([\

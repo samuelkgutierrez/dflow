@@ -1,0 +1,3 @@
+#/bin/bash
+
+./configure CXXFLAGS="-Wall -g -O0 -I/usr/local/include/graphviz" LDFLAGS="-lgvc -lcgraph -lcdt"
