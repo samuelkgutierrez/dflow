@@ -126,7 +126,8 @@ Statement::draw(Painter *p) const
 void *
 Block::draw(Painter *p) const
 {
-    PNode blockNode = Painter::newNode(p, "block", 1);
+    string label = "block " + Base::int2string(this->label());
+    PNode blockNode = Painter::newNode(p, "", 1);
     for (Statement *s : this->_statements) {
         Painter::newEdge(p, blockNode, (PNode)s->draw(p), " ", 1);
     }
@@ -143,7 +144,13 @@ Skip::draw(Painter *p) const
 void *
 IfStatement::draw(Painter *p) const
 {
-    return this->_exprBlock->draw(p);
+    string label = "if " + Base::int2string(this->label());
+    PNode ifNode = Painter::newNode(p, label, 1);
+    Painter::newEdge(p, ifNode, (PNode)this->_exprBlock->draw(p), " ", 1);
+    Painter::newEdge(p, ifNode, (PNode)this->_ifBlock->draw(p), " ", 1);
+    Painter::newEdge(p, ifNode, (PNode)this->_elseBlock->draw(p), " ", 1);
+    return ifNode;
+
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
