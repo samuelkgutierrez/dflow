@@ -45,8 +45,8 @@ static char *gvconfig[] = {
 /* ////////////////////////////////////////////////////////////////////////// */
 Painter::Painter(void)
 {
-    Agnode_t *n, *m;
-    Agedge_t *e;
+    PNode n, m;
+    PEdge e;
 
     /* set up a graphviz context */
     this->gvc = gvContext();
@@ -57,7 +57,10 @@ Painter::Painter(void)
     n = agnode(graph, "n", 1);
     m = agnode(graph, "m", 1);
     e = agedge(graph, n, m, 0, 1);
+    /* change node props */
     agsafeset(n, "color", "red", "");
+    /* label edges */
+    agsafeset(e, "label", "TEST", "");
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -75,3 +78,5 @@ Painter::drawAST(std::string fileName)
     gvLayoutJobs(gvc, graph);
     gvRenderJobs(gvc, graph);
 }
+
+

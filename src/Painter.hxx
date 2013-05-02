@@ -28,6 +28,9 @@
 #include "cgraph.h"
 #include "gvc.h"
 
+typedef Agnode_t* PNode;
+typedef Agedge_t* PEdge;
+
 class Painter {
 private:
     /* context */
@@ -39,6 +42,8 @@ public:
     Painter(void);
 
     ~Painter(void);
+
+    PNode newNode(std::string label); 
 
     void drawAST(std::string fileName);
 };

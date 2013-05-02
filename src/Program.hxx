@@ -27,6 +27,8 @@
 #include <string>
 #include <vector>
 
+class Painter;
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 /* nodes will be the basic building block of a program */
@@ -217,6 +219,8 @@ public:
     virtual unsigned depth(void) const { return Node::depth(); }
 
     virtual void depth(unsigned depth);
+
+    void draw(void);
 
 };
 typedef std::vector<Block> Blocks;

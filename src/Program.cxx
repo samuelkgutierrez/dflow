@@ -17,6 +17,7 @@
 
 #include "Program.hxx"
 #include "Base.hxx"
+#include "Painter.hxx"
 
 #include <iostream>
 
@@ -154,4 +155,10 @@ IfStatement::depth(unsigned depth)
     this->_exprBlock->depth(depth);
     this->_ifBlock->depth(depth + 1);
     this->_elseBlock->depth(depth + 1);
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+void
+Block::draw(void)
+{
 }

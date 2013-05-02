@@ -78,6 +78,7 @@ main(int argc, char **argv)
         programRoot->depth(0);
         cout << programRoot->str();
         Painter p;
+        p.drawAST("foo");
     }
     catch (DFlowException &e) {
         cerr << e.what() << endl;
