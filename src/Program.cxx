@@ -196,7 +196,8 @@ IfStatement::label(int label)
     this->_label = label + 1;
     this->_exprBlock->label(this->label());
     this->_ifBlock->label(this->label() + 1);
-    int next = this->_ifBlock->label() + (int)this->_ifBlock->nstatements() + 1;
+    int next = this->_ifBlock->label() +
+               (int)this->_ifBlock->nstatements() + 1;
     this->_elseBlock->label(next);
 }
 
