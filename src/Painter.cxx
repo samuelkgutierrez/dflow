@@ -33,16 +33,18 @@
 
 using namespace std;
 
+    /* graphviz configury */
+static char *args[] = {
+    "dot",      /* use dot */
+    "-Tpdf",    /* pdf output */
+    "-oabc.pdf" /* output to file abc.pdf */
+};
 
-Painter::Painter(int argc, char **argv)
+
+Painter::Painter(void)
 {
     Agnode_t *n, *m;
     Agedge_t *e;
-char * args[] = {
-    "dot",
-    "-Tgif", /* gif output */
-    "-oabc.gif" /* output to file abc.gif */
-};
 
     this->gvc = gvContext();
     gvParseArgs (gvc, sizeof(args)/sizeof(char*), args);

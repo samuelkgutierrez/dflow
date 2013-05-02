@@ -30,14 +30,14 @@
 
 class Painter {
 private:
+    /* graphviz configury */
+    static const char **config;
     /* context */
     GVC_t *gvc;
     Agraph_t *graph;
 
 public:
     Painter(void);
-
-    Painter(int argc, char **argv);
 
     ~Painter(void) { ; }
 };
