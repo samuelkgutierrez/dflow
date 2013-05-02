@@ -78,8 +78,6 @@ main(int argc, char **argv)
         programRoot->depth(0);
         programRoot->label(0);
         cout << programRoot->str();
-        //Painter p;
-        //p.drawAST("foo");
         programRoot->draw();
     }
     catch (DFlowException &e) {

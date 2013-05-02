@@ -34,6 +34,7 @@ typedef Agedge_t* PEdge;
 
 class Painter {
 private:
+    int id;
     /* context */
     GVC_t *gvc;
     /* graph */
@@ -50,6 +51,8 @@ public:
                          std::string name, int j);
 
     void drawAST(std::string fileName);
+
+    static std::string uniqID(Painter *p);
 };
 
 #endif

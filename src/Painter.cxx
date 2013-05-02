@@ -56,6 +56,8 @@ Painter::Painter(void)
     gvParseArgs(this->gvc, sizeof(gvconfig) / sizeof(char *), gvconfig);
     /* prep graph so nodes and edges can be added later */
     this->graph = agopen((char *)"ast", Agdirected, 0);
+    /* used to generate uniq ids */
+    this->id = 0;
 
 #if 0
     n = agnode(graph, "n", 1);
@@ -88,11 +90,19 @@ Painter::drawAST(std::string fileName)
 PNode
 Painter::newNode(Painter *p, std::string label, int i)
 {
-    return agnode(p->graph, (char *)label.c_str(), i);
+    PNode newNode =  agnode(p->graph, (char *)Painter::uniqID(p).c_str(), i);
+    agsafeset(newNode, (char *)"label", (char *)label.c_str(), (char *)"");
+    return newNode;
 }
 
 PEdge
 Painter::newEdge(Painter *p, PNode n1, PNode n2, string name, int j)
 {
     return agedge(p->graph, n1, n2, (char *)name.c_str(), j);
+}
+
+string
+Painter::uniqID(Painter *p)
+{
+    return "__0xPrograMx0__" + Base::int2string(p->id++);
 }

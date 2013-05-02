@@ -92,9 +92,7 @@ Logical::draw(Painter *p) const
 void *
 AssignmentExpression::draw(Painter *p) const
 {
-    static int id = 0;
-    PNode opNode = Painter::newNode(p, "HAX" + Base::int2string(id++), 1);
-    agsafeset(opNode, "label", "=", "");
+    PNode opNode = Painter::newNode(p, "=", 1);
     Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "a", 1);
     Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "b", 1);
     return opNode;
@@ -113,7 +111,10 @@ ArithmeticExpression::draw(Painter *p) const
 void *
 LogicalExpression::draw(Painter *p) const
 {
-    return this->l->draw(p);
+    PNode opNode = Painter::newNode(p, this->_op, 1);
+    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "c", 1);
+    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "d", 1);
+    return opNode;
 }
 
 /* XXX */
