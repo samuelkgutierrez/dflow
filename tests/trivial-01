@@ -1,0 +1,12 @@
+a = b;
+c = d + 1;
+e = 1.0 + f;
+g = 7;
+h = 8.675309;
+i = j + k;
+l = true;
+m = false || true;
+n = o || false;
+p = false && q;
+r = ! false;
+s = ! false && t;

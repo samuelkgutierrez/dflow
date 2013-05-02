@@ -92,14 +92,17 @@ Logical::draw(Painter *p) const
 void *
 AssignmentExpression::draw(Painter *p) const
 {
-    return this->l->draw(p);
+    Painter::newEdge(p, (PNode)this->l->draw(p),
+                     (PNode)this->r->draw(p), 0, 1);
 }
 
-/* XXX */
 void *
 ArithmeticExpression::draw(Painter *p) const
 {
-    return this->l->draw(p);
+    PNode opNode = Painter::newNode(p, this->_op, 1);
+    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), 0, 1);
+    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), 0, 1);
+    return opNode;
 }
 
 /* XXX */

@@ -45,8 +45,10 @@ static char *gvconfig[] = {
 /* ////////////////////////////////////////////////////////////////////////// */
 Painter::Painter(void)
 {
+#if 0
     PNode n, m;
     PEdge e;
+#endif
 
     /* set up a graphviz context */
     this->gvc = gvContext();
@@ -54,6 +56,8 @@ Painter::Painter(void)
     gvParseArgs(this->gvc, sizeof(gvconfig) / sizeof(char *), gvconfig);
     /* prep graph so nodes and edges can be added later */
     this->graph = agopen((char *)"ast", Agdirected, 0);
+
+#if 0
     n = agnode(graph, "n", 1);
     m = agnode(graph, "m", 1);
     e = agedge(graph, n, m, 0, 1);
@@ -61,6 +65,7 @@ Painter::Painter(void)
     agsafeset(n, "color", "red", "");
     /* label edges */
     agsafeset(e, "label", "TEST", "");
+#endif
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -87,7 +92,7 @@ Painter::newNode(Painter *p, std::string label, int i)
 }
 
 PEdge
-Painter::newNode(Painter *p, PNode n1, PNode n2, int i, int j)
+Painter::newEdge(Painter *p, PNode n1, PNode n2, int i, int j)
 {
     return agedge(p->graph, n1, n2, 0, j);
 }
