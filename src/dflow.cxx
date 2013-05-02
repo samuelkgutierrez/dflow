@@ -74,6 +74,7 @@ main(int argc, char **argv)
     try {
         /* do this before we ever touch programRoot */
         parseAppSource(string(argv[1]));
+        programRoot->depth(0);
         cout << programRoot->str();
     }
     catch (DFlowException &e) {

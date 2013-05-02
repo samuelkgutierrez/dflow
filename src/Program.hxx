@@ -28,11 +28,15 @@
 #include <vector>
 
 /* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
 /* nodes will be the basic building block of a program */
 class Node {
 protected:
+    /* node depth */
     unsigned _depth;
+    /* left child pointer */
     Node *l;
+    /* right child pointer */
     Node *r;
 
 public:
@@ -42,15 +46,18 @@ public:
 
     virtual std::string str(void) const = 0;
 
-    virtual unsigned depth(void) const = 0;
+    virtual unsigned depth(void) const { return this->_depth; }
+
+    virtual void depth(unsigned depth) { this->_depth = depth; }
 };
 
+/* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 class Expression : public Node {
 private:
 
 public:
-    Expression(void) : Node() { ; }
+    Expression(void) { ; }
 
     virtual ~Expression(void) { ; }
 
@@ -58,6 +65,7 @@ public:
 
 };
 
+/* ////////////////////////////////////////////////////////////////////////// */
 class Identifier : public Expression {
 private:
     std::string _id;
@@ -72,6 +80,7 @@ public:
     std::string str(void) const { return this->_id; }
 };
 
+/* ////////////////////////////////////////////////////////////////////////// */
 class Int : public Expression {
 private:
     int _value;
@@ -87,6 +96,7 @@ public:
     std::string str(void) const { return Base::int2string(this->_value); }
 };
 
+/* ////////////////////////////////////////////////////////////////////////// */
 class Float : public Expression {
 private:
     float _value;
@@ -103,6 +113,7 @@ public:
 
 };
 
+/* ////////////////////////////////////////////////////////////////////////// */
 class Logical : public Expression {
 private:
     bool _value;
@@ -117,6 +128,7 @@ public:
     std::string str(void) const { return Base::bool2string(this->_value); }
 };
 
+/* ////////////////////////////////////////////////////////////////////////// */
 class AssignmentExpression : public Expression {
 private:
 
@@ -130,6 +142,7 @@ public:
     std::string str(void) const;
 };
 
+/* ////////////////////////////////////////////////////////////////////////// */
 class ArithmeticExpression : public Expression {
 private:
     std::string _op;
@@ -147,6 +160,7 @@ public:
 
 };
 
+/* ////////////////////////////////////////////////////////////////////////// */
 class LogicalExpression : public Expression {
 private:
     std::string _op;
@@ -163,46 +177,58 @@ public:
     std::string str(void) const;
 };
 
+/* ////////////////////////////////////////////////////////////////////////// */
 class Statement : public Node {
 protected:
     Expression *_expr;
 
 public:
-    Statement(void) : Node() { ; }
+    Statement(void) { ; }
 
-    ~Statement(void) { ; }
+    virtual ~Statement(void) { ; }
 
     Statement(Expression *expression);
 
     virtual std::string str(void) const { return (this->_expr->str() + "\n"); }
+
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;
 
+/* ////////////////////////////////////////////////////////////////////////// */
 class Block : public Node {
 protected:
     Statementps _statements;
 
 public:
-    Block(void) : Node() { ; }
+    Block(void) { ; }
 
     virtual ~Block(void) { ; }
 
     virtual void add(Statement *s) { this->_statements.push_back(s); }
 
     std::string str(void) const;
+
+    virtual unsigned depth(void) const { return Node::depth(); }
+
+    virtual void depth(unsigned depth);
+
 };
 typedef std::vector<Block> Blocks;
 
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
 class Skip : public Statement {
 public:
     Skip(void) { ; }
 
-    ~Skip(void) { ; }
+    virtual ~Skip(void) { ; }
 
     std::string str(void) const { return "skip\n"; }
 };
 
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
 class IfStatement : public Statement {
 private:
     Block *_exprBlock;
@@ -212,11 +238,15 @@ private:
 public:
     IfStatement(void) { ; }
 
-    ~IfStatement(void) { ; }
+    virtual ~IfStatement(void) { ; }
 
     IfStatement(Block *expr, Block *ifBlock, Block *elseBlock);
 
     std::string str(void) const;
+
+    virtual unsigned depth(void) const { return this->_depth; }
+
+    virtual void depth(unsigned depth);
 };
 
 #endif

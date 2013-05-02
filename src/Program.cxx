@@ -16,6 +16,7 @@
  */
 
 #include "Program.hxx"
+#include "Base.hxx"
 
 #include <iostream>
 
@@ -25,7 +26,7 @@ using namespace std;
 string
 Block::str(void) const
 {
-    string out = "NEW BLOCK\n";
+    string out = Base::int2string((int)this->depth()) + " NEW BLOCK\n";
     for (Statement *s : this->_statements) {
         out += s->str();
     }
@@ -121,4 +122,24 @@ IfStatement::str(void) const
     out += "  " + this->_elseBlock->str();
     out += "fi\n";
     return out;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+void
+Block::depth(unsigned depth)
+{
+    this->_depth = depth;
+    for (Statement *s : this->_statements) {
+        s->depth(this->_depth + 1);
+    }
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+void
+IfStatement::depth(unsigned depth)
+{
+    this->_depth = depth;
+    this->_exprBlock->depth(depth);
+    this->_ifBlock->depth(depth + 1);
+    this->_elseBlock->depth(depth + 1);
 }
