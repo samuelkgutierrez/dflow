@@ -143,8 +143,10 @@ IfStatement::draw(Painter *p) const
 void
 Block::draw(void)
 {
+    cout << "HERE" << endl;
     this->painter = new Painter();
     this->draw(this->painter);
+    this->painter->drawAST("foo");
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
