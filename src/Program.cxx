@@ -127,12 +127,12 @@ IfStatement::IfStatement(Block *expr,
 string
 IfStatement::str(void) const
 {
-    string out = "if ";
+    string out = Base::pad(this->depth()) + "if ";
     out += this->_exprBlock->str() + " then\n";
     out += this->_ifBlock->str();
-    out += "else\n";
+    out += Base::pad(this->depth()) + "else\n";
     out += this->_elseBlock->str();
-    out += "fi\n";
+    out += Base::pad(this->depth()) + "fi\n";
     return out;
 }
 

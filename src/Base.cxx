@@ -90,6 +90,6 @@ string
 Base::pad(unsigned pad)
 {
     string out = "";
-    for (unsigned i = 0; i < pad; ++i) out += " ";
+    for (unsigned i = 0; i < pad; ++i) out += "  ";
     return out;
 }
