@@ -88,13 +88,12 @@ Logical::draw(Painter *p) const
     return Painter::newNode(p, Base::bool2string(this->_value), 1);
 }
 
-/* XXX */
 void *
 AssignmentExpression::draw(Painter *p) const
 {
     PNode opNode = Painter::newNode(p, "=", 1);
-    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "a", 1);
-    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "b", 1);
+    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "", 1);
+    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "", 1);
     return opNode;
 }
 
@@ -102,18 +101,17 @@ void *
 ArithmeticExpression::draw(Painter *p) const
 {
     PNode opNode = Painter::newNode(p, this->_op, 1);
-    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "c", 1);
-    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "d", 1);
+    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "", 1);
+    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "", 1);
     return opNode;
 }
 
-/* XXX */
 void *
 LogicalExpression::draw(Painter *p) const
 {
     PNode opNode = Painter::newNode(p, this->_op, 1);
-    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "c", 1);
-    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "d", 1);
+    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "", 1);
+    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "", 1);
     return opNode;
 }
 
@@ -129,9 +127,8 @@ void *
 Block::draw(Painter *p) const
 {
     PNode blockNode = Painter::newNode(p, "block", 1);
-    int i = 0;
     for (Statement *s : this->_statements) {
-        Painter::newEdge(p, blockNode, (PNode)s->draw(p), Base::int2string(++i), 1);
+        Painter::newEdge(p, blockNode, (PNode)s->draw(p), " ", 1);
     }
     return blockNode;
 }
