@@ -71,7 +71,7 @@ class Expression : public Node {
 private:
 
 public:
-    Expression(void) { ; }
+    Expression(void) : Node() { ; }
 
     virtual ~Expression(void) { ; }
 

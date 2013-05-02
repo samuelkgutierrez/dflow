@@ -147,15 +147,12 @@ Skip::draw(Painter *p, void *e) const
 void
 IfStatement::draw(Painter *p, void *e) const
 {
-#if 0
-    string label = "if " + Base::int2string(this->label());
+    string label = "if";
     PNode ifNode = Painter::newNode(p, label, 1);
-    Painter::newEdge(p, ifNode, (PNode)this->_exprBlock->draw(p), " ", 1);
-    Painter::newEdge(p, ifNode, (PNode)this->_ifBlock->draw(p), " ", 1);
-    Painter::newEdge(p, ifNode, (PNode)this->_elseBlock->draw(p), " ", 1);
-    return ifNode;
-#endif
-
+    Painter::newEdge(p, (PNode)e, ifNode, "", 1);
+    this->_exprBlock->draw(p, ifNode);
+    this->_ifBlock->draw(p, ifNode);
+    this->_elseBlock->draw(p, ifNode);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
