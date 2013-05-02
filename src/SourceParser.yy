@@ -76,7 +76,9 @@ statement  : assignexpr SEND { $$ = new Statement($1); }
            | skipstat { $$ = $1; }
            | IF bexpr THEN statements ELSE statements FI {
                  Block *exprBlock = new Block();
-                 exprBlock->add(new Statement($2));
+                 Statement *exprStatement = new Statement($2);
+                 exprStatement->exprStatement(true);
+                 exprBlock->add(exprStatement);
                  $$ = new IfStatement(exprBlock, $4, $6);
              }
            ;

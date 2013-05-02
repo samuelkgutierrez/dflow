@@ -180,17 +180,21 @@ public:
 /* ////////////////////////////////////////////////////////////////////////// */
 class Statement : public Node {
 protected:
+    bool _exprStatement;
     Expression *_expr;
 
 public:
-    Statement(void) { ; }
+    Statement(void) : _exprStatement(false), _expr(NULL) { ; }
 
     virtual ~Statement(void) { ; }
 
     Statement(Expression *expression);
 
-    virtual std::string str(void) const { return (Base::pad(this->depth()) +
-                                                  this->_expr->str() + "\n"); }
+    virtual std::string str(void) const;
+
+    virtual bool exprStatement(void) const { return this->_exprStatement; }
+
+    virtual void exprStatement(bool is) { this->_exprStatement = is; }
 
 };
 typedef std::vector<Statement> Statements;
@@ -225,7 +229,7 @@ public:
 
     virtual ~Skip(void) { ; }
 
-    std::string str(void) const { return "skip\n"; }
+    std::string str(void) const { return Base::pad(this->depth()) + "skip\n"; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */

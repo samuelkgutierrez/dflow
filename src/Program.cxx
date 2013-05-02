@@ -101,6 +101,19 @@ Statement::Statement(Expression *expression)
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
+string
+Statement::str(void) const
+{
+    unsigned realPadLen = this->_exprStatement ? 0 : this->depth();
+    string out = Base::pad(realPadLen) + this->_expr->str();
+
+    if (!this->_exprStatement) {
+        out += "\n";
+    }
+    return out;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
 IfStatement::IfStatement(Block *expr,
                          Block *ifBlock,
                          Block *elseBlock)
