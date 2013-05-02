@@ -92,7 +92,7 @@ Painter::newNode(Painter *p, std::string label, int i)
 }
 
 PEdge
-Painter::newEdge(Painter *p, PNode n1, PNode n2, int i, int j)
+Painter::newEdge(Painter *p, PNode n1, PNode n2, string name, int j)
 {
-    return agedge(p->graph, n1, n2, 0, j);
+    return agedge(p->graph, n1, n2, (char *)name.c_str(), j);
 }

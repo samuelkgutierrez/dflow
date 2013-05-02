@@ -46,7 +46,8 @@ public:
 
     static PNode newNode(Painter *p, std::string label, int i);
 
-    static PEdge newEdge(Painter *p, PNode n1, PNode n2, int i, int j);
+    static PEdge newEdge(Painter *p, PNode n1, PNode n2,
+                         std::string name, int j);
 
     void drawAST(std::string fileName);
 };

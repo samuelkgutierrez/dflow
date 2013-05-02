@@ -92,16 +92,18 @@ Logical::draw(Painter *p) const
 void *
 AssignmentExpression::draw(Painter *p) const
 {
-    Painter::newEdge(p, (PNode)this->l->draw(p),
-                     (PNode)this->r->draw(p), 0, 1);
+    PNode opNode = Painter::newNode(p, string("=" + Base::int2string(this->label())), 1);
+    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "a", 1);
+    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "b", 1);
+    return opNode;
 }
 
 void *
 ArithmeticExpression::draw(Painter *p) const
 {
     PNode opNode = Painter::newNode(p, this->_op, 1);
-    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), 0, 1);
-    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), 0, 1);
+    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "c", 1);
+    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "d", 1);
     return opNode;
 }
 
@@ -123,10 +125,12 @@ Statement::draw(Painter *p) const
 void *
 Block::draw(Painter *p) const
 {
+    PNode blockNode = Painter::newNode(p, "block", 1);
+    int i = 0;
     for (Statement *s : this->_statements) {
-        return s->draw(p);
+        Painter::newEdge(p, blockNode, (PNode)s->draw(p), Base::int2string(++i), 1);
     }
-    return  NULL;
+    return blockNode;
 }
 
 void *
@@ -146,9 +150,9 @@ IfStatement::draw(Painter *p) const
 void
 Block::draw(void)
 {
-    cout << "HERE" << endl;
     this->painter = new Painter();
     this->draw(this->painter);
+    /* XXX fix path */
     this->painter->drawAST("foo");
 }
 
