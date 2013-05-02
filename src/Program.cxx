@@ -92,7 +92,9 @@ Logical::draw(Painter *p) const
 void *
 AssignmentExpression::draw(Painter *p) const
 {
-    PNode opNode = Painter::newNode(p, string("=" + Base::int2string(this->label())), 1);
+    static int id = 0;
+    PNode opNode = Painter::newNode(p, "HAX" + Base::int2string(id++), 1);
+    agsafeset(opNode, "label", "=", "");
     Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "a", 1);
     Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "b", 1);
     return opNode;
