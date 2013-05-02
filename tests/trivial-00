@@ -1,3 +1,1 @@
 c = d + 1;
-e = true;
-f = false || true;

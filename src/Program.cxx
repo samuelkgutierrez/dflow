@@ -64,92 +64,97 @@ AssignmentExpression::str(void) const
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
-void *
-Identifier::draw(Painter *p) const
+void
+Identifier::draw(Painter *p, void *e) const
 {
-    return Painter::newNode(p, this->_id, 1);
+    PNode n = Painter::newNode(p, this->_id, 1);
+    Painter::newEdge(p, (PNode)e, n, "", 1);
+    if (this->r) this->r->draw(p, n);
 }
 
-void *
-Int::draw(Painter *p) const
+void
+Int::draw(Painter *p, void *e) const
 {
-    return Painter::newNode(p, Base::int2string(this->_value), 1);
+    PNode n = Painter::newNode(p, Base::int2string(this->_value), 1);
+    Painter::newEdge(p, (PNode)e, n, "", 1);
 }
 
-void *
-Float::draw(Painter *p) const
+void
+Float::draw(Painter *p, void *e) const
 {
-    return Painter::newNode(p, Base::float2string(this->_value), 1);
+    PNode n = Painter::newNode(p, Base::float2string(this->_value), 1);
+    Painter::newEdge(p, (PNode)e, n, "", 1);
 }
 
-void *
-Logical::draw(Painter *p) const
+void
+Logical::draw(Painter *p, void *e) const
 {
-    return Painter::newNode(p, Base::bool2string(this->_value), 1);
+    PNode n = Painter::newNode(p, Base::bool2string(this->_value), 1);
+    Painter::newEdge(p, (PNode)e, n, "", 1);
 }
 
-void *
-AssignmentExpression::draw(Painter *p) const
+void
+AssignmentExpression::draw(Painter *p, void *e) const
 {
     PNode opNode = Painter::newNode(p, "=", 1);
-    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "", 1);
-    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "", 1);
-    return opNode;
+    Painter::newEdge(p, (PNode)e, opNode, "", 1);
+    this->l->draw(p, opNode);
+    this->r->draw(p, opNode);
 }
 
-void *
-ArithmeticExpression::draw(Painter *p) const
+void
+ArithmeticExpression::draw(Painter *p, void *e) const
 {
     PNode opNode = Painter::newNode(p, this->_op, 1);
-    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "", 1);
-    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "", 1);
-    return opNode;
+    Painter::newEdge(p, (PNode)e, opNode, "", 1);
+    this->l->draw(p, opNode);
+    this->r->draw(p, opNode);
 }
 
-void *
-LogicalExpression::draw(Painter *p) const
+void
+LogicalExpression::draw(Painter *p, void *e) const
 {
     PNode opNode = Painter::newNode(p, this->_op, 1);
-    Painter::newEdge(p, opNode, (PNode)this->l->draw(p), "", 1);
-    Painter::newEdge(p, opNode, (PNode)this->r->draw(p), "", 1);
-    return opNode;
+    Painter::newEdge(p, (PNode)e, opNode, "", 1);
+    this->l->draw(p, opNode);
+    this->r->draw(p, opNode);
 }
 
 /* XXX */
-void *
-Statement::draw(Painter *p) const
+void
+Statement::draw(Painter *p, void *e) const
 {
-    return this->_expr->draw(p);
+    this->_expr->draw(p, e);
 }
 
 /* XXX */
-void *
-Block::draw(Painter *p) const
+void
+Block::draw(Painter *p, void *e) const
 {
-    string label = "block " + Base::int2string(this->label());
-    PNode blockNode = Painter::newNode(p, "", 1);
     for (Statement *s : this->_statements) {
-        Painter::newEdge(p, blockNode, (PNode)s->draw(p), " ", 1);
+        s->draw(p, e);
     }
-    return blockNode;
 }
 
-void *
-Skip::draw(Painter *p) const
+void
+Skip::draw(Painter *p, void *e) const
 {
-    return Painter::newNode(p, "skip", 1);
+    PNode n = Painter::newNode(p, "skip", 1);
+    Painter::newEdge(p, (PNode)e, n, "", 1);
 }
 
 /* XXX */
-void *
-IfStatement::draw(Painter *p) const
+void
+IfStatement::draw(Painter *p, void *e) const
 {
+#if 0
     string label = "if " + Base::int2string(this->label());
     PNode ifNode = Painter::newNode(p, label, 1);
     Painter::newEdge(p, ifNode, (PNode)this->_exprBlock->draw(p), " ", 1);
     Painter::newEdge(p, ifNode, (PNode)this->_ifBlock->draw(p), " ", 1);
     Painter::newEdge(p, ifNode, (PNode)this->_elseBlock->draw(p), " ", 1);
     return ifNode;
+#endif
 
 }
 
@@ -158,7 +163,9 @@ void
 Block::draw(void)
 {
     this->painter = new Painter();
-    this->draw(this->painter);
+
+    PNode n = Painter::newNode(this->painter, "program", 1);
+    this->draw(this->painter, n);
     /* XXX fix path */
     this->painter->drawAST("foo");
 }
