@@ -108,7 +108,7 @@ Statement::str(void) const
     string out = Base::pad(realPadLen) + this->_expr->str();
 
     if (!this->_exprStatement) {
-        out += "\n";
+        out += ";\n";
     }
     return out;
 }

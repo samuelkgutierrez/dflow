@@ -229,7 +229,7 @@ public:
 
     virtual ~Skip(void) { ; }
 
-    std::string str(void) const { return Base::pad(this->depth()) + "skip\n"; }
+    std::string str(void) const { return Base::pad(this->depth()) + "skip;\n"; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */

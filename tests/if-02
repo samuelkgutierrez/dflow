@@ -3,7 +3,7 @@ if true then
     b = false;
     c = a && b;
 else
-    if true then
+    if true && a then
         d = true || false;
         e = 3 + 3.14;
     else
