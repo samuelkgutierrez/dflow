@@ -30,16 +30,17 @@
 
 class Painter {
 private:
-    /* graphviz configury */
-    static const char **config;
     /* context */
     GVC_t *gvc;
+    /* graph */
     Agraph_t *graph;
 
 public:
     Painter(void);
 
-    ~Painter(void) { ; }
+    ~Painter(void);
+
+    void drawAST(std::string fileName);
 };
 
 #endif

@@ -33,30 +33,45 @@
 
 using namespace std;
 
-    /* graphviz configury */
-static char *args[] = {
-    "dot",      /* use dot */
-    "-Tpdf",    /* pdf output */
-    "-oabc.pdf" /* output to file abc.pdf */
+/* ////////////////////////////////////////////////////////////////////////// */
+/* graphviz configury */
+/* ////////////////////////////////////////////////////////////////////////// */
+static char *gvconfig[] = {
+    (char *)"dot",      /* use dot */
+    (char *)"-Tpdf",    /* pdf output */
+    (char *)"-oabc.pdf" /* output to file abc.pdf */
 };
 
-
+/* ////////////////////////////////////////////////////////////////////////// */
 Painter::Painter(void)
 {
     Agnode_t *n, *m;
     Agedge_t *e;
 
+    /* set up a graphviz context */
     this->gvc = gvContext();
-    gvParseArgs (gvc, sizeof(args)/sizeof(char*), args);
-
+    /* set output and layout engine */
+    gvParseArgs(this->gvc, sizeof(gvconfig) / sizeof(char *), gvconfig);
+    /* prep graph so nodes and edges can be added later */
     this->graph = agopen((char *)"ast", Agdirected, 0);
     n = agnode(graph, "n", 1);
     m = agnode(graph, "m", 1);
     e = agedge(graph, n, m, 0, 1);
     agsafeset(n, "color", "red", "");
-    gvLayoutJobs(gvc, graph);
-    gvRenderJobs(gvc, graph);
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+Painter::~Painter(void)
+{
     gvFreeLayout(gvc, graph);
     agclose(graph);
     gvFreeContext(gvc);
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+void
+Painter::drawAST(std::string fileName)
+{
+    gvLayoutJobs(gvc, graph);
+    gvRenderJobs(gvc, graph);
 }
