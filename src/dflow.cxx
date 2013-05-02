@@ -76,6 +76,7 @@ main(int argc, char **argv)
         /* do this before we ever touch programRoot */
         parseAppSource(string(argv[1]));
         programRoot->depth(0);
+        programRoot->label(0);
         cout << programRoot->str();
         Painter p;
         p.drawAST("foo");

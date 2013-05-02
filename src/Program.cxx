@@ -64,6 +64,38 @@ AssignmentExpression::str(void) const
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
+void *
+Identifier::draw(Painter *p) const
+{
+    return Painter::newNode(p, this->_id, 1);
+}
+
+void *
+Int::draw(Painter *p) const
+{
+    return Painter::newNode(p, Base::int2string(this->_value), 1);
+}
+
+void *
+Float::draw(Painter *p) const
+{
+    return Painter::newNode(p, Base::float2string(this->_value), 1);
+}
+
+void *
+Logical::draw(Painter *p) const
+{
+    return Painter::newNode(p, Base::bool2string(this->_value), 1);
+}
+
+void *
+AssignmentExpression::draw(Painter *p) const
+{
+    ;
+}
+
+
+/* ////////////////////////////////////////////////////////////////////////// */
 LogicalExpression::LogicalExpression(Expression *l,
                                      std::string *op,
                                      Expression *r)
@@ -106,7 +138,8 @@ string
 Statement::str(void) const
 {
     unsigned realPadLen = this->_exprStatement ? 0 : this->depth();
-    string out = Base::pad(realPadLen) + this->_expr->str();
+    string out = Base::pad(realPadLen) + "[" + this->_expr->str() + "]" +
+                 Base::int2string(this->label());
 
     if (!this->_exprStatement) {
         out += ";\n";
@@ -157,8 +190,27 @@ IfStatement::depth(unsigned depth)
     this->_elseBlock->depth(depth + 1);
 }
 
+void
+IfStatement::label(int label)
+{
+    this->_label = label + 1;
+    this->_exprBlock->label(this->label());
+    this->_ifBlock->label(this->label() + 1);
+    this->_elseBlock->depth(this->label() + 1);
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 void
 Block::draw(void)
 {
+}
+
+void
+Block::label(int label)
+{
+    this->_label = label + 1;
+    int start = this->_label;
+    for (Statement *s : this->_statements) {
+        s->label(++start);
+    }
 }

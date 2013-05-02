@@ -79,4 +79,9 @@ Painter::drawAST(std::string fileName)
     gvRenderJobs(gvc, graph);
 }
 
-
+/* ////////////////////////////////////////////////////////////////////////// */
+PNode
+Painter::newNode(Painter *p, std::string label, int i)
+{
+    return agnode(p->graph, (char *)label.c_str(), i);
+}

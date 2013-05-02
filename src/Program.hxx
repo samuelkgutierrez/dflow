@@ -34,15 +34,21 @@ class Painter;
 /* nodes will be the basic building block of a program */
 class Node {
 protected:
+    int _label;
     /* node depth */
     unsigned _depth;
     /* left child pointer */
     Node *l;
     /* right child pointer */
     Node *r;
+    /* the node painter */
+    Painter *painter;
 
 public:
-    Node(void) { this->l = NULL; this->r = NULL; this->_depth = 0; }
+    Node(void) { this->l = NULL;
+                 this->r = NULL;
+                 this->_depth = 0;
+                 this->_label = 0; }
 
     virtual ~Node(void) { ; }
 
@@ -51,6 +57,12 @@ public:
     virtual unsigned depth(void) const { return this->_depth; }
 
     virtual void depth(unsigned depth) { this->_depth = depth; }
+
+    virtual int label(void) const { return this->_label; }
+
+    virtual void label(int label) { this->_label = label; }
+
+    virtual void *draw(Painter *p) const = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -65,6 +77,7 @@ public:
 
     virtual std::string str(void) const = 0;
 
+    virtual void *draw(Painter *p) const = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -80,6 +93,8 @@ public:
     Identifier(std::string id) : Expression(), _id(id) { ; }
 
     std::string str(void) const { return this->_id; }
+
+    virtual void *draw(Painter *p) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -96,6 +111,8 @@ public:
         Expression(), _value(Base::string2int(svalue)) { ; }
 
     std::string str(void) const { return Base::int2string(this->_value); }
+
+    virtual void *draw(Painter *p) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -113,6 +130,8 @@ public:
 
     std::string str(void) const { return Base::float2string(this->_value); }
 
+    virtual void *draw(Painter *p) const;
+
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -128,6 +147,8 @@ public:
     Logical(const std::string &svalue) : _value(Base::string2bool(svalue)) { ; }
 
     std::string str(void) const { return Base::bool2string(this->_value); }
+
+    virtual void *draw(Painter *p) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -142,6 +163,8 @@ public:
     AssignmentExpression(Identifier *id, Expression *expr);
 
     std::string str(void) const;
+
+    virtual void *draw(Painter *p) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -160,6 +183,8 @@ public:
 
     std::string str(void) const;
 
+    virtual void *draw(Painter *p) const { ; }
+
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -177,6 +202,8 @@ public:
                       Expression *r);
 
     std::string str(void) const;
+
+    virtual void *draw(Painter *p) const { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -197,6 +224,8 @@ public:
     virtual bool exprStatement(void) const { return this->_exprStatement; }
 
     virtual void exprStatement(bool is) { this->_exprStatement = is; }
+
+    virtual void *draw(Painter *p) const { ; }
 
 };
 typedef std::vector<Statement> Statements;
@@ -220,6 +249,12 @@ public:
 
     virtual void depth(unsigned depth);
 
+    virtual int label(void) const { return this->_label; }
+
+    virtual void label(int label);
+
+    virtual void *draw(Painter *p) const { ; }
+
     void draw(void);
 
 };
@@ -234,6 +269,8 @@ public:
     virtual ~Skip(void) { ; }
 
     std::string str(void) const { return Base::pad(this->depth()) + "skip;\n"; }
+
+    virtual void *draw(Painter *p) const { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -256,6 +293,12 @@ public:
     virtual unsigned depth(void) const { return this->_depth; }
 
     virtual void depth(unsigned depth);
+
+    virtual int label(void) const { return this->_label; }
+
+    virtual void label(int label);
+
+    virtual void *draw(Painter *p) const { ; }
 };
 
 #endif
