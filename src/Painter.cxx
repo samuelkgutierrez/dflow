@@ -45,11 +45,6 @@ static char *gvconfig[] = {
 /* ////////////////////////////////////////////////////////////////////////// */
 Painter::Painter(void)
 {
-#if 0
-    PNode n, m;
-    PEdge e;
-#endif
-
     /* set up a graphviz context */
     this->gvc = gvContext();
     /* set output and layout engine */
@@ -58,16 +53,6 @@ Painter::Painter(void)
     this->graph = agopen((char *)"ast", Agdirected, 0);
     /* used to generate uniq ids */
     this->id = 0;
-
-#if 0
-    n = agnode(graph, "n", 1);
-    m = agnode(graph, "m", 1);
-    e = agedge(graph, n, m, 0, 1);
-    /* change node props */
-    agsafeset(n, "color", "red", "");
-    /* label edges */
-    agsafeset(e, "label", "TEST", "");
-#endif
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -95,12 +80,14 @@ Painter::newNode(Painter *p, std::string label, int i)
     return newNode;
 }
 
+/* ////////////////////////////////////////////////////////////////////////// */
 PEdge
 Painter::newEdge(Painter *p, PNode n1, PNode n2, string name, int j)
 {
     return agedge(p->graph, n1, n2, (char *)name.c_str(), j);
 }
 
+/* ////////////////////////////////////////////////////////////////////////// */
 string
 Painter::uniqID(Painter *p)
 {

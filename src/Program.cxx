@@ -212,11 +212,11 @@ string
 Statement::str(void) const
 {
     unsigned realPadLen = this->_exprStatement ? 0 : this->depth();
-    string out = Base::pad(realPadLen) + "[" + this->_expr->str() + "]" +
+    string out = Base::pad(realPadLen) + "[" + this->_expr->str() + "] -- " +
                  Base::int2string(this->label());
 
     if (!this->_exprStatement) {
-        out += ";\n";
+        out += "\n";
     }
     return out;
 }
@@ -244,6 +244,7 @@ IfStatement::str(void) const
     return out;
 }
 
+/* ////////////////////////////////////////////////////////////////////////// */
 WhileStatement::WhileStatement(Block *expr, Block *bodyBlock)
 {
     this->_exprBlock = expr;

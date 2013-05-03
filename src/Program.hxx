@@ -52,8 +52,6 @@ public:
 
     virtual ~Node(void) { ; }
 
-    virtual std::string str(void) const = 0;
-
     virtual unsigned depth(void) const { return this->_depth; }
 
     virtual void depth(unsigned depth) { this->_depth = depth; }
@@ -61,6 +59,8 @@ public:
     virtual int label(void) const { return this->_label; }
 
     virtual void label(int label) { this->_label = label; }
+
+    virtual std::string str(void) const = 0;
 
     virtual void draw(Painter *p, void *e) const = 0;
 };
@@ -86,7 +86,7 @@ private:
     std::string _id;
 
 public:
-    Identifier(void) { ; }
+    Identifier(void) : Expression() { ; }
 
     ~Identifier(void) { ; }
 
@@ -103,7 +103,7 @@ private:
     int _value;
 
 public:
-    Int(void) { ; }
+    Int(void) : Expression() { ; }
 
     ~Int(void) { ; }
 
@@ -121,7 +121,7 @@ private:
     float _value;
 
 public:
-    Float(void) { ; }
+    Float(void) : Expression() { ; }
 
     ~Float(void) { ; }
 
@@ -140,7 +140,7 @@ private:
     bool _value;
 
 public:
-    Logical(void) { ; }
+    Logical(void) : Expression() { ; }
 
     ~Logical(void) { ; }
 
@@ -241,7 +241,7 @@ public:
 
     virtual void add(Statement *s) { this->_statements.push_back(s); }
 
-    std::string str(void) const;
+    virtual std::string str(void) const;
 
     virtual unsigned depth(void) const { return Node::depth(); }
 
@@ -269,8 +269,8 @@ public:
     virtual ~Skip(void) { ; }
 
     std::string str(void) const {
-        return Base::pad(this->depth()) + "[skip]" +
-               Base::int2string(this->label()) + ";\n";
+        return Base::pad(this->depth()) + "[skip]  -- " +
+               Base::int2string(this->label()) + "\n";
     }
 
     virtual void draw(Painter *p, void *e) const;
