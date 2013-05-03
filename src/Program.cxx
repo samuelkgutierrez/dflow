@@ -120,14 +120,12 @@ LogicalExpression::draw(Painter *p, void *e) const
     this->r->draw(p, opNode);
 }
 
-/* XXX */
 void
 Statement::draw(Painter *p, void *e) const
 {
     this->_expr->draw(p, e);
 }
 
-/* XXX */
 void
 Block::draw(Painter *p, void *e) const
 {
@@ -143,7 +141,6 @@ Skip::draw(Painter *p, void *e) const
     Painter::newEdge(p, (PNode)e, n, "", 1);
 }
 
-/* XXX */
 void
 IfStatement::draw(Painter *p, void *e) const
 {
@@ -166,7 +163,7 @@ Block::draw(void)
 {
     this->painter = new Painter();
 
-    PNode n = Painter::newNode(this->painter, "program", 1);
+    PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
     this->draw(this->painter, n);
     /* XXX fix path */
     this->painter->drawAST("foo");
@@ -245,6 +242,47 @@ IfStatement::str(void) const
     out += this->_elseBlock->str();
     out += Base::pad(this->depth()) + "fi\n";
     return out;
+}
+
+WhileStatement::WhileStatement(Block *expr, Block *bodyBlock)
+{
+    this->_exprBlock = expr;
+    this->_bodyBlock = bodyBlock;
+}
+
+string
+WhileStatement::str(void) const
+{
+    return "while";
+}
+
+void
+WhileStatement::depth(unsigned depth)
+{
+    this->_depth = depth;
+    this->_exprBlock->depth(depth);
+    this->_bodyBlock->depth(depth + 1);
+}
+
+void
+WhileStatement::label(int label)
+{
+    this->_label = label + 1;
+    this->_exprBlock->label(this->label());
+    this->_bodyBlock->label(this->label() + 1);
+}
+
+void
+WhileStatement::draw(Painter *p, void *e) const
+{
+    PNode whileNode = Painter::newNode(p, "while", 1);
+    Painter::newEdge(p, (PNode)e, whileNode, "", 1);
+    PNode test = Painter::newNode(p, "[[TEST]]", 1);
+    Painter::newEdge(p, whileNode, test, "", 1);
+    this->_exprBlock->draw(p, test);
+    PNode body = Painter::newNode(p, "[[BODY]]", 1);
+    Painter::newEdge(p, whileNode, body, "", 1);
+    this->_bodyBlock->draw(p, body);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */

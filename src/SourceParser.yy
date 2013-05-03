@@ -53,7 +53,7 @@ static int lineNo = 1;
              ASSIGN EQ LT LTE GT GTE
              OR AND NOT TRUE FALSE;
 
-%token IF THEN ELSE FI SKIP;
+%token IF THEN ELSE FI SKIP WHILE DO OD;
 
 %type <block> program statements;
 %type <expression> aexpr bexpr assignexpr expr num logical;
@@ -80,6 +80,13 @@ statement  : assignexpr SEND { $$ = new Statement($1); }
                  exprStatement->exprStatement(true);
                  exprBlock->add(exprStatement);
                  $$ = new IfStatement(exprBlock, $4, $6);
+             }
+           | WHILE bexpr DO statements OD {
+                 Block *exprBlock = new Block();
+                 Statement *exprStatement = new Statement($2);
+                 exprStatement->exprStatement(true);
+                 exprBlock->add(exprStatement);
+                 $$ = new WhileStatement(exprBlock, $4);
              }
            ;
 

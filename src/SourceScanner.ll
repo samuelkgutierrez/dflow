@@ -56,6 +56,12 @@ do {                                                                           \
 
 "skip" { return SKIP; }
 
+"while" { return WHILE; }
+
+"do" { return DO; }
+
+"od" { return OD; }
+
 [0-9]+ { SAVE_STOKEN; return INT; }
 
 [0-9]+\.[0-9]* { SAVE_STOKEN; return FLOAT; }

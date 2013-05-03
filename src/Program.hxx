@@ -304,4 +304,29 @@ public:
     virtual void draw(Painter *p, void *e) const;
 };
 
+class WhileStatement : public Statement {
+private:
+    Block *_exprBlock;
+    Block *_bodyBlock;
+
+public:
+    WhileStatement(void) { ; }
+
+    virtual ~WhileStatement(void) { ; }
+
+    WhileStatement(Block *expr, Block *bodyBlock);
+
+    std::string str(void) const;
+
+    virtual unsigned depth(void) const { return this->_depth; }
+
+    virtual void depth(unsigned depth);
+
+    virtual int label(void) const { return this->_label; }
+
+    virtual void label(int label);
+
+    virtual void draw(Painter *p, void *e) const;
+};
+
 #endif
