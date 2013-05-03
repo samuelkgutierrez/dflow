@@ -253,7 +253,11 @@ WhileStatement::WhileStatement(Block *expr, Block *bodyBlock)
 string
 WhileStatement::str(void) const
 {
-    return "while";
+    string out = Base::pad(this->depth()) + "while ";
+    out += this->_exprBlock->str() + " do\n";
+    out += this->_bodyBlock->str();
+    out += Base::pad(this->depth()) + "od\n";
+    return out;
 }
 
 void
