@@ -1,0 +1,16 @@
+while true do
+    if true then
+        a = true;
+        b = false;
+        c = a && b;
+    else
+        if true && a then
+            skip;
+        else
+            while a == b do
+                x = 1.2 + 4.3;
+                a = a - 1;
+            od
+        fi
+    fi
+od
