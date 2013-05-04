@@ -1,3 +1,5 @@
 #/bin/bash
 
-./configure CXXFLAGS="-Wall -g -O0 -I/usr/local/include/graphviz" LDFLAGS="-lgvc -lcgraph -lcdt"
+#./configure CXXFLAGS="-Wall -g -O0 -I/usr/local/include/graphviz" LDFLAGS="-lgvc -lcgraph -lcdt"
+#./configure CFLAGS="-g -O0 -Wall" CXXFLAGS="-Wall -g -O0 -I/usr/local/include/graphviz" LDFLAGS="-lgvc -lcgraph -lcdt"
+scan-build ./configure CXXFLAGS="-Wextra -ggdb3 -O0 -I/usr/local/include/graphviz" LDFLAGS="-lgvc -lcgraph -lcdt"

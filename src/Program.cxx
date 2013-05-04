@@ -204,6 +204,7 @@ ArithmeticExpression::str(void) const
 /* ////////////////////////////////////////////////////////////////////////// */
 Statement::Statement(Expression *expression)
 {
+    this->_exprStatement = false;
     this->_expr = expression;
 }
 

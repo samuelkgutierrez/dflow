@@ -30,25 +30,31 @@
 #include <string.h>
 #include <ctype.h>
 
+#define ARGC 3
+#define MAX_LEN 4096
 
 using namespace std;
 
 /* ////////////////////////////////////////////////////////////////////////// */
-/* graphviz configury */
-/* ////////////////////////////////////////////////////////////////////////// */
-static char *gvconfig[] = {
-    (char *)"dot",      /* use dot */
-    (char *)"-Tpdf",    /* pdf output */
-    (char *)"-oabc.pdf" /* output to file abc.pdf */
-};
-
-/* ////////////////////////////////////////////////////////////////////////// */
 Painter::Painter(void)
 {
+    string ftype = "-Teps";
+    string fname = "-oTEST.eps";
+
+    /* fake an argv with our settings */
+    this->config = (char **)calloc(ARGC + 1, sizeof(char *));
+    this->config[ARGC] = (char *)NULL;
+    for (unsigned i = 0; i < ARGC; ++i) {
+        this->config[i] = (char *)calloc(MAX_LEN, sizeof(char));
+    }
+    std::strncpy(this->config[0], (char *)"dot", MAX_LEN - 1);
+    std::strncpy(this->config[1], (char *)ftype.c_str(), MAX_LEN - 1);
+    std::strncpy(this->config[2], (char *)fname.c_str(), MAX_LEN - 1);
+
     /* set up a graphviz context */
     this->gvc = gvContext();
     /* set output and layout engine */
-    gvParseArgs(this->gvc, sizeof(gvconfig) / sizeof(char *), gvconfig);
+    gvParseArgs(this->gvc, ARGC, this->config);
     /* prep graph so nodes and edges can be added later */
     this->graph = agopen((char *)"ast", Agdirected, 0);
     /* used to generate uniq ids */
@@ -61,6 +67,13 @@ Painter::~Painter(void)
     gvFreeLayout(gvc, graph);
     agclose(graph);
     gvFreeContext(gvc);
+
+    if (this->config) {
+        for (unsigned i = 0; i < ARGC; ++i) {
+            if (this->config[i]) free(this->config[i]);
+        }
+        free(this->config);
+    }
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */

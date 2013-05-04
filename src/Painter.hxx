@@ -39,6 +39,8 @@ private:
     GVC_t *gvc;
     /* graph */
     Agraph_t *graph;
+    /* config argv */
+    char **config;
 
 public:
     Painter(void);
