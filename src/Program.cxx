@@ -26,17 +26,17 @@ using namespace std;
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Identifier::buildGraph(Painter *p, void *e) const
+Identifier::buildGraph(Painter *p, void *e, bool a) const
 {
     PNode n = Painter::newNode(p, this->_id, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
-    if (this->r) this->r->buildGraph(p, n);
+    if (this->r) this->r->buildGraph(p, n, a);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Int::buildGraph(Painter *p, void *e) const
+Int::buildGraph(Painter *p, void *e, bool a) const
 {
     PNode n = Painter::newNode(p, Base::int2string(this->_value), 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
@@ -45,7 +45,7 @@ Int::buildGraph(Painter *p, void *e) const
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Float::buildGraph(Painter *p, void *e) const
+Float::buildGraph(Painter *p, void *e, bool a) const
 {
     PNode n = Painter::newNode(p, Base::float2string(this->_value), 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
@@ -54,7 +54,7 @@ Float::buildGraph(Painter *p, void *e) const
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Logical::buildGraph(Painter *p, void *e) const
+Logical::buildGraph(Painter *p, void *e, bool a) const
 {
     PNode n = Painter::newNode(p, Base::bool2string(this->_value), 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
@@ -80,12 +80,12 @@ AssignmentExpression::str(void) const
 }
 
 void
-AssignmentExpression::buildGraph(Painter *p, void *e) const
+AssignmentExpression::buildGraph(Painter *p, void *e, bool a) const
 {
     PNode opNode = Painter::newNode(p, "=", 1);
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
-    this->l->buildGraph(p, opNode);
-    this->r->buildGraph(p, opNode);
+    this->l->buildGraph(p, opNode, a);
+    this->r->buildGraph(p, opNode, a);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -110,12 +110,12 @@ ArithmeticExpression::str(void) const
 }
 
 void
-ArithmeticExpression::buildGraph(Painter *p, void *e) const
+ArithmeticExpression::buildGraph(Painter *p, void *e, bool a) const
 {
     PNode opNode = Painter::newNode(p, this->_op, 1);
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
-    this->l->buildGraph(p, opNode);
-    this->r->buildGraph(p, opNode);
+    this->l->buildGraph(p, opNode, a);
+    this->r->buildGraph(p, opNode, a);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -140,12 +140,12 @@ LogicalExpression::str(void) const
 }
 
 void
-LogicalExpression::buildGraph(Painter *p, void *e) const
+LogicalExpression::buildGraph(Painter *p, void *e, bool a) const
 {
     PNode opNode = Painter::newNode(p, this->_op, 1);
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
-    this->l->buildGraph(p, opNode);
-    this->r->buildGraph(p, opNode);
+    this->l->buildGraph(p, opNode, a);
+    this->r->buildGraph(p, opNode, a);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -196,10 +196,10 @@ Block::str(void) const
 }
 
 void
-Block::buildGraph(Painter *p, void *e) const
+Block::buildGraph(Painter *p, void *e, bool a) const
 {
     for (Statement *s : this->_statements) {
-        s->buildGraph(p, e);
+        s->buildGraph(p, e, a);
     }
 }
 
@@ -221,9 +221,11 @@ Block::draw(std::string fprefix, std::string type)
         this->painter = new Painter(fname, type);
         /* start the drawing process */
         PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
-        this->buildGraph(this->painter, n);
-        /* render the thing */
+        this->buildGraph(this->painter, n, (Block::diaNames[i] == "dast"));
+        /* render the thing -- is that even the correct term? */
+        cout << "> -- writing " + fname + "." + type + " ... "; cout.flush();
         this->painter->renderAST();
+        cout << "done" << endl;
         delete this->painter;
     }
 }
@@ -231,9 +233,11 @@ Block::draw(std::string fprefix, std::string type)
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Skip::buildGraph(Painter *p, void *e) const
+Skip::buildGraph(Painter *p, void *e, bool a) const
 {
-    PNode n = Painter::newNode(p, "skip", 1);
+    string label = "skip";
+    if (a) label += " " + Base::int2string(this->label());
+    PNode n = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
 }
 
@@ -270,19 +274,19 @@ IfStatement::label(int label)
 }
 
 void
-IfStatement::buildGraph(Painter *p, void *e) const
+IfStatement::buildGraph(Painter *p, void *e, bool a) const
 {
     PNode ifNode = Painter::newNode(p, "if", 1);
     Painter::newEdge(p, (PNode)e, ifNode, "", 1);
     PNode ifTest = Painter::newNode(p, "[[TEST]]", 1);
     Painter::newEdge(p, ifNode, ifTest, "", 1);
-    this->_exprBlock->buildGraph(p, ifTest);
+    this->_exprBlock->buildGraph(p, ifTest, a);
     PNode ifBody = Painter::newNode(p, "[[IF]]", 1);
     Painter::newEdge(p, ifNode, ifBody, "", 1);
-    this->_ifBlock->buildGraph(p, ifBody);
+    this->_ifBlock->buildGraph(p, ifBody, a);
     PNode elseBody = Painter::newNode(p, "[[ELSE]]", 1);
     Painter::newEdge(p, ifNode, elseBody, "", 1);
-    this->_elseBlock->buildGraph(p, elseBody);
+    this->_elseBlock->buildGraph(p, elseBody, a);
 }
 
 string
@@ -332,14 +336,14 @@ WhileStatement::label(int label)
 }
 
 void
-WhileStatement::buildGraph(Painter *p, void *e) const
+WhileStatement::buildGraph(Painter *p, void *e, bool a) const
 {
     PNode whileNode = Painter::newNode(p, "while", 1);
     Painter::newEdge(p, (PNode)e, whileNode, "", 1);
     PNode test = Painter::newNode(p, "[[TEST]]", 1);
     Painter::newEdge(p, whileNode, test, "", 1);
-    this->_exprBlock->buildGraph(p, test);
+    this->_exprBlock->buildGraph(p, test, a);
     PNode body = Painter::newNode(p, "[[BODY]]", 1);
     Painter::newEdge(p, whileNode, body, "", 1);
-    this->_bodyBlock->buildGraph(p, body);
+    this->_bodyBlock->buildGraph(p, body, a);
 }

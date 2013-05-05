@@ -86,9 +86,8 @@ main(int argc, char **argv)
         cout << "done" << endl;
         cout << "> here is the annotated source:" << endl;
         cout << programRoot->str();
-        cout << "> drawing AST ... ";
+        cout << "> drawing ASTs ... " << endl;
         programRoot->draw(string(argv[1]), "eps");
-        cout << "written to " << endl;
     }
     catch (DFlowException &e) {
         cerr << e.what() << endl;
