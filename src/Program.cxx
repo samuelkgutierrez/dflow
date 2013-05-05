@@ -250,16 +250,22 @@ Block::buildCFG(Painter *p)
 {
     bool first = true;
     PNode firstNode, prev;
+    Statement *ps = NULL;
     for (Statement *s : this->_statements) {
         if (first) {
             firstNode = (PNode)s->buildCFG(p);
             first = false;
+            ps = s;
             prev = firstNode;
         }
         else {
+            if (ps->ifstmt()) {
+                prev = (PNode)*ps->bNodes.rbegin();
+            }
             PNode cur = (PNode)s->buildCFG(p);
             Painter::newEdge(p, prev, cur, "", 1);
             prev = cur;
+            ps = s;
         }
     }
     return firstNode;
@@ -374,27 +380,28 @@ IfStatement::buildCFG(Painter *p)
     PNode ifNode = Painter::newNode(p, label, 1);
     /* if body */
     for (Statement *s : this->_ifBlock->_statements) {
-        this->ifNodes.push_back(s->buildCFG(p));
+        this->aNodes.push_back(s->buildCFG(p));
     }
-    PNode fIf = (PNode)*ifNodes.begin();
-    PNode lIf = (PNode)*ifNodes.rbegin();
+    PNode fIf = (PNode)*aNodes.begin();
+    PNode lIf = (PNode)*aNodes.rbegin();
     Painter::newEdge(p, ifNode, fIf, "", 1);
     PNode prev = ifNode;
-    for (auto cur : ifNodes) {
+    for (auto cur : this->aNodes) {
         Painter::newEdge(p, prev, (PNode)cur, "", 1);
         prev = (PNode)cur;
     }
     /* else body */
     for (Statement *s : this->_elseBlock->_statements) {
-        this->elseNodes.push_back((PNode)s->buildCFG(p));
+        this->bNodes.push_back((PNode)s->buildCFG(p));
     }
     prev = ifNode;
-    for (auto cur : elseNodes) {
+    PNode endNode = Painter::newNode(p, "", 1);
+    PNode lElse = (PNode)*this->bNodes.rbegin();
+    this->bNodes.push_back(endNode);
+    for (auto cur : this->bNodes) {
         Painter::newEdge(p, prev, (PNode)cur, "", 1);
         prev = (PNode)cur;
     }
-    PNode lElse = (PNode)*this->elseNodes.rbegin();
-    PNode endNode = Painter::newNode(p, "", 1);
     Painter::newEdge(p, lIf, endNode, "", 1);
     Painter::newEdge(p, lElse, endNode, "", 1);
 
@@ -469,16 +476,15 @@ WhileStatement::buildCFG(Painter *p)
     string label = "while " + this->_exprBlock->str();
     PNode whileNode = Painter::newNode(p, label, 1);
     /* body */
-    vector<PNode> nodes;
     for (Statement *s : this->_bodyBlock->_statements) {
-        nodes.push_back((PNode)s->buildCFG(p));
+        this->aNodes.push_back(s->buildCFG(p));
     }
     PNode prev = whileNode;
-    for (auto cur : nodes) {
-        Painter::newEdge(p, prev, cur, "", 1);
-        prev = cur;
+    for (auto cur : this->aNodes) {
+        Painter::newEdge(p, prev, (PNode)cur, "", 1);
+        prev = (PNode)cur;
     }
-    PNode exitNode = *nodes.rbegin();
+    PNode exitNode = (PNode)*this->aNodes.rbegin();
     Painter::newEdge(p, exitNode, whileNode, "", 1);
 
     return whileNode;

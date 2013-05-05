@@ -258,6 +258,11 @@ protected:
     std::string _meta;
 
 public:
+    /* nodes 1 */
+    std::vector<void *> aNodes;
+    /* nodes 2 */
+    std::vector<void *> bNodes;
+
     Statement(void) :
         _entry(false), _exit(false), _exprStatement(false), _expr(NULL) { ; }
 
@@ -371,10 +376,6 @@ private:
 
 
 public:
-    /* nodes in if */ 
-    std::vector<void *> ifNodes;
-    /* nodes in else */ 
-    std::vector<void *> elseNodes;
 
     IfStatement(void) { ; }
 
