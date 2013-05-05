@@ -395,7 +395,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) const { ; }
+    virtual void *buildCFG(Painter *p) const;
 };
 
 #endif
