@@ -99,7 +99,7 @@ AssignmentExpression::buildAST(Painter *p, void *e, bool a) const
 }
 
 void *
-AssignmentExpression::buildCFG(Painter *p) const
+AssignmentExpression::buildCFG(Painter *p)
 {
     string label  = this->str();
     return Painter::newNode(p, label, 1);
@@ -138,7 +138,7 @@ ArithmeticExpression::buildAST(Painter *p, void *e, bool a) const
 }
 
 void *
-ArithmeticExpression::buildCFG(Painter *p) const
+ArithmeticExpression::buildCFG(Painter *p)
 {
     cout << "MATH EXPR" << endl;
 }
@@ -246,7 +246,7 @@ Block::depth(unsigned depth)
 }
 
 void *
-Block::buildCFG(Painter *p) const
+Block::buildCFG(Painter *p)
 {
     bool first = true;
     PNode firstNode, prev;
@@ -312,7 +312,7 @@ Skip::buildAST(Painter *p, void *e, bool a) const
 }
 
 void *
-Skip::buildCFG(Painter *p) const
+Skip::buildCFG(Painter *p)
 {
     string label = "skip";
     return Painter::newNode(p, label, 1);
@@ -368,35 +368,33 @@ IfStatement::buildAST(Painter *p, void *e, bool a) const
 }
 
 void *
-IfStatement::buildCFG(Painter *p) const
+IfStatement::buildCFG(Painter *p)
 {
     string label = "if " + this->_exprBlock->str();
     PNode ifNode = Painter::newNode(p, label, 1);
     /* if body */
-    vector<PNode> ifNodes;
     for (Statement *s : this->_ifBlock->_statements) {
-        ifNodes.push_back((PNode)s->buildCFG(p));
+        this->ifNodes.push_back(s->buildCFG(p));
     }
-    PNode fIf = *ifNodes.begin();
-    PNode lIf = *ifNodes.rbegin();
+    PNode fIf = (PNode)*ifNodes.begin();
+    PNode lIf = (PNode)*ifNodes.rbegin();
     Painter::newEdge(p, ifNode, fIf, "", 1);
     PNode prev = ifNode;
     for (auto cur : ifNodes) {
-        Painter::newEdge(p, prev, cur, "", 1);
-        prev = cur;
+        Painter::newEdge(p, prev, (PNode)cur, "", 1);
+        prev = (PNode)cur;
     }
     /* else body */
-    vector<PNode> elseNodes;
     for (Statement *s : this->_elseBlock->_statements) {
-        elseNodes.push_back((PNode)s->buildCFG(p));
+        this->elseNodes.push_back((PNode)s->buildCFG(p));
     }
     prev = ifNode;
     for (auto cur : elseNodes) {
-        Painter::newEdge(p, prev, cur, "", 1);
-        prev = cur;
+        Painter::newEdge(p, prev, (PNode)cur, "", 1);
+        prev = (PNode)cur;
     }
-    PNode lElse = *elseNodes.rbegin();
-    PNode endNode = Painter::newNode(p, "[[END]]", 1);
+    PNode lElse = (PNode)*this->elseNodes.rbegin();
+    PNode endNode = Painter::newNode(p, "", 1);
     Painter::newEdge(p, lIf, endNode, "", 1);
     Painter::newEdge(p, lElse, endNode, "", 1);
 
@@ -466,7 +464,7 @@ WhileStatement::buildAST(Painter *p, void *e, bool a) const
 }
 
 void *
-WhileStatement::buildCFG(Painter *p) const
+WhileStatement::buildCFG(Painter *p)
 {
     string label = "while " + this->_exprBlock->str();
     PNode whileNode = Painter::newNode(p, label, 1);

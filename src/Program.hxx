@@ -66,7 +66,7 @@ public:
     /* bool a = annotated */
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
 
-    virtual void *buildCFG(Painter *p) const = 0;
+    virtual void *buildCFG(Painter *p) = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -83,7 +83,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
 
-    virtual void *buildCFG(Painter *p) const = 0;
+    virtual void *buildCFG(Painter *p) = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -102,7 +102,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) const { ; }
+    virtual void *buildCFG(Painter *p) { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -122,7 +122,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) const { ; }
+    virtual void *buildCFG(Painter *p) { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -142,7 +142,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) const { ; }
+    virtual void *buildCFG(Painter *p) { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -161,7 +161,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) const { ; }
+    virtual void *buildCFG(Painter *p) { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -187,7 +187,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) const;
+    virtual void *buildCFG(Painter *p);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -216,7 +216,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) const;
+    virtual void *buildCFG(Painter *p);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -245,7 +245,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) const { ; }
+    virtual void *buildCFG(Painter *p) { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -282,7 +282,7 @@ public:
         this->_expr->buildAST(p, e, a);
     }
 
-    virtual void *buildCFG(Painter *p) const {
+    virtual void *buildCFG(Painter *p) {
         return this->_expr->buildCFG(p);
     }
 
@@ -339,7 +339,7 @@ public:
 
     unsigned nstatements(void) const { return this->_statements.size(); }
 
-    virtual void *buildCFG(Painter *p) const;
+    virtual void *buildCFG(Painter *p);
 };
 typedef std::vector<Block> Blocks;
 
@@ -358,7 +358,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) const;
+    virtual void *buildCFG(Painter *p);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -369,7 +369,13 @@ private:
     Block *_ifBlock;
     Block *_elseBlock;
 
+
 public:
+    /* nodes in if */ 
+    std::vector<void *> ifNodes;
+    /* nodes in else */ 
+    std::vector<void *> elseNodes;
+
     IfStatement(void) { ; }
 
     virtual ~IfStatement(void) { ; }
@@ -388,7 +394,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) const;
+    virtual void *buildCFG(Painter *p);
 };
 
 class WhileStatement : public Statement {
@@ -415,7 +421,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) const;
+    virtual void *buildCFG(Painter *p);
 };
 
 #endif
