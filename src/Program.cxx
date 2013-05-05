@@ -145,7 +145,6 @@ string
 LogicalExpression::str(void) const
 {
     string out;
-    cout << "LOG: " << this->label() << endl;
     out = this->l->str();
     out += " " + this->_op + " ";
     out += this->r->str();
@@ -291,7 +290,9 @@ IfStatement::label(int label)
 void
 IfStatement::buildGraph(Painter *p, void *e, bool a) const
 {
-    PNode ifNode = Painter::newNode(p, "if", 1);
+    string label = "if";
+    if (a) label += " " + Base::int2string(this->label());
+    PNode ifNode = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, ifNode, "", 1);
     PNode ifTest = Painter::newNode(p, "[[TEST]]", 1);
     Painter::newEdge(p, ifNode, ifTest, "", 1);
@@ -353,7 +354,9 @@ WhileStatement::label(int label)
 void
 WhileStatement::buildGraph(Painter *p, void *e, bool a) const
 {
-    PNode whileNode = Painter::newNode(p, "while", 1);
+    string label = "while";
+    if (a) label += " " + Base::int2string(this->label());
+    PNode whileNode = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, whileNode, "", 1);
     PNode test = Painter::newNode(p, "[[TEST]]", 1);
     Painter::newEdge(p, whileNode, test, "", 1);
