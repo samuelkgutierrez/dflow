@@ -1,0 +1,6 @@
+while true do
+    a = true;
+    b = 2.3 * 4;
+od
+c = true && false;
+d = c || false;

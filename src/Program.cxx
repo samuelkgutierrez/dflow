@@ -249,17 +249,17 @@ void *
 Block::buildCFG(Painter *p) const
 {
     bool first = true;
-    PNode firstNode, priv;
+    PNode firstNode, prev;
     for (Statement *s : this->_statements) {
         if (first) {
             firstNode = (PNode)s->buildCFG(p);
             first = false;
-            priv = firstNode;
+            prev = firstNode;
         }
         else {
             PNode cur = (PNode)s->buildCFG(p);
-            Painter::newEdge(p, priv, cur, "", 1);
-            priv = cur;
+            Painter::newEdge(p, prev, cur, "", 1);
+            prev = cur;
         }
     }
     return firstNode;
@@ -449,13 +449,20 @@ WhileStatement::buildAST(Painter *p, void *e, bool a) const
 void *
 WhileStatement::buildCFG(Painter *p) const
 {
-    /* if expr */
     string label = "while " + this->_exprBlock->str();
     PNode whileNode = Painter::newNode(p, label, 1);
     /* body */
-    Painter::newEdge(p, whileNode, (PNode)this->_bodyBlock->buildCFG(p), "", 1);
-
-    PNode endNode = Painter::newNode(p, "[[END]]", 1);
+    vector<PNode> nodes;
+    for (Statement *s : this->_bodyBlock->_statements) {
+        nodes.push_back((PNode)s->buildCFG(p));
+    }
+    PNode prev = whileNode;
+    for (auto cur : nodes) {
+        Painter::newEdge(p, prev, cur, "", 1);
+        prev = cur;
+    }
+    PNode exitNode = *nodes.rbegin();
+    Painter::newEdge(p, exitNode, whileNode, "", 1);
 
     return whileNode;
 }

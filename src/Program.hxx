@@ -293,6 +293,14 @@ public:
     virtual bool exit(void) const { return this->_exit; }
 
     virtual void exit(bool e) { this->_exit = e; }
+
+    virtual std::string meta(void) const { return this->_meta; }
+
+    virtual void exit(std::string m) { this->_meta = m; }
+
+    virtual bool whilestmt(void) const { return this->_meta == "while"; }
+
+    virtual bool ifstmt(void) const { return this->_meta == "if"; }
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;
@@ -303,10 +311,10 @@ private:
     static const int ndias;
     static const std::string diaNames[];
 
-protected:
+public:
+    /* FIXME - public bad */
     Statementps _statements;
 
-public:
     Block(void) { ; }
 
     virtual ~Block(void) { ; }
