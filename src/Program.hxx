@@ -63,7 +63,10 @@ public:
 
     virtual std::string str(void) const = 0;
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const = 0;
+    /* bool a = annotated */
+    virtual void buildAST(Painter *p, void *e, bool a) const = 0;
+
+    virtual void buildCFG(Painter *p, void *e) const = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -78,7 +81,9 @@ public:
 
     virtual std::string str(void) const = 0;
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const = 0;
+    virtual void buildAST(Painter *p, void *e, bool a) const = 0;
+
+    virtual void buildCFG(Painter *p, void *e) const = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -95,7 +100,9 @@ public:
 
     std::string str(void) const { return this->_id; }
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const;
+    virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void buildCFG(Painter *p, void *e) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -113,7 +120,9 @@ public:
 
     std::string str(void) const { return Base::int2string(this->_value); }
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const;
+    virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void buildCFG(Painter *p, void *e) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -131,8 +140,9 @@ public:
 
     std::string str(void) const { return Base::float2string(this->_value); }
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const;
+    virtual void buildAST(Painter *p, void *e, bool a) const;
 
+    virtual void buildCFG(Painter *p, void *e) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -149,7 +159,9 @@ public:
 
     std::string str(void) const { return Base::bool2string(this->_value); }
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const;
+    virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void buildCFG(Painter *p, void *e) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -173,7 +185,9 @@ public:
         if (this->r) this->r->label(label);
     }
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const;
+    virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void buildCFG(Painter *p, void *e) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -200,7 +214,9 @@ public:
         if (this->r) this->r->label(label);
     }
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const;
+    virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void buildCFG(Painter *p, void *e) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -227,7 +243,9 @@ public:
         if (this->r) this->r->label(label);
     }
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const;
+    virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void buildCFG(Painter *p, void *e) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -256,9 +274,11 @@ public:
         if (this->_expr) this->_expr->label(label);
     }
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const {
-        this->_expr->buildGraph(p, e, a);
+    virtual void buildAST(Painter *p, void *e, bool a) const {
+        this->_expr->buildAST(p, e, a);
     }
+
+    virtual void buildCFG(Painter *p, void *e) const;
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;
@@ -289,7 +309,7 @@ public:
 
     virtual void label(int &label);
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const;
+    virtual void buildAST(Painter *p, void *e, bool a) const;
 
     void drawASTs(std::string fprefix, std::string type);
 
@@ -297,6 +317,7 @@ public:
 
     unsigned nstatements(void) const { return this->_statements.size(); }
 
+    virtual void buildCFG(Painter *p, void *e) const;
 };
 typedef std::vector<Block> Blocks;
 
@@ -313,7 +334,9 @@ public:
                Base::int2string(this->label()) + "\n";
     }
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const;
+    virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void buildCFG(Painter *p, void *e) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -341,7 +364,9 @@ public:
 
     virtual void label(int &label);
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const;
+    virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void buildCFG(Painter *p, void *e) const { ; }
 };
 
 class WhileStatement : public Statement {
@@ -366,7 +391,9 @@ public:
 
     virtual void label(int &label);
 
-    virtual void buildGraph(Painter *p, void *e, bool a) const;
+    virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void buildCFG(Painter *p, void *e) const { ; }
 };
 
 #endif
