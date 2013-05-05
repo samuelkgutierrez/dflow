@@ -211,12 +211,13 @@ Block::depth(unsigned depth)
 void
 Block::draw(void)
 {
+    /* this is the top-level call, so construct the painter */
     this->painter = new Painter();
-
+    /* start the drawing process */
     PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
     this->draw(this->painter, n);
     /* XXX fix path */
-    this->painter->drawAST("foo");
+    this->painter->renderAST("foo");
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */

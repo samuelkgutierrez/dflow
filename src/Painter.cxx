@@ -78,7 +78,7 @@ Painter::~Painter(void)
 
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Painter::drawAST(std::string fileName)
+Painter::renderAST(std::string fileName)
 {
     gvLayoutJobs(gvc, graph);
     gvRenderJobs(gvc, graph);

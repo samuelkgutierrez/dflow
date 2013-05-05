@@ -152,6 +152,7 @@ parserParse(FILE *fp = NULL)
 int
 yyerror(const char *s)
 {
+    /* TODO: fix error output (lineNo) */
     std::cout << "parse error:" << std::endl
               << "- what: " << s << std::endl
               << "- where: line " << lineNo << std::endl;

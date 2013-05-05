@@ -74,9 +74,17 @@ main(int argc, char **argv)
     }
     try {
         /* do this before we ever touch programRoot */
+        cout << "> parsing " + string(argv[1]) + " ... ";
         parseAppSource(string(argv[1]));
+        cout << "done" << endl;
+        cout << "> generating source from AST ... " << endl;
+        cout << "> -- setting nesting depths ... ";
         programRoot->depth(0);
+        cout << "done" << endl;
+        cout << "> -- labeling ... ";
         programRoot->label(0);
+        cout << "done" << endl;
+        cout << "> here is the source:" << endl;
         cout << programRoot->str();
         programRoot->draw();
     }

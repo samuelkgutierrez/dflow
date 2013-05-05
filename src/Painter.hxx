@@ -52,7 +52,7 @@ public:
     static PEdge newEdge(Painter *p, PNode n1, PNode n2,
                          std::string name, int j);
 
-    void drawAST(std::string fileName);
+    void renderAST(std::string fileName);
 
     static std::string uniqID(Painter *p);
 };
