@@ -35,7 +35,7 @@ extern "C" FILE *yyin;
 Block *programRoot = NULL;
 
 /* input line number used for nice error messages */
-static int lineNo = 1;
+extern int lineNo;
 
 %}
 
@@ -152,10 +152,9 @@ parserParse(FILE *fp = NULL)
 int
 yyerror(const char *s)
 {
-    /* TODO: fix error output (lineNo) */
     std::cout << "parse error:" << std::endl
               << "- what: " << s << std::endl
-              << "- where: line " << lineNo << std::endl;
+              << "- around: line " << lineNo << std::endl;
     /* ignored */
     return 42;
 }

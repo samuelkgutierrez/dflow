@@ -36,11 +36,15 @@ do {                                                                           \
     yylval.str = new std::string(yytext, yyleng);                              \
 } while (0)
 
+int lineNo = 1;
+
 %}
 
 %%
 
-[ \t\n] { ; }
+[\n] { ++lineNo; }
+
+[ \t] { ; }
 
 "if" { return IF; }
 

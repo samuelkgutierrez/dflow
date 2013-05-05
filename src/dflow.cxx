@@ -74,7 +74,7 @@ main(int argc, char **argv)
     }
     try {
         /* do this before we ever touch programRoot */
-        cout << "> parsing " + string(argv[1]) + " ... ";
+        cout << "> generating AST from " + string(argv[1]) + " ... ";
         parseAppSource(string(argv[1]));
         cout << "done" << endl;
         cout << "> generating source from AST ... " << endl;
@@ -84,9 +84,11 @@ main(int argc, char **argv)
         cout << "> -- labeling ... ";
         programRoot->label(0);
         cout << "done" << endl;
-        cout << "> here is the source:" << endl;
+        cout << "> here is the annotated source:" << endl;
         cout << programRoot->str();
+        cout << "> drawing AST ... ";
         programRoot->draw();
+        cout << "written to " << endl;
     }
     catch (DFlowException &e) {
         cerr << e.what() << endl;
