@@ -36,7 +36,7 @@
 using namespace std;
 
 /* ////////////////////////////////////////////////////////////////////////// */
-Painter::Painter(void)
+Painter::Painter(string prefix, string type)
 {
     string ftype = "-Teps";
     string fname = "-oTEST.eps";
@@ -78,7 +78,7 @@ Painter::~Painter(void)
 
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Painter::renderAST(std::string fileName)
+Painter::renderAST(void)
 {
     gvLayoutJobs(gvc, graph);
     gvRenderJobs(gvc, graph);

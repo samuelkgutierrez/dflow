@@ -42,8 +42,10 @@ private:
     /* config argv */
     char **config;
 
+    Painter(void) { ; }
+
 public:
-    Painter(void);
+    Painter(std::string prefix, std::string type);
 
     ~Painter(void);
 
@@ -52,7 +54,7 @@ public:
     static PEdge newEdge(Painter *p, PNode n1, PNode n2,
                          std::string name, int j);
 
-    void renderAST(std::string fileName);
+    void renderAST(void);
 
     static std::string uniqID(Painter *p);
 };

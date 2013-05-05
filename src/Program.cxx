@@ -26,17 +26,17 @@ using namespace std;
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Identifier::draw(Painter *p, void *e) const
+Identifier::buildGraph(Painter *p, void *e) const
 {
     PNode n = Painter::newNode(p, this->_id, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
-    if (this->r) this->r->draw(p, n);
+    if (this->r) this->r->buildGraph(p, n);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Int::draw(Painter *p, void *e) const
+Int::buildGraph(Painter *p, void *e) const
 {
     PNode n = Painter::newNode(p, Base::int2string(this->_value), 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
@@ -45,7 +45,7 @@ Int::draw(Painter *p, void *e) const
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Float::draw(Painter *p, void *e) const
+Float::buildGraph(Painter *p, void *e) const
 {
     PNode n = Painter::newNode(p, Base::float2string(this->_value), 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
@@ -54,7 +54,7 @@ Float::draw(Painter *p, void *e) const
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Logical::draw(Painter *p, void *e) const
+Logical::buildGraph(Painter *p, void *e) const
 {
     PNode n = Painter::newNode(p, Base::bool2string(this->_value), 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
@@ -80,12 +80,12 @@ AssignmentExpression::str(void) const
 }
 
 void
-AssignmentExpression::draw(Painter *p, void *e) const
+AssignmentExpression::buildGraph(Painter *p, void *e) const
 {
     PNode opNode = Painter::newNode(p, "=", 1);
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
-    this->l->draw(p, opNode);
-    this->r->draw(p, opNode);
+    this->l->buildGraph(p, opNode);
+    this->r->buildGraph(p, opNode);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -110,12 +110,12 @@ ArithmeticExpression::str(void) const
 }
 
 void
-ArithmeticExpression::draw(Painter *p, void *e) const
+ArithmeticExpression::buildGraph(Painter *p, void *e) const
 {
     PNode opNode = Painter::newNode(p, this->_op, 1);
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
-    this->l->draw(p, opNode);
-    this->r->draw(p, opNode);
+    this->l->buildGraph(p, opNode);
+    this->r->buildGraph(p, opNode);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -140,12 +140,12 @@ LogicalExpression::str(void) const
 }
 
 void
-LogicalExpression::draw(Painter *p, void *e) const
+LogicalExpression::buildGraph(Painter *p, void *e) const
 {
     PNode opNode = Painter::newNode(p, this->_op, 1);
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
-    this->l->draw(p, opNode);
-    this->r->draw(p, opNode);
+    this->l->buildGraph(p, opNode);
+    this->r->buildGraph(p, opNode);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -192,10 +192,10 @@ Block::str(void) const
 }
 
 void
-Block::draw(Painter *p, void *e) const
+Block::buildGraph(Painter *p, void *e) const
 {
     for (Statement *s : this->_statements) {
-        s->draw(p, e);
+        s->buildGraph(p, e);
     }
 }
 
@@ -209,21 +209,21 @@ Block::depth(unsigned depth)
 }
 
 void
-Block::draw(void)
+Block::draw(std::string fprefix, std::string type)
 {
     /* this is the top-level call, so construct the painter */
-    this->painter = new Painter();
+    this->painter = new Painter(fprefix, type);
     /* start the drawing process */
     PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
-    this->draw(this->painter, n);
-    /* XXX fix path */
-    this->painter->renderAST("foo");
+    this->buildGraph(this->painter, n);
+    /* render the thing */
+    this->painter->renderAST();
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
-Skip::draw(Painter *p, void *e) const
+Skip::buildGraph(Painter *p, void *e) const
 {
     PNode n = Painter::newNode(p, "skip", 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
@@ -262,19 +262,19 @@ IfStatement::label(int label)
 }
 
 void
-IfStatement::draw(Painter *p, void *e) const
+IfStatement::buildGraph(Painter *p, void *e) const
 {
     PNode ifNode = Painter::newNode(p, "if", 1);
     Painter::newEdge(p, (PNode)e, ifNode, "", 1);
     PNode ifTest = Painter::newNode(p, "[[TEST]]", 1);
     Painter::newEdge(p, ifNode, ifTest, "", 1);
-    this->_exprBlock->draw(p, ifTest);
+    this->_exprBlock->buildGraph(p, ifTest);
     PNode ifBody = Painter::newNode(p, "[[IF]]", 1);
     Painter::newEdge(p, ifNode, ifBody, "", 1);
-    this->_ifBlock->draw(p, ifBody);
+    this->_ifBlock->buildGraph(p, ifBody);
     PNode elseBody = Painter::newNode(p, "[[ELSE]]", 1);
     Painter::newEdge(p, ifNode, elseBody, "", 1);
-    this->_elseBlock->draw(p, elseBody);
+    this->_elseBlock->buildGraph(p, elseBody);
 }
 
 string
@@ -324,14 +324,14 @@ WhileStatement::label(int label)
 }
 
 void
-WhileStatement::draw(Painter *p, void *e) const
+WhileStatement::buildGraph(Painter *p, void *e) const
 {
     PNode whileNode = Painter::newNode(p, "while", 1);
     Painter::newEdge(p, (PNode)e, whileNode, "", 1);
     PNode test = Painter::newNode(p, "[[TEST]]", 1);
     Painter::newEdge(p, whileNode, test, "", 1);
-    this->_exprBlock->draw(p, test);
+    this->_exprBlock->buildGraph(p, test);
     PNode body = Painter::newNode(p, "[[BODY]]", 1);
     Painter::newEdge(p, whileNode, body, "", 1);
-    this->_bodyBlock->draw(p, body);
+    this->_bodyBlock->buildGraph(p, body);
 }
