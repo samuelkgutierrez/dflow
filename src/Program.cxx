@@ -24,45 +24,6 @@
 using namespace std;
 
 /* ////////////////////////////////////////////////////////////////////////// */
-string
-Block::str(void) const
-{
-    string out = "";
-    for (Statement *s : this->_statements) {
-        out += s->str();
-    }
-    return out;
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-AssignmentExpression::AssignmentExpression(Identifier *id,
-                                           Expression *expr)
-{
-    this->l = id;
-    this->r = expr;
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-ArithmeticExpression::ArithmeticExpression(Expression *l,
-                                           std::string *op,
-                                           Expression *r)
-{
-    this->l = l;
-    this->_op = string(*op);
-    this->r = r;
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-string
-AssignmentExpression::str(void) const
-{
-    string out;
-    out = this->l->str();
-    out += " = ";
-    out += this->r->str();
-    return out;
-}
-
 /* ////////////////////////////////////////////////////////////////////////// */
 void
 Identifier::draw(Painter *p, void *e) const
@@ -72,6 +33,8 @@ Identifier::draw(Painter *p, void *e) const
     if (this->r) this->r->draw(p, n);
 }
 
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
 void
 Int::draw(Painter *p, void *e) const
 {
@@ -79,6 +42,8 @@ Int::draw(Painter *p, void *e) const
     Painter::newEdge(p, (PNode)e, n, "", 1);
 }
 
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
 void
 Float::draw(Painter *p, void *e) const
 {
@@ -86,11 +51,32 @@ Float::draw(Painter *p, void *e) const
     Painter::newEdge(p, (PNode)e, n, "", 1);
 }
 
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
 void
 Logical::draw(Painter *p, void *e) const
 {
     PNode n = Painter::newNode(p, Base::bool2string(this->_value), 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+AssignmentExpression::AssignmentExpression(Identifier *id,
+                                           Expression *expr)
+{
+    this->l = id;
+    this->r = expr;
+}
+
+string
+AssignmentExpression::str(void) const
+{
+    string out;
+    out = this->l->str();
+    out += " = ";
+    out += this->r->str();
+    return out;
 }
 
 void
@@ -102,6 +88,27 @@ AssignmentExpression::draw(Painter *p, void *e) const
     this->r->draw(p, opNode);
 }
 
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+ArithmeticExpression::ArithmeticExpression(Expression *l,
+                                           std::string *op,
+                                           Expression *r)
+{
+    this->l = l;
+    this->_op = string(*op);
+    this->r = r;
+}
+
+string
+ArithmeticExpression::str(void) const
+{
+    string out;
+    out = this->l->str();
+    out += " " + this->_op + " ";
+    out += this->r->str();
+    return out;
+}
+
 void
 ArithmeticExpression::draw(Painter *p, void *e) const
 {
@@ -109,6 +116,27 @@ ArithmeticExpression::draw(Painter *p, void *e) const
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
     this->l->draw(p, opNode);
     this->r->draw(p, opNode);
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+LogicalExpression::LogicalExpression(Expression *l,
+                                     std::string *op,
+                                     Expression *r)
+{
+    this->l = l;
+    this->_op = string(*op);
+    this->r = r;
+}
+
+string
+LogicalExpression::str(void) const
+{
+    string out;
+    out = this->l->str();
+    out += " " + this->_op + " ";
+    out += this->r->str();
+    return out;
 }
 
 void
@@ -120,10 +148,47 @@ LogicalExpression::draw(Painter *p, void *e) const
     this->r->draw(p, opNode);
 }
 
-void
-Statement::draw(Painter *p, void *e) const
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+Statement::Statement(Expression *expression)
 {
-    this->_expr->draw(p, e);
+    this->_exprStatement = false;
+    this->_expr = expression;
+}
+
+string
+Statement::str(void) const
+{
+    unsigned realPadLen = this->_exprStatement ? 0 : this->depth();
+    string out = Base::pad(realPadLen) + "[" + this->_expr->str() + "] -- " +
+                 Base::int2string(this->label());
+
+    if (!this->_exprStatement) {
+        out += "\n";
+    }
+    return out;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+void
+Block::label(int label)
+{
+    this->_label = label + 1;
+    int start = this->_label;
+    for (Statement *s : this->_statements) {
+        s->label(++start);
+    }
+}
+
+string
+Block::str(void) const
+{
+    string out = "";
+    for (Statement *s : this->_statements) {
+        out += s->str();
+    }
+    return out;
 }
 
 void
@@ -135,10 +200,64 @@ Block::draw(Painter *p, void *e) const
 }
 
 void
+Block::depth(unsigned depth)
+{
+    this->_depth = depth;
+    for (Statement *s : this->_statements) {
+        s->depth(this->_depth + 1);
+    }
+}
+
+void
+Block::draw(void)
+{
+    this->painter = new Painter();
+
+    PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
+    this->draw(this->painter, n);
+    /* XXX fix path */
+    this->painter->drawAST("foo");
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+void
 Skip::draw(Painter *p, void *e) const
 {
     PNode n = Painter::newNode(p, "skip", 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
+}
+
+
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
+IfStatement::IfStatement(Block *expr,
+                         Block *ifBlock,
+                         Block *elseBlock)
+{
+    this->_exprBlock = expr;
+    this->_ifBlock = ifBlock;
+    this->_elseBlock = elseBlock;
+}
+
+void
+IfStatement::depth(unsigned depth)
+{
+    this->_depth = depth;
+    this->_exprBlock->depth(depth);
+    this->_ifBlock->depth(depth + 1);
+    this->_elseBlock->depth(depth + 1);
+}
+
+void
+IfStatement::label(int label)
+{
+    this->_label = label + 1;
+    this->_exprBlock->label(this->label());
+    this->_ifBlock->label(this->label() + 1);
+    int next = this->_ifBlock->label() +
+               (int)this->_ifBlock->nstatements() + 1;
+    this->_elseBlock->label(next);
 }
 
 void
@@ -157,82 +276,6 @@ IfStatement::draw(Painter *p, void *e) const
     this->_elseBlock->draw(p, elseBody);
 }
 
-/* ////////////////////////////////////////////////////////////////////////// */
-void
-Block::draw(void)
-{
-    this->painter = new Painter();
-
-    PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
-    this->draw(this->painter, n);
-    /* XXX fix path */
-    this->painter->drawAST("foo");
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-LogicalExpression::LogicalExpression(Expression *l,
-                                     std::string *op,
-                                     Expression *r)
-{
-    this->l = l;
-    this->_op = string(*op);
-    this->r = r;
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-string
-LogicalExpression::str(void) const
-{
-    string out;
-    out = this->l->str();
-    out += " " + this->_op + " ";
-    out += this->r->str();
-    return out;
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-string
-ArithmeticExpression::str(void) const
-{
-    string out;
-    out = this->l->str();
-    out += " " + this->_op + " ";
-    out += this->r->str();
-    return out;
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-Statement::Statement(Expression *expression)
-{
-    this->_exprStatement = false;
-    this->_expr = expression;
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-string
-Statement::str(void) const
-{
-    unsigned realPadLen = this->_exprStatement ? 0 : this->depth();
-    string out = Base::pad(realPadLen) + "[" + this->_expr->str() + "] -- " +
-                 Base::int2string(this->label());
-
-    if (!this->_exprStatement) {
-        out += "\n";
-    }
-    return out;
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-IfStatement::IfStatement(Block *expr,
-                         Block *ifBlock,
-                         Block *elseBlock)
-{
-    this->_exprBlock = expr;
-    this->_ifBlock = ifBlock;
-    this->_elseBlock = elseBlock;
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
 string
 IfStatement::str(void) const
 {
@@ -245,6 +288,7 @@ IfStatement::str(void) const
     return out;
 }
 
+/* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 WhileStatement::WhileStatement(Block *expr, Block *bodyBlock)
 {
@@ -289,45 +333,4 @@ WhileStatement::draw(Painter *p, void *e) const
     PNode body = Painter::newNode(p, "[[BODY]]", 1);
     Painter::newEdge(p, whileNode, body, "", 1);
     this->_bodyBlock->draw(p, body);
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-void
-Block::depth(unsigned depth)
-{
-    this->_depth = depth;
-    for (Statement *s : this->_statements) {
-        s->depth(this->_depth + 1);
-    }
-}
-
-/* ////////////////////////////////////////////////////////////////////////// */
-void
-IfStatement::depth(unsigned depth)
-{
-    this->_depth = depth;
-    this->_exprBlock->depth(depth);
-    this->_ifBlock->depth(depth + 1);
-    this->_elseBlock->depth(depth + 1);
-}
-
-void
-IfStatement::label(int label)
-{
-    this->_label = label + 1;
-    this->_exprBlock->label(this->label());
-    this->_ifBlock->label(this->label() + 1);
-    int next = this->_ifBlock->label() +
-               (int)this->_ifBlock->nstatements() + 1;
-    this->_elseBlock->label(next);
-}
-
-void
-Block::label(int label)
-{
-    this->_label = label + 1;
-    int start = this->_label;
-    for (Statement *s : this->_statements) {
-        s->label(++start);
-    }
 }

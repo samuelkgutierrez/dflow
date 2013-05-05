@@ -34,6 +34,7 @@ class Painter;
 /* nodes will be the basic building block of a program */
 class Node {
 protected:
+    /* node label */
     int _label;
     /* node depth */
     unsigned _depth;
@@ -224,7 +225,7 @@ public:
 
     virtual void exprStatement(bool is) { this->_exprStatement = is; }
 
-    virtual void draw(Painter *p, void *e) const;
+    virtual void draw(Painter *p, void *e) const { this->_expr->draw(p, e); }
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;
