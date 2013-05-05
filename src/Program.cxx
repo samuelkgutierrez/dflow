@@ -98,6 +98,13 @@ AssignmentExpression::buildAST(Painter *p, void *e, bool a) const
     this->r->buildAST(p, opNode, a);
 }
 
+void *
+AssignmentExpression::buildCFG(Painter *p) const
+{
+    string label  = this->str();
+    return Painter::newNode(p, label, 1);
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 ArithmeticExpression::ArithmeticExpression(Expression *l,
@@ -128,6 +135,12 @@ ArithmeticExpression::buildAST(Painter *p, void *e, bool a) const
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
     this->l->buildAST(p, opNode, a);
     this->r->buildAST(p, opNode, a);
+}
+
+void *
+ArithmeticExpression::buildCFG(Painter *p) const
+{
+    cout << "MATH EXPR" << endl;
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -185,7 +198,6 @@ Statement::str(void) const
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
-
 const int Block::ndias = 2;
 const string Block::diaNames[Block::ndias] = {"ast", "dast"};
 
@@ -225,6 +237,26 @@ Block::depth(unsigned depth)
     }
 }
 
+void *
+Block::buildCFG(Painter *p) const
+{
+    bool first = true;
+    PNode firstNode, next;
+    for (Statement *s : this->_statements) {
+        if (first) {
+            firstNode = (PNode)s->buildCFG(p);
+            first = false;
+            next = firstNode;
+        }
+        else {
+            PNode cur = (PNode)s->buildCFG(p);
+            Painter::newEdge(p, next, cur, "", 1);
+            next = cur;
+        }
+    }
+    return firstNode;
+}
+
 void
 Block::drawASTs(std::string fprefix, std::string type)
 {
@@ -251,7 +283,8 @@ Block::drawCFG(std::string fprefix, std::string type)
     this->painter = new Painter(fname, type);
     /* start the drawing process */
     PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
-    this->buildAST(this->painter, n, false);
+    PNode t = (PNode)this->buildCFG(this->painter);
+    Painter::newEdge(this->painter, n, t, "", 1);
     /* render the thing -- is that even the correct term? */
     cout << "> -- writing " + fname + "." + type + " ... "; cout.flush();
     this->painter->renderAST();
@@ -268,6 +301,13 @@ Skip::buildAST(Painter *p, void *e, bool a) const
     if (a) label += " " + Base::int2string(this->label());
     PNode n = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
+}
+
+void *
+Skip::buildCFG(Painter *p) const
+{
+    string label = "skip";
+    return Painter::newNode(p, label, 1);
 }
 
 
@@ -316,6 +356,21 @@ IfStatement::buildAST(Painter *p, void *e, bool a) const
     PNode elseBody = Painter::newNode(p, "[[ELSE]]", 1);
     Painter::newEdge(p, ifNode, elseBody, "", 1);
     this->_elseBlock->buildAST(p, elseBody, a);
+}
+
+void *
+IfStatement::buildCFG(Painter *p) const
+{
+    /* if expr */
+    string label = "if" + this->_exprBlock->str();
+    PNode ifNode = Painter::newNode(p, label, 1);
+    /* body */
+    label = this->_ifBlock->str();
+    Painter::newEdge(p, ifNode, (PNode)this->_ifBlock->buildCFG(p), "", 1);
+    /* else body */
+    Painter::newEdge(p, ifNode, (PNode)this->_elseBlock->buildCFG(p), "", 1);
+
+    return ifNode;
 }
 
 string

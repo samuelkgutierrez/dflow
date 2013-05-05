@@ -8,3 +8,5 @@ if true then
 else
     d = ! true;
 fi
+
+c = 3.14;
