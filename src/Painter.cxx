@@ -38,8 +38,8 @@ using namespace std;
 /* ////////////////////////////////////////////////////////////////////////// */
 Painter::Painter(string prefix, string type)
 {
-    string ftype = "-Teps";
-    string fname = "-oTEST.eps";
+    string ftype = "-T" + type;
+    string fname = "-o" + prefix + "." + type;
 
     /* fake an argv with our settings */
     this->config = (char **)calloc(ARGC + 1, sizeof(char *));

@@ -171,6 +171,10 @@ Statement::str(void) const
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
+
+const int Block::ndias = 2;
+const string Block::diaNames[Block::ndias] = {"ast", "dast"};
+
 void
 Block::label(int label)
 {
@@ -211,13 +215,17 @@ Block::depth(unsigned depth)
 void
 Block::draw(std::string fprefix, std::string type)
 {
-    /* this is the top-level call, so construct the painter */
-    this->painter = new Painter(fprefix, type);
-    /* start the drawing process */
-    PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
-    this->buildGraph(this->painter, n);
-    /* render the thing */
-    this->painter->renderAST();
+    for (auto i = 0; i < Block::ndias; ++i) {
+        string fname = fprefix + "-" + Block::diaNames[i];
+        /* this is the top-level call, so construct the painter */
+        this->painter = new Painter(fname, type);
+        /* start the drawing process */
+        PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
+        this->buildGraph(this->painter, n);
+        /* render the thing */
+        this->painter->renderAST();
+        delete this->painter;
+    }
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */

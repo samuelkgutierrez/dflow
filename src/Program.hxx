@@ -232,6 +232,10 @@ typedef std::vector<Statement *> Statementps;
 
 /* ////////////////////////////////////////////////////////////////////////// */
 class Block : public Node {
+private:
+    static const int ndias;
+    static const std::string diaNames[];
+
 protected:
     Statementps _statements;
 
