@@ -251,11 +251,15 @@ public:
 /* ////////////////////////////////////////////////////////////////////////// */
 class Statement : public Node {
 protected:
+    bool _entry;
+    bool _exit;
     bool _exprStatement;
     Expression *_expr;
+    std::string _meta;
 
 public:
-    Statement(void) : _exprStatement(false), _expr(NULL) { ; }
+    Statement(void) :
+        _entry(false), _exit(false), _exprStatement(false), _expr(NULL) { ; }
 
     virtual ~Statement(void) { ; }
 
@@ -281,6 +285,14 @@ public:
     virtual void *buildCFG(Painter *p) const {
         return this->_expr->buildCFG(p);
     }
+
+    virtual bool entry(void) const { return this->_entry; }
+
+    virtual void entry(bool e) { this->_entry = e; }
+
+    virtual bool exit(void) const { return this->_exit; }
+
+    virtual void exit(bool e) { this->_exit = e; }
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;

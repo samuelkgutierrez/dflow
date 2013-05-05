@@ -204,10 +204,18 @@ const string Block::diaNames[Block::ndias] = {"ast", "dast"};
 void
 Block::label(int &label)
 {
+    bool first = true;
     this->_label = label;
+    Statement *lastp = NULL;
     for (Statement *s : this->_statements) {
+        if (first) {
+            s->entry(true);
+            first = false;
+        }
         s->label(label);
+        lastp = s;
     }
+    lastp->exit(true);
 }
 
 string
@@ -317,6 +325,7 @@ IfStatement::IfStatement(Block *expr,
                          Block *ifBlock,
                          Block *elseBlock)
 {
+    this->_meta = "if";
     this->_exprBlock = expr;
     this->_ifBlock = ifBlock;
     this->_elseBlock = elseBlock;
@@ -391,6 +400,7 @@ IfStatement::str(void) const
 /* ////////////////////////////////////////////////////////////////////////// */
 WhileStatement::WhileStatement(Block *expr, Block *bodyBlock)
 {
+    this->_meta = "while";
     this->_exprBlock = expr;
     this->_bodyBlock = bodyBlock;
 }
