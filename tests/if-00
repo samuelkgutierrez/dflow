@@ -7,6 +7,7 @@ if true then
     c = a && b;
 else
     d = ! true;
+    e = 3.4;
 fi
 
 c = 3.14;

@@ -370,16 +370,35 @@ IfStatement::buildAST(Painter *p, void *e, bool a) const
 void *
 IfStatement::buildCFG(Painter *p) const
 {
-    /* if expr */
-    string label = "if" + this->_exprBlock->str();
+    string label = "if " + this->_exprBlock->str();
     PNode ifNode = Painter::newNode(p, label, 1);
-    /* body */
-    label = this->_ifBlock->str();
-    Painter::newEdge(p, ifNode, (PNode)this->_ifBlock->buildCFG(p), "", 1);
+    /* if body */
+    vector<PNode> ifNodes;
+    for (Statement *s : this->_ifBlock->_statements) {
+        ifNodes.push_back((PNode)s->buildCFG(p));
+    }
+    PNode fIf = *ifNodes.begin();
+    PNode lIf = *ifNodes.rbegin();
+    Painter::newEdge(p, ifNode, fIf, "", 1);
+    PNode prev = ifNode;
+    for (auto cur : ifNodes) {
+        Painter::newEdge(p, prev, cur, "", 1);
+        prev = cur;
+    }
     /* else body */
-    Painter::newEdge(p, ifNode, (PNode)this->_elseBlock->buildCFG(p), "", 1);
-
-    PNode end = Painter::newNode(p, "[[END]]", 1);
+    vector<PNode> elseNodes;
+    for (Statement *s : this->_elseBlock->_statements) {
+        elseNodes.push_back((PNode)s->buildCFG(p));
+    }
+    prev = ifNode;
+    for (auto cur : elseNodes) {
+        Painter::newEdge(p, prev, cur, "", 1);
+        prev = cur;
+    }
+    PNode lElse = *elseNodes.rbegin();
+    PNode endNode = Painter::newNode(p, "[[END]]", 1);
+    Painter::newEdge(p, lIf, endNode, "", 1);
+    Painter::newEdge(p, lElse, endNode, "", 1);
 
     return ifNode;
 }
