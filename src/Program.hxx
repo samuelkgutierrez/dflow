@@ -291,7 +291,9 @@ public:
 
     virtual void buildGraph(Painter *p, void *e, bool a) const;
 
-    void draw(std::string fprefix, std::string type);
+    void drawASTs(std::string fprefix, std::string type);
+
+    void drawCFG(std::string fprefix, std::string type);
 
     unsigned nstatements(void) const { return this->_statements.size(); }
 

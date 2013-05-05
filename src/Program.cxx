@@ -226,7 +226,7 @@ Block::depth(unsigned depth)
 }
 
 void
-Block::draw(std::string fprefix, std::string type)
+Block::drawASTs(std::string fprefix, std::string type)
 {
     for (auto i = 0; i < Block::ndias; ++i) {
         string fname = fprefix + "-" + Block::diaNames[i];
@@ -241,6 +241,22 @@ Block::draw(std::string fprefix, std::string type)
         cout << "done" << endl;
         delete this->painter;
     }
+}
+
+void
+Block::drawCFG(std::string fprefix, std::string type)
+{
+    string fname = fprefix + "-" + "cfg";
+    /* this is the top-level call, so construct the painter */
+    this->painter = new Painter(fname, type);
+    /* start the drawing process */
+    PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
+    this->buildGraph(this->painter, n, false);
+    /* render the thing -- is that even the correct term? */
+    cout << "> -- writing " + fname + "." + type + " ... "; cout.flush();
+    this->painter->renderAST();
+    cout << "done" << endl;
+    delete this->painter;
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
