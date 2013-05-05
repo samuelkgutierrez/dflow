@@ -165,6 +165,14 @@ public:
 
     std::string str(void) const;
 
+    virtual int label(void) const { return this->_label; }
+
+    virtual void label(int label) {
+        this->_label = label;
+        if (this->l) this->l->label(label + 1);
+        if (this->r) this->r->label(label + 2);
+    }
+
     virtual void buildGraph(Painter *p, void *e, bool a) const;
 };
 
@@ -184,6 +192,14 @@ public:
 
     std::string str(void) const;
 
+    virtual int label(void) const { return this->_label; }
+
+    virtual void label(int label) {
+        this->_label = label;
+        if (this->l) this->l->label(label + 1);
+        if (this->r) this->r->label(label + 2);
+    }
+
     virtual void buildGraph(Painter *p, void *e, bool a) const;
 };
 
@@ -202,6 +218,14 @@ public:
                       Expression *r);
 
     std::string str(void) const;
+
+    virtual int label(void) const { return this->_label; }
+
+    virtual void label(int label) {
+        this->_label = label;
+        if (this->l) this->l->label(label + 1);
+        if (this->r) this->r->label(label + 2);
+    }
 
     virtual void buildGraph(Painter *p, void *e, bool a) const;
 };
@@ -224,6 +248,13 @@ public:
     virtual bool exprStatement(void) const { return this->_exprStatement; }
 
     virtual void exprStatement(bool is) { this->_exprStatement = is; }
+
+    virtual int label(void) const { return this->_label; }
+
+    virtual void label(int label) {
+        this->_label = label;
+        if (this->_expr) this->_expr->label(label);
+    }
 
     virtual void buildGraph(Painter *p, void *e, bool a) const {
         this->_expr->buildGraph(p, e, a);

@@ -28,7 +28,9 @@ using namespace std;
 void
 Identifier::buildGraph(Painter *p, void *e, bool a) const
 {
-    PNode n = Painter::newNode(p, this->_id, 1);
+    string label = this->_id; 
+    if (a) label += " " + Base::int2string(this->label());
+    PNode n = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
     if (this->r) this->r->buildGraph(p, n, a);
 }
@@ -38,7 +40,9 @@ Identifier::buildGraph(Painter *p, void *e, bool a) const
 void
 Int::buildGraph(Painter *p, void *e, bool a) const
 {
-    PNode n = Painter::newNode(p, Base::int2string(this->_value), 1);
+    string label = Base::int2string(this->_value);
+    if (a) label += " " + Base::int2string(this->label());
+    PNode n = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
 }
 
@@ -47,7 +51,9 @@ Int::buildGraph(Painter *p, void *e, bool a) const
 void
 Float::buildGraph(Painter *p, void *e, bool a) const
 {
-    PNode n = Painter::newNode(p, Base::float2string(this->_value), 1);
+    string label = Base::float2string(this->_value);
+    if (a) label += " " + Base::int2string(this->label());
+    PNode n = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
 }
 
@@ -56,7 +62,9 @@ Float::buildGraph(Painter *p, void *e, bool a) const
 void
 Logical::buildGraph(Painter *p, void *e, bool a) const
 {
-    PNode n = Painter::newNode(p, Base::bool2string(this->_value), 1);
+    string label = Base::bool2string(this->_value);
+    if (a) label += " " + Base::int2string(this->label());
+    PNode n = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
 }
 
@@ -82,7 +90,9 @@ AssignmentExpression::str(void) const
 void
 AssignmentExpression::buildGraph(Painter *p, void *e, bool a) const
 {
-    PNode opNode = Painter::newNode(p, "=", 1);
+    string label  = "=";
+    if (a) label += " " + Base::int2string(this->label());
+    PNode opNode = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
     this->l->buildGraph(p, opNode, a);
     this->r->buildGraph(p, opNode, a);
@@ -112,7 +122,9 @@ ArithmeticExpression::str(void) const
 void
 ArithmeticExpression::buildGraph(Painter *p, void *e, bool a) const
 {
-    PNode opNode = Painter::newNode(p, this->_op, 1);
+    string label = this->_op;
+    if (a) label += " " + Base::int2string(this->label());
+    PNode opNode = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
     this->l->buildGraph(p, opNode, a);
     this->r->buildGraph(p, opNode, a);
@@ -133,6 +145,7 @@ string
 LogicalExpression::str(void) const
 {
     string out;
+    cout << "LOG: " << this->label() << endl;
     out = this->l->str();
     out += " " + this->_op + " ";
     out += this->r->str();
@@ -142,7 +155,9 @@ LogicalExpression::str(void) const
 void
 LogicalExpression::buildGraph(Painter *p, void *e, bool a) const
 {
-    PNode opNode = Painter::newNode(p, this->_op, 1);
+    string label = this->_op;
+    if (a) label += " " + Base::int2string(this->label());
+    PNode opNode = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
     this->l->buildGraph(p, opNode, a);
     this->r->buildGraph(p, opNode, a);
