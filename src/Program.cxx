@@ -190,12 +190,11 @@ const int Block::ndias = 2;
 const string Block::diaNames[Block::ndias] = {"ast", "dast"};
 
 void
-Block::label(int label)
+Block::label(int &label)
 {
-    this->_label = label + 1;
-    int start = this->_label;
+    this->_label = label;
     for (Statement *s : this->_statements) {
-        s->label(++start);
+        s->label(label);
     }
 }
 
@@ -277,14 +276,12 @@ IfStatement::depth(unsigned depth)
 }
 
 void
-IfStatement::label(int label)
+IfStatement::label(int &label)
 {
-    this->_label = label + 1;
-    this->_exprBlock->label(this->label());
-    this->_ifBlock->label(this->label() + 1);
-    int next = this->_ifBlock->label() +
-               (int)this->_ifBlock->nstatements() + 1;
-    this->_elseBlock->label(next);
+    this->_label = ++label;
+    this->_exprBlock->label(label);
+    this->_ifBlock->label(label);
+    this->_elseBlock->label(label);
 }
 
 void
@@ -344,11 +341,11 @@ WhileStatement::depth(unsigned depth)
 }
 
 void
-WhileStatement::label(int label)
+WhileStatement::label(int &label)
 {
-    this->_label = label + 1;
-    this->_exprBlock->label(this->label());
-    this->_bodyBlock->label(this->label() + 1);
+    this->_label = ++label;
+    this->_exprBlock->label(label);
+    this->_bodyBlock->label(label);
 }
 
 void

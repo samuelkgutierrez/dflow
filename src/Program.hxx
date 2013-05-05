@@ -59,7 +59,7 @@ public:
 
     virtual int label(void) const { return this->_label; }
 
-    virtual void label(int label) { this->_label = label; }
+    virtual void label(int &label) { this->_label = ++label; }
 
     virtual std::string str(void) const = 0;
 
@@ -167,10 +167,10 @@ public:
 
     virtual int label(void) const { return this->_label; }
 
-    virtual void label(int label) {
-        this->_label = label;
-        if (this->l) this->l->label(label + 1);
-        if (this->r) this->r->label(label + 2);
+    virtual void label(int &label) {
+        this->_label = ++label;
+        if (this->l) this->l->label(label);
+        if (this->r) this->r->label(label);
     }
 
     virtual void buildGraph(Painter *p, void *e, bool a) const;
@@ -194,10 +194,10 @@ public:
 
     virtual int label(void) const { return this->_label; }
 
-    virtual void label(int label) {
-        this->_label = label;
-        if (this->l) this->l->label(label + 1);
-        if (this->r) this->r->label(label + 2);
+    virtual void label(int &label) {
+        this->_label = ++label;
+        if (this->l) this->l->label(label);
+        if (this->r) this->r->label(label);
     }
 
     virtual void buildGraph(Painter *p, void *e, bool a) const;
@@ -221,10 +221,10 @@ public:
 
     virtual int label(void) const { return this->_label; }
 
-    virtual void label(int label) {
-        this->_label = label;
-        if (this->l) this->l->label(label + 1);
-        if (this->r) this->r->label(label + 2);
+    virtual void label(int &label) {
+        this->_label = ++label;
+        if (this->l) this->l->label(label);
+        if (this->r) this->r->label(label);
     }
 
     virtual void buildGraph(Painter *p, void *e, bool a) const;
@@ -251,8 +251,8 @@ public:
 
     virtual int label(void) const { return this->_label; }
 
-    virtual void label(int label) {
-        this->_label = label;
+    virtual void label(int &label) {
+        this->_label = ++label;
         if (this->_expr) this->_expr->label(label);
     }
 
@@ -287,7 +287,7 @@ public:
 
     virtual int label(void) const { return this->_label; }
 
-    virtual void label(int label);
+    virtual void label(int &label);
 
     virtual void buildGraph(Painter *p, void *e, bool a) const;
 
@@ -337,7 +337,7 @@ public:
 
     virtual int label(void) const { return this->_label; }
 
-    virtual void label(int label);
+    virtual void label(int &label);
 
     virtual void buildGraph(Painter *p, void *e, bool a) const;
 };
@@ -362,7 +362,7 @@ public:
 
     virtual int label(void) const { return this->_label; }
 
-    virtual void label(int label);
+    virtual void label(int &label);
 
     virtual void buildGraph(Painter *p, void *e, bool a) const;
 };

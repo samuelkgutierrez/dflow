@@ -82,7 +82,8 @@ main(int argc, char **argv)
         programRoot->depth(0);
         cout << "done" << endl;
         cout << "> -- labeling ... ";
-        programRoot->label(0);
+        int label = 0;
+        programRoot->label(label);
         cout << "done" << endl;
         cout << "> here is the annotated source:" << endl;
         cout << programRoot->str();
