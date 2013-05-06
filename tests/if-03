@@ -1,0 +1,9 @@
+if true then
+    if false then
+        a = 1;
+    else
+        a = 2;
+    fi
+else
+    a = 3;
+fi

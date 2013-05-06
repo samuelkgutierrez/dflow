@@ -301,7 +301,7 @@ public:
 
     virtual std::string meta(void) const { return this->_meta; }
 
-    virtual void exit(std::string m) { this->_meta = m; }
+    virtual void meta(std::string m) { this->_meta = m; }
 
     virtual bool whilestmt(void) const { return this->_meta == "while"; }
 
