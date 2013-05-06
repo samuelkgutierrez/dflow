@@ -101,9 +101,6 @@ AssignmentExpression::buildAST(Painter *p, void *e, bool a) const
 void
 AssignmentExpression::cfgPrep(Painter *p)
 {
-    cout << "#################" << endl;
-    cout << this->str();
-    cout << "#################" << endl;
     this->_cfgnode = Painter::newNode(p, this->str(), 1);
 }
 
@@ -171,6 +168,12 @@ LogicalExpression::buildAST(Painter *p, void *e, bool a) const
     this->r->buildAST(p, opNode, a);
 }
 
+void
+LogicalExpression::cfgPrep(Painter *p)
+{
+    this->_cfgnode = Painter::newNode(p, this->str(), 1);
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 Statement::Statement(Expression *expression)
@@ -190,6 +193,13 @@ Statement::str(void) const
         out += "\n";
     }
     return out;
+}
+
+void
+Statement::cfgStitch(Painter *p, void *in, void **out)
+{
+    Painter::newEdge(p, (PNode)in, (PNode)this->cfgnode(), "", 1);
+    *out = this->cfgnode();
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -267,7 +277,9 @@ Block::drawCFG(std::string fprefix, std::string type)
     this->painter = new Painter(fname, type);
     /* start the drawing process */
     PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
+    PNode o = NULL;
     this->cfgPrep(this->painter);
+    this->cfgStitch(this->painter, n, (void **)&o);
     //PNode t = (PNode)this->buildCFG(this->painter);
     //Painter::newEdge(this->painter, n, t, "", 1);
     /* render the thing -- is that even the correct term? */
@@ -285,6 +297,25 @@ Block::cfgPrep(Painter *p)
     }
 }
 
+void
+Block::cfgStitch(Painter *p, void *in, void **out)
+{
+    PNode ine = NULL, oute = NULL;
+    bool first = true;
+    for (Statement *s : this->_statements) {
+        if (first) {
+            s->cfgStitch(p, in, (void **)&oute);
+            first = false;
+            ine = oute;
+        }
+        else {
+            s->cfgStitch(p, ine, (void **)&oute);
+            ine = oute;
+        }
+    }
+    *out = oute;
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
@@ -294,6 +325,12 @@ Skip::buildAST(Painter *p, void *e, bool a) const
     if (a) label += " " + Base::int2string(this->label());
     PNode n = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
+}
+
+void
+Skip::cfgPrep(Painter *p)
+{
+    this->_cfgnode = Painter::newNode(p, this->str(), 1);
 }
 
 
@@ -355,6 +392,24 @@ IfStatement::str(void) const
     out += this->_elseBlock->str();
     out += Base::pad(this->depth()) + "fi\n";
     return out;
+}
+
+void
+IfStatement::cfgPrep(Painter *p)
+{
+    this->_cfgnode = Painter::newNode(p, "if " + this->_exprBlock->str(), 1);
+    this->_ifBlock->cfgPrep(p);
+    this->_elseBlock->cfgPrep(p);
+}
+
+void
+IfStatement::cfgStitch(Painter *p, void *in, void **out)
+{
+    Painter::newEdge(p, (PNode)in, (PNode)this->cfgnode(), "", 1);
+    PNode n = NULL;
+    this->_ifBlock->cfgStitch(p, (PNode)this->cfgnode(), (void **)&n);
+    this->_elseBlock->cfgStitch(p, (PNode)this->cfgnode(), (void **)&n);
+    *out = n;
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */

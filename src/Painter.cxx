@@ -86,7 +86,7 @@ Painter::renderAST(void)
 
 /* ////////////////////////////////////////////////////////////////////////// */
 PNode
-Painter::newNode(Painter *p, std::string label, int i)
+Painter::newNode(Painter *p, string label, int i)
 {
     PNode newNode =  agnode(p->graph, (char *)Painter::uniqID(p).c_str(), i);
     agsafeset(newNode, (char *)"label", (char *)label.c_str(), (char *)"");
@@ -98,6 +98,12 @@ PEdge
 Painter::newEdge(Painter *p, PNode n1, PNode n2, string name, int j)
 {
     return agedge(p->graph, n1, n2, (char *)name.c_str(), j);
+}
+
+void
+Painter::updateLabel(Painter *p, PNode target, string newLabel)
+{
+    agsafeset(target, (char *)"label", (char *)newLabel.c_str(), (char *)"");
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */

@@ -68,9 +68,13 @@ public:
     /* bool a = annotated */
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
     /* prep for cfg creation */
-    virtual void cfgPrep(Painter *p) { ; }
+    virtual void cfgPrep(Painter *p) { this->cfgPrep(p); }
 
     virtual void *cfgnode(void) { return this->_cfgnode; }
+
+    virtual void cfgStitch(Painter *p, void *in, void **out) {
+        this->cfgStitch(p, in, out);
+    }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -214,7 +218,6 @@ public:
     }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
-
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -243,6 +246,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
+    virtual void cfgPrep(Painter *p);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -304,6 +308,7 @@ public:
         this->_expr->cfgPrep(p);
         this->_cfgnode = this->_expr->cfgnode();
     }
+    void cfgStitch(Painter *p, void *in, void **out);
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;
@@ -357,6 +362,8 @@ public:
     unsigned nstatements(void) const { return this->_statements.size(); }
 
     virtual void cfgPrep(Painter *p);
+
+    virtual void cfgStitch(Painter *p, void *in, void **out);
 };
 typedef std::vector<Block> Blocks;
 
@@ -375,6 +382,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
+    virtual void cfgPrep(Painter *p);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -406,6 +414,9 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
+    virtual void cfgPrep(Painter *p);
+
+    virtual void cfgStitch(Painter *p, void *in, void **out);
 };
 
 class WhileStatement : public Statement {
