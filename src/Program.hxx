@@ -44,10 +44,13 @@ protected:
     Node *r;
     /* the node painter */
     Painter *painter;
+    /* graph node for control flow graph */
+    void *_cfgnode;
 
 public:
     Node(void) { this->l = NULL;
                  this->r = NULL;
+                 this->_cfgnode = NULL;
                  this->_depth = 0;
                  this->_label = 0; }
 
@@ -62,11 +65,8 @@ public:
     virtual void label(int &label) { this->_label = ++label; }
 
     virtual std::string str(void) const = 0;
-
     /* bool a = annotated */
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
-
-    virtual void *buildCFG(Painter *p) = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -83,7 +83,6 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
 
-    virtual void *buildCFG(Painter *p) = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -102,7 +101,6 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -122,7 +120,6 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -142,7 +139,6 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -161,7 +157,6 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -187,7 +182,6 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -216,7 +210,6 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -245,7 +238,6 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p) { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -287,10 +279,6 @@ public:
         this->_expr->buildAST(p, e, a);
     }
 
-    virtual void *buildCFG(Painter *p) {
-        return this->_expr->buildCFG(p);
-    }
-
     virtual bool entry(void) const { return this->_entry; }
 
     virtual void entry(bool e) { this->_entry = e; }
@@ -309,6 +297,20 @@ public:
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;
+
+/* ////////////////////////////////////////////////////////////////////////// */
+class MergeNode : public Node {
+
+public:
+    MergeNode(void) : Node() { ; }
+
+    virtual ~MergeNode(void) { ; }
+
+    MergeNode(Node *lNode, Node *rNode) {
+        this->l = lNode;
+        this->r = rNode;
+    }
+};
 
 /* ////////////////////////////////////////////////////////////////////////// */
 class Block : public Node {
@@ -344,7 +346,6 @@ public:
 
     unsigned nstatements(void) const { return this->_statements.size(); }
 
-    virtual void *buildCFG(Painter *p);
 };
 typedef std::vector<Block> Blocks;
 
@@ -363,7 +364,6 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -395,7 +395,6 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p);
 };
 
 class WhileStatement : public Statement {
@@ -422,7 +421,6 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual void *buildCFG(Painter *p);
 };
 
 #endif

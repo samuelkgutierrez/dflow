@@ -98,13 +98,6 @@ AssignmentExpression::buildAST(Painter *p, void *e, bool a) const
     this->r->buildAST(p, opNode, a);
 }
 
-void *
-AssignmentExpression::buildCFG(Painter *p)
-{
-    string label  = this->str();
-    return Painter::newNode(p, label, 1);
-}
-
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 ArithmeticExpression::ArithmeticExpression(Expression *l,
@@ -135,12 +128,6 @@ ArithmeticExpression::buildAST(Painter *p, void *e, bool a) const
     Painter::newEdge(p, (PNode)e, opNode, "", 1);
     this->l->buildAST(p, opNode, a);
     this->r->buildAST(p, opNode, a);
-}
-
-void *
-ArithmeticExpression::buildCFG(Painter *p)
-{
-    cout << "MATH EXPR" << endl;
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -245,32 +232,6 @@ Block::depth(unsigned depth)
     }
 }
 
-void *
-Block::buildCFG(Painter *p)
-{
-    bool first = true;
-    PNode firstNode, prev;
-    Statement *ps = NULL;
-    for (Statement *s : this->_statements) {
-        if (first) {
-            firstNode = (PNode)s->buildCFG(p);
-            first = false;
-            ps = s;
-            prev = firstNode;
-        }
-        else {
-            if (ps->ifstmt()) {
-                prev = (PNode)*ps->bNodes.rbegin();
-            }
-            PNode cur = (PNode)s->buildCFG(p);
-            Painter::newEdge(p, prev, cur, "", 1);
-            prev = cur;
-            ps = s;
-        }
-    }
-    return firstNode;
-}
-
 void
 Block::drawASTs(std::string fprefix, std::string type)
 {
@@ -297,8 +258,8 @@ Block::drawCFG(std::string fprefix, std::string type)
     this->painter = new Painter(fname, type);
     /* start the drawing process */
     PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
-    PNode t = (PNode)this->buildCFG(this->painter);
-    Painter::newEdge(this->painter, n, t, "", 1);
+    //PNode t = (PNode)this->buildCFG(this->painter);
+    //Painter::newEdge(this->painter, n, t, "", 1);
     /* render the thing -- is that even the correct term? */
     cout << "> -- writing " + fname + "." + type + " ... "; cout.flush();
     this->painter->renderAST();
@@ -315,13 +276,6 @@ Skip::buildAST(Painter *p, void *e, bool a) const
     if (a) label += " " + Base::int2string(this->label());
     PNode n = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
-}
-
-void *
-Skip::buildCFG(Painter *p)
-{
-    string label = "skip";
-    return Painter::newNode(p, label, 1);
 }
 
 
@@ -371,41 +325,6 @@ IfStatement::buildAST(Painter *p, void *e, bool a) const
     PNode elseBody = Painter::newNode(p, "[[ELSE]]", 1);
     Painter::newEdge(p, ifNode, elseBody, "", 1);
     this->_elseBlock->buildAST(p, elseBody, a);
-}
-
-void *
-IfStatement::buildCFG(Painter *p)
-{
-    string label = "if " + this->_exprBlock->str();
-    PNode ifNode = Painter::newNode(p, label, 1);
-    /* if body */
-    for (Statement *s : this->_ifBlock->_statements) {
-        this->aNodes.push_back(s->buildCFG(p));
-    }
-    PNode fIf = (PNode)*aNodes.begin();
-    PNode lIf = (PNode)*aNodes.rbegin();
-    Painter::newEdge(p, ifNode, fIf, "", 1);
-    PNode prev = ifNode;
-    for (auto cur : this->aNodes) {
-        Painter::newEdge(p, prev, (PNode)cur, "", 1);
-        prev = (PNode)cur;
-    }
-    /* else body */
-    for (Statement *s : this->_elseBlock->_statements) {
-        this->bNodes.push_back((PNode)s->buildCFG(p));
-    }
-    prev = ifNode;
-    PNode endNode = Painter::newNode(p, "", 1);
-    PNode lElse = (PNode)*this->bNodes.rbegin();
-    this->bNodes.push_back(endNode);
-    for (auto cur : this->bNodes) {
-        Painter::newEdge(p, prev, (PNode)cur, "", 1);
-        prev = (PNode)cur;
-    }
-    Painter::newEdge(p, lIf, endNode, "", 1);
-    Painter::newEdge(p, lElse, endNode, "", 1);
-
-    return ifNode;
 }
 
 string
@@ -468,24 +387,4 @@ WhileStatement::buildAST(Painter *p, void *e, bool a) const
     PNode body = Painter::newNode(p, "[[BODY]]", 1);
     Painter::newEdge(p, whileNode, body, "", 1);
     this->_bodyBlock->buildAST(p, body, a);
-}
-
-void *
-WhileStatement::buildCFG(Painter *p)
-{
-    string label = "while " + this->_exprBlock->str();
-    PNode whileNode = Painter::newNode(p, label, 1);
-    /* body */
-    for (Statement *s : this->_bodyBlock->_statements) {
-        this->aNodes.push_back(s->buildCFG(p));
-    }
-    PNode prev = whileNode;
-    for (auto cur : this->aNodes) {
-        Painter::newEdge(p, prev, (PNode)cur, "", 1);
-        prev = (PNode)cur;
-    }
-    PNode exitNode = (PNode)*this->aNodes.rbegin();
-    Painter::newEdge(p, exitNode, whileNode, "", 1);
-
-    return whileNode;
 }
