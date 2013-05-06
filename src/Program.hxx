@@ -67,6 +67,10 @@ public:
     virtual std::string str(void) const = 0;
     /* bool a = annotated */
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
+    /* prep for cfg creation */
+    virtual void cfgPrep(Painter *p) { ; }
+
+    virtual void *cfgnode(void) { return this->_cfgnode; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -182,6 +186,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
+    virtual void cfgPrep(Painter *p);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -294,6 +299,11 @@ public:
     virtual bool whilestmt(void) const { return this->_meta == "while"; }
 
     virtual bool ifstmt(void) const { return this->_meta == "if"; }
+
+    virtual void cfgPrep(Painter *p) {
+        this->_expr->cfgPrep(p);
+        this->_cfgnode = this->_expr->cfgnode();
+    }
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;
@@ -346,6 +356,7 @@ public:
 
     unsigned nstatements(void) const { return this->_statements.size(); }
 
+    virtual void cfgPrep(Painter *p);
 };
 typedef std::vector<Block> Blocks;
 

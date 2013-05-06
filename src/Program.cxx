@@ -98,6 +98,15 @@ AssignmentExpression::buildAST(Painter *p, void *e, bool a) const
     this->r->buildAST(p, opNode, a);
 }
 
+void
+AssignmentExpression::cfgPrep(Painter *p)
+{
+    cout << "#################" << endl;
+    cout << this->str();
+    cout << "#################" << endl;
+    this->_cfgnode = Painter::newNode(p, this->str(), 1);
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 ArithmeticExpression::ArithmeticExpression(Expression *l,
@@ -258,6 +267,7 @@ Block::drawCFG(std::string fprefix, std::string type)
     this->painter = new Painter(fname, type);
     /* start the drawing process */
     PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
+    this->cfgPrep(this->painter);
     //PNode t = (PNode)this->buildCFG(this->painter);
     //Painter::newEdge(this->painter, n, t, "", 1);
     /* render the thing -- is that even the correct term? */
@@ -265,6 +275,14 @@ Block::drawCFG(std::string fprefix, std::string type)
     this->painter->renderAST();
     cout << "done" << endl;
     delete this->painter;
+}
+
+void
+Block::cfgPrep(Painter *p)
+{
+    for (Statement *s : this->_statements) {
+        s->cfgPrep(p);
+    }
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
