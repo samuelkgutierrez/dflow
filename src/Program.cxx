@@ -28,7 +28,7 @@ using namespace std;
 void
 Identifier::buildAST(Painter *p, void *e, bool a) const
 {
-    string label = this->_id; 
+    string label = this->_id;
     if (a) label += " " + Base::int2string(this->label());
     PNode n = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
@@ -277,11 +277,11 @@ Block::drawCFG(std::string fprefix, std::string type)
     this->painter = new Painter(fname, type);
     /* start the drawing process */
     PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
+    PNode e = Painter::newNode(this->painter, "[[PROGRAM END]]", 1);
     PNode o = NULL;
     this->cfgPrep(this->painter);
     this->cfgStitch(this->painter, n, (void **)&o);
-    //PNode t = (PNode)this->buildCFG(this->painter);
-    //Painter::newEdge(this->painter, n, t, "", 1);
+    Painter::newEdge(this->painter, o, e, "", 1);
     /* render the thing -- is that even the correct term? */
     cout << "> -- writing " + fname + "." + type + " ... "; cout.flush();
     this->painter->renderAST();
@@ -406,10 +406,13 @@ void
 IfStatement::cfgStitch(Painter *p, void *in, void **out)
 {
     Painter::newEdge(p, (PNode)in, (PNode)this->cfgnode(), "", 1);
-    PNode n = NULL;
-    this->_ifBlock->cfgStitch(p, (PNode)this->cfgnode(), (void **)&n);
-    this->_elseBlock->cfgStitch(p, (PNode)this->cfgnode(), (void **)&n);
-    *out = n;
+    PNode ifOut = NULL, elseOut = NULL;
+    this->_ifBlock->cfgStitch(p, (PNode)this->cfgnode(), (void **)&ifOut);
+    this->_elseBlock->cfgStitch(p, (PNode)this->cfgnode(), (void **)&elseOut);
+    PNode merge = Painter::newNode(p, "", 1);
+    Painter::newEdge(p, ifOut, merge, "", 1);
+    Painter::newEdge(p, elseOut, merge, "", 1);
+    *out = merge;
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -460,4 +463,23 @@ WhileStatement::buildAST(Painter *p, void *e, bool a) const
     PNode body = Painter::newNode(p, "[[BODY]]", 1);
     Painter::newEdge(p, whileNode, body, "", 1);
     this->_bodyBlock->buildAST(p, body, a);
+}
+
+void
+WhileStatement::cfgPrep(Painter *p)
+{
+    this->_cfgnode = Painter::newNode(p, "if " + this->_exprBlock->str(), 1);
+    this->_bodyBlock->cfgPrep(p);
+}
+
+void
+WhileStatement::cfgStitch(Painter *p, void *in, void **out)
+{
+    Painter::newEdge(p, (PNode)in, (PNode)this->cfgnode(), "", 1);
+    PNode wOut;
+    this->_bodyBlock->cfgStitch(p, (PNode)this->cfgnode(), (void **)&wOut);
+    Painter::newEdge(p, wOut, (PNode)this->cfgnode(), "", 1);
+    PNode merge = Painter::newNode(p, "", 1);
+    Painter::newEdge(p, (PNode)this->cfgnode(), merge, "", 1);
+    *out = merge;
 }

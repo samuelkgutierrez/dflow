@@ -443,6 +443,9 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
+    virtual void cfgPrep(Painter *p);
+
+    virtual void cfgStitch(Painter *p, void *in, void **out);
 };
 
 #endif

@@ -54,8 +54,6 @@ public:
     static PEdge newEdge(Painter *p, PNode n1, PNode n2,
                          std::string name, int j);
 
-    static void updateLabel(Painter *p, PNode target, std::string newLabel);
-
     void renderAST(void);
 
     static std::string uniqID(Painter *p);
