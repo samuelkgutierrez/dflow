@@ -63,8 +63,8 @@ public:
     virtual int label(void) const { return this->_label; }
 
     virtual void label(int &label) { this->_label = ++label; }
-
-    virtual std::string str(void) const = 0;
+    /* bool a = annotated */
+    virtual std::string str(bool a) const = 0;
     /* bool a = annotated */
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
     /* prep for cfg creation */
@@ -87,7 +87,7 @@ public:
 
     virtual ~Expression(void) { ; }
 
-    virtual std::string str(void) const = 0;
+    virtual std::string str(bool a) const = 0;
 
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
 
@@ -105,7 +105,7 @@ public:
 
     Identifier(std::string id) : Expression(), _id(id) { ; }
 
-    std::string str(void) const { return this->_id; }
+    std::string str(bool a) const { return this->_id; }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
@@ -124,7 +124,7 @@ public:
     Int(std::string svalue) :
         Expression(), _value(Base::string2int(svalue)) { ; }
 
-    std::string str(void) const { return Base::int2string(this->_value); }
+    std::string str(bool a) const { return Base::int2string(this->_value); }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
@@ -143,7 +143,7 @@ public:
     Float(std::string svalue) :
         Expression(), _value(Base::string2float(svalue)) { ; }
 
-    std::string str(void) const { return Base::float2string(this->_value); }
+    std::string str(bool a) const { return Base::float2string(this->_value); }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
@@ -161,7 +161,7 @@ public:
 
     Logical(const std::string &svalue) : _value(Base::string2bool(svalue)) { ; }
 
-    std::string str(void) const { return Base::bool2string(this->_value); }
+    std::string str(bool a) const { return Base::bool2string(this->_value); }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
@@ -178,7 +178,7 @@ public:
 
     AssignmentExpression(Identifier *id, Expression *expr);
 
-    std::string str(void) const;
+    std::string str(bool a) const;
 
     virtual int label(void) const { return this->_label; }
 
@@ -207,7 +207,7 @@ public:
                          std::string *op,
                          Expression *r);
 
-    std::string str(void) const;
+    std::string str(bool a) const;
 
     virtual int label(void) const { return this->_label; }
 
@@ -234,7 +234,7 @@ public:
                       std::string *op,
                       Expression *r);
 
-    std::string str(void) const;
+    std::string str(bool a) const;
 
     virtual int label(void) const { return this->_label; }
 
@@ -271,7 +271,7 @@ public:
 
     Statement(Expression *expression);
 
-    virtual std::string str(void) const;
+    virtual std::string str(bool a) const;
 
     virtual bool exprStatement(void) const { return this->_exprStatement; }
 
@@ -343,7 +343,7 @@ public:
 
     virtual void add(Statement *s) { this->_statements.push_back(s); }
 
-    virtual std::string str(void) const;
+    virtual std::string str(bool a) const;
 
     virtual unsigned depth(void) const { return Node::depth(); }
 
@@ -375,9 +375,16 @@ public:
 
     virtual ~Skip(void) { ; }
 
-    std::string str(void) const {
-        return Base::pad(this->depth()) + "[skip]  -- " +
-               Base::int2string(this->label()) + "\n";
+    std::string str(bool a) const {
+        std::string out = "";
+        if (a) {
+            out += Base::pad(this->depth()) + "[";
+        }
+        out += "skip";
+        if (a) {
+            out += "] -- " + Base::int2string(this->label()) + "\n";
+        }
+        return out;
     }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
@@ -402,7 +409,7 @@ public:
 
     IfStatement(Block *expr, Block *ifBlock, Block *elseBlock);
 
-    std::string str(void) const;
+    std::string str(bool a) const;
 
     virtual unsigned depth(void) const { return this->_depth; }
 
@@ -431,7 +438,7 @@ public:
 
     WhileStatement(Block *expr, Block *bodyBlock);
 
-    std::string str(void) const;
+    std::string str(bool a) const;
 
     virtual unsigned depth(void) const { return this->_depth; }
 

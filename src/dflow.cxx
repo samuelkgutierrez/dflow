@@ -86,7 +86,7 @@ main(int argc, char **argv)
         programRoot->label(label);
         cout << "done" << endl;
         cout << "> here is the annotated source:" << endl;
-        cout << programRoot->str();
+        cout << programRoot->str(true);
         cout << "> drawing ASTs ... " << endl;
         programRoot->drawASTs(string(argv[1]), "eps");
         cout << "> drawing control flow graph ... " << endl;

@@ -78,12 +78,12 @@ AssignmentExpression::AssignmentExpression(Identifier *id,
 }
 
 string
-AssignmentExpression::str(void) const
+AssignmentExpression::str(bool a) const
 {
     string out;
-    out = this->l->str();
+    out = this->l->str(a);
     out += " = ";
-    out += this->r->str();
+    out += this->r->str(a);
     return out;
 }
 
@@ -101,7 +101,7 @@ AssignmentExpression::buildAST(Painter *p, void *e, bool a) const
 void
 AssignmentExpression::cfgPrep(Painter *p)
 {
-    this->_cfgnode = Painter::newNode(p, this->str(), 1);
+    this->_cfgnode = Painter::newNode(p, this->str(false), 1);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -116,12 +116,12 @@ ArithmeticExpression::ArithmeticExpression(Expression *l,
 }
 
 string
-ArithmeticExpression::str(void) const
+ArithmeticExpression::str(bool a) const
 {
     string out;
-    out = this->l->str();
+    out = this->l->str(a);
     out += " " + this->_op + " ";
-    out += this->r->str();
+    out += this->r->str(a);
     return out;
 }
 
@@ -148,12 +148,12 @@ LogicalExpression::LogicalExpression(Expression *l,
 }
 
 string
-LogicalExpression::str(void) const
+LogicalExpression::str(bool a) const
 {
     string out;
-    out = this->l->str();
+    out = this->l->str(a);
     out += " " + this->_op + " ";
-    out += this->r->str();
+    out += this->r->str(a);
     return out;
 }
 
@@ -171,7 +171,7 @@ LogicalExpression::buildAST(Painter *p, void *e, bool a) const
 void
 LogicalExpression::cfgPrep(Painter *p)
 {
-    this->_cfgnode = Painter::newNode(p, this->str(), 1);
+    this->_cfgnode = Painter::newNode(p, this->str(false), 1);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -183,12 +183,17 @@ Statement::Statement(Expression *expression)
 }
 
 string
-Statement::str(void) const
+Statement::str(bool a) const
 {
     unsigned realPadLen = this->_exprStatement ? 0 : this->depth();
-    string out = Base::pad(realPadLen) + "[" + this->_expr->str() + "] -- " +
-                 Base::int2string(this->label());
-
+    string out = "";
+    if (a) {
+        out += Base::pad(realPadLen) + "[";
+    }
+    out += this->_expr->str(a);
+    if (a) {
+        out += "] -- " + Base::int2string(this->label());
+    }
     if (!this->_exprStatement) {
         out += "\n";
     }
@@ -225,11 +230,11 @@ Block::label(int &label)
 }
 
 string
-Block::str(void) const
+Block::str(bool a) const
 {
     string out = "";
     for (Statement *s : this->_statements) {
-        out += s->str();
+        out += s->str(a);
     }
     return out;
 }
@@ -330,7 +335,7 @@ Skip::buildAST(Painter *p, void *e, bool a) const
 void
 Skip::cfgPrep(Painter *p)
 {
-    this->_cfgnode = Painter::newNode(p, this->str(), 1);
+    this->_cfgnode = Painter::newNode(p, this->str(false), 1);
 }
 
 
@@ -383,13 +388,13 @@ IfStatement::buildAST(Painter *p, void *e, bool a) const
 }
 
 string
-IfStatement::str(void) const
+IfStatement::str(bool a) const
 {
     string out = Base::pad(this->depth()) + "if ";
-    out += this->_exprBlock->str() + " then\n";
-    out += this->_ifBlock->str();
+    out += this->_exprBlock->str(a) + " then\n";
+    out += this->_ifBlock->str(a);
     out += Base::pad(this->depth()) + "else\n";
-    out += this->_elseBlock->str();
+    out += this->_elseBlock->str(a);
     out += Base::pad(this->depth()) + "fi\n";
     return out;
 }
@@ -397,7 +402,8 @@ IfStatement::str(void) const
 void
 IfStatement::cfgPrep(Painter *p)
 {
-    this->_cfgnode = Painter::newNode(p, "if " + this->_exprBlock->str(), 1);
+    this->_cfgnode = Painter::newNode(p, "if " +
+                     this->_exprBlock->str(false), 1);
     this->_ifBlock->cfgPrep(p);
     this->_elseBlock->cfgPrep(p);
 }
@@ -425,11 +431,11 @@ WhileStatement::WhileStatement(Block *expr, Block *bodyBlock)
 }
 
 string
-WhileStatement::str(void) const
+WhileStatement::str(bool a) const
 {
     string out = Base::pad(this->depth()) + "while ";
-    out += this->_exprBlock->str() + " do\n";
-    out += this->_bodyBlock->str();
+    out += this->_exprBlock->str(a) + " do\n";
+    out += this->_bodyBlock->str(a);
     out += Base::pad(this->depth()) + "od\n";
     return out;
 }
@@ -468,7 +474,8 @@ WhileStatement::buildAST(Painter *p, void *e, bool a) const
 void
 WhileStatement::cfgPrep(Painter *p)
 {
-    this->_cfgnode = Painter::newNode(p, "if " + this->_exprBlock->str(), 1);
+    this->_cfgnode = Painter::newNode(p, "if " +
+                     this->_exprBlock->str(false), 1);
     this->_bodyBlock->cfgPrep(p);
 }
 
