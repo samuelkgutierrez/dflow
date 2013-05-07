@@ -78,7 +78,9 @@ public:
     virtual void cfgStitch(Painter *p, void *in, void **out) {
         this->cfgStitch(p, in, out);
     }
-    virtual vset addv(void) { return this->_vars;  }
+    virtual vset getvs(void);
+
+    unsigned nvars(void) const { return this->_vars.size(); }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -92,8 +94,6 @@ public:
     virtual std::string str(bool a) const = 0;
 
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
-
-    virtual vset addv(void);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -112,7 +112,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
-    virtual vset addv(void) { vset n; n.insert(this->_id); return n; }
+    virtual vset getvs(void) { vset n; n.insert(this->_id); return n; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -193,8 +193,6 @@ public:
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
     virtual void cfgPrep(Painter *p);
-
-    virtual vset addv(void);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -222,8 +220,6 @@ public:
     }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
-
-    virtual vset addv(void);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -253,8 +249,6 @@ public:
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
     virtual void cfgPrep(Painter *p);
-
-    virtual vset addv(void);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -317,6 +311,8 @@ public:
         this->_cfgnode = this->_expr->cfgnode();
     }
     void cfgStitch(Painter *p, void *in, void **out);
+
+    virtual vset getvs(void);
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;
@@ -372,6 +368,10 @@ public:
     virtual void cfgPrep(Painter *p);
 
     virtual void cfgStitch(Painter *p, void *in, void **out);
+
+    virtual vset getvs(void);
+
+    void gatherVars(void) { this->_vars = this->getvs(); }
 };
 typedef std::vector<Block> Blocks;
 
@@ -420,6 +420,8 @@ public:
     virtual void cfgPrep(Painter *p);
 
     virtual void cfgStitch(Painter *p, void *in, void **out);
+
+    virtual vset getvs(void);
 };
 
 class WhileStatement : public Statement {
@@ -449,6 +451,8 @@ public:
     virtual void cfgPrep(Painter *p);
 
     virtual void cfgStitch(Painter *p, void *in, void **out);
+
+    virtual vset getvs(void);
 };
 
 #endif

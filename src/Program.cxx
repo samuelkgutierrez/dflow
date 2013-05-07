@@ -26,15 +26,15 @@ using namespace std;
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 vset
-Expression::addv(void)
+Node::getvs(void)
 {
     vset n;
     if (this->l) {
-        vset t = this->l->addv();
+        vset t = this->l->getvs();
         n.insert(t.begin(), t.end());
     }
     if (this->r) {
-        vset t = this->r->addv();
+        vset t = this->r->getvs();
         n.insert(t.begin(), t.end());
     }
     return n;
@@ -224,6 +224,12 @@ Statement::cfgStitch(Painter *p, void *in, void **out)
     *out = this->cfgnode();
 }
 
+vset
+Statement::getvs(void)
+{
+    return this->_expr->getvs();
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 const int Block::ndias = 2;
@@ -317,6 +323,17 @@ Block::cfgPrep(Painter *p)
     for (Statement *s : this->_statements) {
         s->cfgPrep(p);
     }
+}
+
+vset
+Block::getvs(void)
+{
+    vset n;
+    for (Statement *s : this->_statements) {
+        vset t = s->getvs();
+        n.insert(t.begin(), t.end());
+    }
+    return n;
 }
 
 void
@@ -452,6 +469,19 @@ IfStatement::cfgStitch(Painter *p, void *in, void **out)
     *out = merge;
 }
 
+vset
+IfStatement::getvs(void)
+{
+    vset n, t;
+    t = this->_exprBlock->getvs();
+    n.insert(t.begin(), t.end());
+    t = this->_ifBlock->getvs();
+    n.insert(t.begin(), t.end());
+    t = this->_elseBlock->getvs();
+    n.insert(t.begin(), t.end());
+    return n;
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 WhileStatement::WhileStatement(Block *expr, Block *bodyBlock)
@@ -520,4 +550,15 @@ WhileStatement::cfgStitch(Painter *p, void *in, void **out)
     PNode merge = Painter::newNode(p, "", 1);
     Painter::newEdge(p, (PNode)this->cfgnode(), merge, "", 1);
     *out = merge;
+}
+
+vset
+WhileStatement::getvs(void)
+{
+    vset n, t;
+    t = this->_exprBlock->getvs();
+    n.insert(t.begin(), t.end());
+    t = this->_bodyBlock->getvs();
+    n.insert(t.begin(), t.end());
+    return n;
 }

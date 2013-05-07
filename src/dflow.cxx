@@ -92,6 +92,9 @@ main(int argc, char **argv)
         cout << "> drawing control flow graph ... " << endl;
         programRoot->drawCFG(string(argv[1]), "eps");
         cout << "> calculating reaching definitions data-flow ... " << endl;
+        cout << "> -- gathering variables ... " << endl;
+        programRoot->gatherVars();
+        cout << "> -- " << programRoot->nvars() << " found ..." << endl;
     }
     catch (DFlowException &e) {
         cerr << e.what() << endl;
