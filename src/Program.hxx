@@ -85,6 +85,8 @@ public:
     unsigned nvars(void) const { return this->_vars.size(); }
 
     virtual void varclean(void);
+
+    virtual void emitVars(void) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */

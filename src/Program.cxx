@@ -48,6 +48,17 @@ Node::varclean(void)
     if (it != this->_vars.end()) this->_vars.erase(it);
 }
 
+void
+Node::emitVars(void) const
+{
+    string out = "{";
+    for (const auto &v : this->_vars) {
+        out += " " + v;
+    }
+    out += " }";
+    cout << out << endl;
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void

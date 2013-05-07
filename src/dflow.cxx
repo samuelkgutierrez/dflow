@@ -97,6 +97,7 @@ main(int argc, char **argv)
         /* rm any cruft */
         programRoot->varclean();
         cout << "> -- " << programRoot->nvars() << " found ..." << endl;
+        cout << "> -- "; programRoot->emitVars();
     }
     catch (DFlowException &e) {
         cerr << e.what() << endl;
