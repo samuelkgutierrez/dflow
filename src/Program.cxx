@@ -25,6 +25,7 @@ using namespace std;
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
+const string Node::BOGUS_VAR = "_0xBoGuSx0_";
 vset
 Node::getvs(void)
 {
@@ -38,6 +39,13 @@ Node::getvs(void)
         n.insert(t.begin(), t.end());
     }
     return n;
+}
+
+void
+Node::varclean(void)
+{
+    auto it = this->_vars.find(Node::BOGUS_VAR);
+    if (it != this->_vars.end()) this->_vars.erase(it);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */

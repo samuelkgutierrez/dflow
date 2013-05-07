@@ -51,6 +51,8 @@ protected:
     vset _vars;
 
 public:
+    static const std::string BOGUS_VAR;
+
     Node(void) { this->l = NULL;
                  this->r = NULL;
                  this->_cfgnode = NULL;
@@ -81,6 +83,8 @@ public:
     virtual vset getvs(void);
 
     unsigned nvars(void) const { return this->_vars.size(); }
+
+    virtual void varclean(void);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -388,6 +392,10 @@ public:
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
     virtual void cfgPrep(Painter *p);
+
+    virtual vset getvs(void) {
+        vset bogus; bogus.insert(Node::BOGUS_VAR); return bogus;
+    }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */

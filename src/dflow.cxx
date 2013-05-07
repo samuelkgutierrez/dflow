@@ -94,6 +94,8 @@ main(int argc, char **argv)
         cout << "> calculating reaching definitions data-flow ... " << endl;
         cout << "> -- gathering variables ... " << endl;
         programRoot->gatherVars();
+        /* rm any cruft */
+        programRoot->varclean();
         cout << "> -- " << programRoot->nvars() << " found ..." << endl;
     }
     catch (DFlowException &e) {
