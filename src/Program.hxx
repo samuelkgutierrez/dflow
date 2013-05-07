@@ -26,8 +26,11 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 class Painter;
+
+typedef std::set<std::string> vset;
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -42,10 +45,10 @@ protected:
     Node *l;
     /* right child pointer */
     Node *r;
-    /* the node painter */
-    Painter *painter;
     /* graph node for control flow graph */
     void *_cfgnode;
+    /* set of variables */
+    vset _vars;
 
 public:
     Node(void) { this->l = NULL;
@@ -75,13 +78,12 @@ public:
     virtual void cfgStitch(Painter *p, void *in, void **out) {
         this->cfgStitch(p, in, out);
     }
+    virtual vset addv(void) { return this->_vars;  }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 class Expression : public Node {
-private:
-
 public:
     Expression(void) : Node() { ; }
 
@@ -91,6 +93,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
 
+    virtual vset addv(void);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -109,6 +112,7 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
+    virtual vset addv(void) { vset n; n.insert(this->_id); return n; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -127,7 +131,6 @@ public:
     std::string str(bool a) const { return Base::int2string(this->_value); }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
-
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -164,7 +167,6 @@ public:
     std::string str(bool a) const { return Base::bool2string(this->_value); }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
-
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -191,6 +193,8 @@ public:
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
     virtual void cfgPrep(Painter *p);
+
+    virtual vset addv(void);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -218,6 +222,8 @@ public:
     }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual vset addv(void);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -247,6 +253,8 @@ public:
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
     virtual void cfgPrep(Painter *p);
+
+    virtual vset addv(void);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -333,10 +341,10 @@ private:
     static const int ndias;
     static const std::string diaNames[];
 
-public:
-    /* FIXME - public bad */
+protected:
     Statementps _statements;
 
+public:
     Block(void) { ; }
 
     virtual ~Block(void) { ; }
@@ -375,17 +383,7 @@ public:
 
     virtual ~Skip(void) { ; }
 
-    std::string str(bool a) const {
-        std::string out = "";
-        if (a) {
-            out += Base::pad(this->depth()) + "[";
-        }
-        out += "skip";
-        if (a) {
-            out += "] -- " + Base::int2string(this->label()) + "\n";
-        }
-        return out;
-    }
+    std::string str(bool a) const;
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
@@ -400,9 +398,7 @@ private:
     Block *_ifBlock;
     Block *_elseBlock;
 
-
 public:
-
     IfStatement(void) { ; }
 
     virtual ~IfStatement(void) { ; }

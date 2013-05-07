@@ -25,6 +25,23 @@ using namespace std;
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
+vset
+Expression::addv(void)
+{
+    vset n;
+    if (this->l) {
+        vset t = this->l->addv();
+        n.insert(t.begin(), t.end());
+    }
+    if (this->r) {
+        vset t = this->r->addv();
+        n.insert(t.begin(), t.end());
+    }
+    return n;
+}
+
+/* ////////////////////////////////////////////////////////////////////////// */
+/* ////////////////////////////////////////////////////////////////////////// */
 void
 Identifier::buildAST(Painter *p, void *e, bool a) const
 {
@@ -262,15 +279,15 @@ Block::drawASTs(std::string fprefix, std::string type)
     for (auto i = 0; i < Block::ndias; ++i) {
         string fname = fprefix + "-" + Block::diaNames[i];
         /* this is the top-level call, so construct the painter */
-        this->painter = new Painter(fname, type);
+        Painter *painter = new Painter(fname, type);
         /* start the drawing process */
-        PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
-        this->buildAST(this->painter, n, (Block::diaNames[i] == "dast"));
+        PNode n = Painter::newNode(painter, "[[PROGRAM]]", 1);
+        this->buildAST(painter, n, (Block::diaNames[i] == "dast"));
         /* render the thing -- is that even the correct term? */
         cout << "> -- writing " + fname + "." + type + " ... "; cout.flush();
-        this->painter->renderAST();
+        painter->renderAST();
         cout << "done" << endl;
-        delete this->painter;
+        delete painter;
     }
 }
 
@@ -279,19 +296,19 @@ Block::drawCFG(std::string fprefix, std::string type)
 {
     string fname = fprefix + "-" + "cfg";
     /* this is the top-level call, so construct the painter */
-    this->painter = new Painter(fname, type);
+    Painter *painter = new Painter(fname, type);
     /* start the drawing process */
-    PNode n = Painter::newNode(this->painter, "[[PROGRAM]]", 1);
-    PNode e = Painter::newNode(this->painter, "[[PROGRAM END]]", 1);
+    PNode n = Painter::newNode(painter, "[[PROGRAM]]", 1);
+    PNode e = Painter::newNode(painter, "[[PROGRAM END]]", 1);
     PNode o = NULL;
-    this->cfgPrep(this->painter);
-    this->cfgStitch(this->painter, n, (void **)&o);
-    Painter::newEdge(this->painter, o, e, "", 1);
+    this->cfgPrep(painter);
+    this->cfgStitch(painter, n, (void **)&o);
+    Painter::newEdge(painter, o, e, "", 1);
     /* render the thing -- is that even the correct term? */
     cout << "> -- writing " + fname + "." + type + " ... "; cout.flush();
-    this->painter->renderAST();
+    painter->renderAST();
     cout << "done" << endl;
-    delete this->painter;
+    delete painter;
 }
 
 void
@@ -330,6 +347,20 @@ Skip::buildAST(Painter *p, void *e, bool a) const
     if (a) label += " " + Base::int2string(this->label());
     PNode n = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
+}
+
+string
+Skip::str(bool a) const
+{
+    std::string out = "";
+    if (a) {
+        out += Base::pad(this->depth()) + "[";
+    }
+    out += "skip";
+    if (a) {
+        out += "] -- " + Base::int2string(this->label()) + "\n";
+    }
+    return out;
 }
 
 void
@@ -474,8 +505,8 @@ WhileStatement::buildAST(Painter *p, void *e, bool a) const
 void
 WhileStatement::cfgPrep(Painter *p)
 {
-    this->_cfgnode = Painter::newNode(p, "if " +
-                     this->_exprBlock->str(false), 1);
+    string label = "if " + this->_exprBlock->str(false);
+    this->_cfgnode = Painter::newNode(p, label, 1); 
     this->_bodyBlock->cfgPrep(p);
 }
 

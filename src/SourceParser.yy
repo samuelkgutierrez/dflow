@@ -106,6 +106,9 @@ bexpr : logical logicbinop logical { $$ = new LogicalExpression($1, $2, $3); }
       | logical logicbinop ident { $$ = new LogicalExpression($1, $2, $3); }
       | ident logicbinop ident { $$ = new LogicalExpression($1, $2, $3); }
       | ident logicbinop logical { $$ = new LogicalExpression($1, $2, $3); }
+      | ident logicbinop num { $$ = new LogicalExpression($1, $2, $3); }
+      | num logicbinop ident { $$ = new LogicalExpression($1, $2, $3); }
+      | num logicbinop num { $$ = new LogicalExpression($1, $2, $3); }
       | logical { $$ = $1; }
       ;
 

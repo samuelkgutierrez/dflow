@@ -3,4 +3,6 @@
 #./configure CXXFLAGS="-Wall -g -O0 -I/usr/local/include/graphviz" LDFLAGS="-lgvc -lcgraph -lcdt"
 #./configure CFLAGS="-g -O0 -Wall" CXXFLAGS="-Wall -g -O0 -I/usr/local/include/graphviz" LDFLAGS="-lgvc -lcgraph -lcdt"
 #scan-build ./configure CXXFLAGS="-Wextra -ggdb3 -O0 -I/usr/local/include/graphviz" LDFLAGS="-lgvc -lcgraph -lcdt"
-./configure CXXFLAGS="-Wextra -ggdb3 -O0 -I/usr/local/include/graphviz" LDFLAGS="-lgvc -lcgraph -lcdt"
+#./configure CXXFLAGS="-Wextra -ggdb3 -O0 -I/usr/local/include/graphviz" LDFLAGS="-lgvc -lcgraph -lcdt"
+./configure CXXFLAGS="-Wall -ggdb3 -O0 -I$HOME/local/homebrew/Cellar/graphviz/2.30.1/include/graphviz" \
+LDFLAGS="-L$HOME/local/homebrew/Cellar/graphviz/2.30.1/lib -lgvc -lcgraph -lcdt"

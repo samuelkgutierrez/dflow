@@ -1,0 +1,6 @@
+x = a + b;
+y = a*b;
+while y > a do
+    a = a + 1;
+    x = a + b;
+od
