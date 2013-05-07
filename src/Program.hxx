@@ -27,10 +27,16 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <utility>
 
 class Painter;
 
+/* variable set */
 typedef std::set<std::string> vset;
+/* variable, label pair */
+typedef std::pair<std::string, int> vlabp;
+/* variable, label pair set */
+typedef std::set<vlabp> vlabpset;
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -49,6 +55,10 @@ protected:
     void *_cfgnode;
     /* set of variables */
     vset _vars;
+    /* entry point */
+    vlabpset _entry;
+    /* exit point */
+    vlabpset _exit;
 
 public:
     static const std::string BOGUS_VAR;
