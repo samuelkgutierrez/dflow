@@ -34,9 +34,9 @@ class Painter;
 /* variable set */
 typedef std::set<std::string> vset;
 /* variable, label pair */
-typedef std::pair<std::string, int> vlabp;
+typedef std::pair<std::string, int> vlab;
 /* variable, label pair set */
-typedef std::set<vlabp> vlabpset;
+typedef std::set<vlab> vlabset;
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -56,9 +56,9 @@ protected:
     /* set of variables */
     vset _vars;
     /* entry point */
-    vlabpset _entry;
+    vlabset _entry;
     /* exit point */
-    vlabpset _exit;
+    vlabset _exit;
 
 public:
     static const std::string BOGUS_VAR;
@@ -97,6 +97,10 @@ public:
     virtual void varclean(void);
 
     virtual void emitVars(void) const;
+
+    vlabset genStartSet(void) const;
+
+    static void emitVLabSet(const vlabset &s);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */

@@ -59,6 +59,25 @@ Node::emitVars(void) const
     cout << out << endl;
 }
 
+vlabset
+Node::genStartSet(void) const
+{
+    vlabset ret;
+    for (const auto &v : this->_vars) {
+        ret.insert(make_pair(v, -1));
+    }
+    return ret;
+}
+
+void
+Node::emitVLabSet(const vlabset &s)
+{
+    for (const auto &i : s) {
+        cout << " (" << i.first << ", " << i.second << ")";
+    }
+    cout << endl;
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
