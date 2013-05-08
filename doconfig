@@ -9,7 +9,4 @@
 
 GV="$HOME/local/graphviz"
 ./configure \
-CXXFLAGS="-I$GV/include/graphviz" \
-LDFLAGS="-L$GV/lib" \
-LIBS="-lgvc"
-
+CPPFLAGS="-I$GV/include/graphviz" --enable-static --disable-shared
