@@ -86,12 +86,6 @@ Node::rdgo(const vlabmap &in, vlabmap &out)
     return false;
 }
 
-void
-Node::emitrd(void) const
-{
-    ;
-}
-
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
@@ -135,6 +129,12 @@ Logical::buildAST(Painter *p, void *e, bool a) const
     if (a) label += " " + Base::int2string(this->label());
     PNode n = Painter::newNode(p, label, 1);
     Painter::newEdge(p, (PNode)e, n, "", 1);
+}
+
+void
+Logical::emitrd(void) const
+{
+    cout << this->str(false) << endl;
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -285,9 +285,9 @@ LogicalExpression::rdgo(const vlabmap &in, vlabmap &out)
 void
 LogicalExpression::emitrd(void) const
 {
-    Node::emitVLabSet(this->_entry);
+    //Node::emitVLabSet(this->_entry);
     cout << this->str(true) << endl;
-    Node::emitVLabSet(this->_exit);
+    //Node::emitVLabSet(this->_exit);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -556,9 +556,19 @@ Skip::rdgo(const vlabmap &in, vlabmap &out)
 {
     //Node::emitVLabSet(in);
     //cout << this->str(false) << endl;
+    this->_entry = in;
     out.clear(); out.insert(in.begin(), in.end());
+    this->_exit = out;
     //Node::emitVLabSet(out);
     return false;
+}
+
+void
+Skip::emitrd(void) const
+{
+    Node::emitVLabSet(this->_entry);
+    cout << "skip" << endl;
+    Node::emitVLabSet(this->_exit);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */

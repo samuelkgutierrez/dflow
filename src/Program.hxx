@@ -104,7 +104,7 @@ public:
 
     virtual bool rdgo(const vlabmap &in, vlabmap &out);
 
-    virtual void emitrd(void) const;
+    virtual void emitrd(void) const { ; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -191,6 +191,8 @@ public:
     std::string str(bool a) const { return Base::bool2string(this->_value); }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void emitrd(void) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -427,6 +429,8 @@ public:
     }
 
     bool rdgo(const vlabmap &in, vlabmap &out);
+
+    virtual void emitrd(void) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
