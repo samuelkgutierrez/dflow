@@ -53,9 +53,9 @@ Painter::Painter(string prefix, string type)
     strncpy(this->config[2], (char *)fname.c_str(), MAX_LEN - 1);
 
     /* set up a graphviz context */
-    this->gvc = gvContext();
+    //this->gvc = gvContext();
     /* set output and layout engine */
-    gvParseArgs(this->gvc, ARGC, this->config);
+    //gvParseArgs(this->gvc, ARGC, this->config);
     /* prep graph so nodes and edges can be added later */
     this->graph = agopen((char *)"ast", Agdirected, 0);
     /* used to generate uniq ids */
@@ -65,9 +65,9 @@ Painter::Painter(string prefix, string type)
 /* ////////////////////////////////////////////////////////////////////////// */
 Painter::~Painter(void)
 {
-    gvFreeLayout(gvc, graph);
+    //gvFreeLayout(gvc, graph);
     agclose(graph);
-    gvFreeContext(gvc);
+    //gvFreeContext(gvc);
 
     if (this->config) {
         for (unsigned i = 0; i < ARGC; ++i) {
@@ -81,8 +81,14 @@ Painter::~Painter(void)
 void
 Painter::renderAST(void)
 {
+#if 0
     gvLayoutJobs(gvc, graph);
     gvRenderJobs(gvc, graph);
+#endif 
+
+    FILE *test = fopen("/tmp/test.TEST", "w+");
+    if (NULL == test) cout << "BOOOOOOOOOO" << endl;
+    agwrite(this->graph, test);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
