@@ -83,7 +83,8 @@ Node::emitVLabSet(const vlabmap &s)
 bool
 Node::rdgo(const vlabmap &in, vlabmap &out)
 {
-    out = in;
+    this->_entry = this->_exit = in;
+    out.clear(); out.insert(in.begin(), in.end());
     return false;
 }
 
@@ -172,6 +173,7 @@ bool
 AssignmentExpression::rdgo(const vlabmap &in, vlabmap &out)
 {
     string tvar = this->l->str(false);
+    auto b4 = this->_exit;
 
     out.clear();
     out.insert(in.begin(), in.end());
@@ -180,8 +182,10 @@ AssignmentExpression::rdgo(const vlabmap &in, vlabmap &out)
         out.erase(item);
     }
     out.insert(make_pair(tvar, this->_plabel));
+    this->_entry = in;
+    this->_exit = out;
 
-    return false;
+    return b4 != this->_exit;
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -461,7 +465,9 @@ Block::rdcalc(void)
 {
     auto sset = this->genStartSet();
 
+    cout << "> -- starting fixed point iteration ..." << endl;
     this->rdgo(sset, sset);
+    cout << "> -- done ..." << endl;
     this->emitrd();
 }
 
@@ -739,10 +745,9 @@ WhileStatement::getvs(void)
 bool
 WhileStatement::rdgo(const vlabmap &in, vlabmap &out)
 {
-    vlabmap tout;
     bool eup = false, bup = false, fup = false;
 
-    tout = in;
+    vlabmap tout = in, esav, osav;
     do {
         eup = this->_exprBlock->rdgo(tout, tout);
         bup = this->_bodyBlock->rdgo(tout, tout);
@@ -753,6 +758,8 @@ WhileStatement::rdgo(const vlabmap &in, vlabmap &out)
 
     this->_entry = in;
     this->_exit = out;
+
+    this->_exprBlock->rdgo(out, esav);
 
     return eup || bup || fup;
 }

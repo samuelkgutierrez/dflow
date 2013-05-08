@@ -381,7 +381,9 @@ public:
 
     virtual void emitrd(void) const {
         Node::emitVLabSet(this->_entry);
-        this->_expr->emitrd(); std::cout << std::endl;
+        std::cout << "[";
+        this->_expr->emitrd();
+        std::cout << "] -- " << this->label() << std::endl;
         Node::emitVLabSet(this->_exit);
     }
 };
