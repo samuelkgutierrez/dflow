@@ -99,7 +99,7 @@ main(int argc, char **argv)
         cout << "> -- " << programRoot->nvars() << " found ..." << endl;
         cout << "> -- "; programRoot->emitVars();
         cout << "> -- starting fixed point iteration ..." << endl;
-        auto sset = programRoot->genStartSet();
+        programRoot->rdcalc();
     }
     catch (DFlowException &e) {
         cerr << e.what() << endl;

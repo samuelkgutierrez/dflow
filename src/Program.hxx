@@ -28,15 +28,14 @@
 #include <vector>
 #include <set>
 #include <utility>
+#include <map>
 
 class Painter;
 
 /* variable set */
 typedef std::set<std::string> vset;
-/* variable, label pair */
-typedef std::pair<std::string, int> vlab;
-/* variable, label pair set */
-typedef std::set<vlab> vlabset;
+/* variable, label multimap */
+typedef std::multimap<std::string, int> vlabmap;
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -44,7 +43,7 @@ typedef std::set<vlab> vlabset;
 class Node {
 protected:
     /* node label */
-    int _label;
+    int _plabel, _label;
     /* node depth */
     unsigned _depth;
     /* left child pointer */
@@ -56,9 +55,9 @@ protected:
     /* set of variables */
     vset _vars;
     /* entry point */
-    vlabset _entry;
+    vlabmap _entry;
     /* exit point */
-    vlabset _exit;
+    vlabmap _exit;
 
 public:
     static const std::string BOGUS_VAR;
@@ -67,6 +66,7 @@ public:
                  this->r = NULL;
                  this->_cfgnode = NULL;
                  this->_depth = 0;
+                 this->_plabel = 0;
                  this->_label = 0; }
 
     virtual ~Node(void) { ; }
@@ -98,9 +98,11 @@ public:
 
     virtual void emitVars(void) const;
 
-    vlabset genStartSet(void) const;
+    vlabmap genStartSet(void) const;
 
-    static void emitVLabSet(const vlabset &s);
+    static void emitVLabSet(const vlabmap &s);
+
+    virtual bool rdgo(const vlabmap &in, vlabmap &out);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -205,6 +207,7 @@ public:
     virtual int label(void) const { return this->_label; }
 
     virtual void label(int &label) {
+        this->_plabel = label;
         this->_label = ++label;
         if (this->l) this->l->label(label);
         if (this->r) this->r->label(label);
@@ -213,6 +216,8 @@ public:
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
     virtual void cfgPrep(Painter *p);
+
+    virtual bool rdgo(const vlabmap &in, vlabmap &out);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -269,13 +274,13 @@ public:
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
     virtual void cfgPrep(Painter *p);
+
+    virtual bool rdgo(const vlabmap &in, vlabmap &out);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
 class Statement : public Node {
 protected:
-    bool _entry;
-    bool _exit;
     bool _exprStatement;
     Expression *_expr;
     std::string _meta;
@@ -287,7 +292,7 @@ public:
     std::vector<void *> bNodes;
 
     Statement(void) :
-        _entry(false), _exit(false), _exprStatement(false), _expr(NULL) { ; }
+        _exprStatement(false), _expr(NULL) { ; }
 
     virtual ~Statement(void) { ; }
 
@@ -310,14 +315,6 @@ public:
         this->_expr->buildAST(p, e, a);
     }
 
-    virtual bool entry(void) const { return this->_entry; }
-
-    virtual void entry(bool e) { this->_entry = e; }
-
-    virtual bool exit(void) const { return this->_exit; }
-
-    virtual void exit(bool e) { this->_exit = e; }
-
     virtual std::string meta(void) const { return this->_meta; }
 
     virtual void meta(std::string m) { this->_meta = m; }
@@ -333,6 +330,8 @@ public:
     void cfgStitch(Painter *p, void *in, void **out);
 
     virtual vset getvs(void);
+
+    virtual bool rdgo(const vlabmap &in, vlabmap &out);
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;
@@ -392,6 +391,10 @@ public:
     virtual vset getvs(void);
 
     void gatherVars(void) { this->_vars = this->getvs(); }
+
+    void rdcalc(void);
+
+    bool rdgo(const vlabmap &in, vlabmap &out);
 };
 typedef std::vector<Block> Blocks;
 
@@ -412,6 +415,8 @@ public:
     virtual vset getvs(void) {
         vset bogus; bogus.insert(Node::BOGUS_VAR); return bogus;
     }
+
+    bool rdgo(const vlabmap &in, vlabmap &out);
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -446,6 +451,8 @@ public:
     virtual void cfgStitch(Painter *p, void *in, void **out);
 
     virtual vset getvs(void);
+
+    bool rdgo(const vlabmap &in, vlabmap &out);
 };
 
 class WhileStatement : public Statement {
@@ -477,6 +484,8 @@ public:
     virtual void cfgStitch(Painter *p, void *in, void **out);
 
     virtual vset getvs(void);
+
+    virtual bool rdgo(const vlabmap &in, vlabmap &out);
 };
 
 #endif

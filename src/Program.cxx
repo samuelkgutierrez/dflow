@@ -20,6 +20,7 @@
 #include "Painter.hxx"
 
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -59,10 +60,10 @@ Node::emitVars(void) const
     cout << out << endl;
 }
 
-vlabset
+vlabmap
 Node::genStartSet(void) const
 {
-    vlabset ret;
+    vlabmap ret;
     for (const auto &v : this->_vars) {
         ret.insert(make_pair(v, -1));
     }
@@ -70,12 +71,19 @@ Node::genStartSet(void) const
 }
 
 void
-Node::emitVLabSet(const vlabset &s)
+Node::emitVLabSet(const vlabmap &s)
 {
     for (const auto &i : s) {
         cout << " (" << i.first << ", " << i.second << ")";
     }
     cout << endl;
+}
+
+bool
+Node::rdgo(const vlabmap &in, vlabmap &out)
+{
+    out = in;
+    return false;
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -159,6 +167,22 @@ AssignmentExpression::cfgPrep(Painter *p)
     this->_cfgnode = Painter::newNode(p, this->str(false), 1);
 }
 
+bool
+AssignmentExpression::rdgo(const vlabmap &in, vlabmap &out)
+{
+    string tvar = this->l->str(false);
+
+    out.clear();
+    out.insert(in.begin(), in.end());
+    vlabmap::iterator item;
+    while (out.end() != (item = out.find(tvar))) {
+        out.erase(item);
+    }
+    out.insert(make_pair(tvar, this->_plabel));
+
+    return false;
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 ArithmeticExpression::ArithmeticExpression(Expression *l,
@@ -229,6 +253,23 @@ LogicalExpression::cfgPrep(Painter *p)
     this->_cfgnode = Painter::newNode(p, this->str(false), 1);
 }
 
+bool
+LogicalExpression::rdgo(const vlabmap &in, vlabmap &out)
+{
+    vlabmap b4 = this->_entry, after;
+
+    set_union(this->_entry.begin(),
+              this->_entry.end(),
+              in.begin(),
+              in.end(),
+              inserter(after, after.end()));
+
+    out.clear(); out.insert(after.begin(), after.end());
+    this->_entry = this->_exit = after;
+
+    return b4 != after;
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 Statement::Statement(Expression *expression)
@@ -268,6 +309,29 @@ Statement::getvs(void)
     return this->_expr->getvs();
 }
 
+bool
+Statement::rdgo(const vlabmap &in, vlabmap &out)
+{
+    this->_entry = in;
+
+    Node::emitVLabSet(in);
+
+    cout << this->str(false);
+    if (this->_exprStatement) {
+        cout << endl;
+    }
+
+    out.clear();
+    auto b4 = this->_exit;
+    this->_expr->rdgo(this->_entry, this->_exit);
+    auto after = this->_exit;
+    out = this->_exit;
+
+    Node::emitVLabSet(out);
+
+    return b4 != after;
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 const int Block::ndias = 2;
@@ -276,18 +340,10 @@ const string Block::diaNames[Block::ndias] = {"ast", "dast"};
 void
 Block::label(int &label)
 {
-    bool first = true;
     this->_label = label;
-    Statement *lastp = NULL;
     for (Statement *s : this->_statements) {
-        if (first) {
-            s->entry(true);
-            first = false;
-        }
         s->label(label);
-        lastp = s;
     }
-    lastp->exit(true);
 }
 
 string
@@ -367,10 +423,12 @@ vset
 Block::getvs(void)
 {
     vset n;
+
     for (Statement *s : this->_statements) {
         vset t = s->getvs();
         n.insert(t.begin(), t.end());
     }
+
     return n;
 }
 
@@ -391,6 +449,40 @@ Block::cfgStitch(Painter *p, void *in, void **out)
         }
     }
     *out = oute;
+}
+
+void
+Block::rdcalc(void)
+{
+    auto sset = this->genStartSet();
+
+    this->rdgo(sset, sset);
+}
+
+bool
+Block::rdgo(const vlabmap &in, vlabmap &out)
+{
+    vlabmap ine, oute;
+    bool first = true, update = false;
+
+    /* this is where we run the fixed-point op on each block */
+    do {
+        update = false;
+        for (Statement *s : this->_statements) {
+            if (first) {
+                update = s->rdgo(in, oute) || update;
+                first = false;
+                ine = oute;
+            }
+            else {
+                update = s->rdgo(ine, oute) || update;
+                ine = oute;
+            }
+        }
+    } while (update);
+    out.clear(); out.insert(oute.begin(), oute.end());
+
+    return update;
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -424,6 +516,15 @@ Skip::cfgPrep(Painter *p)
     this->_cfgnode = Painter::newNode(p, this->str(false), 1);
 }
 
+bool
+Skip::rdgo(const vlabmap &in, vlabmap &out)
+{
+    Node::emitVLabSet(in);
+    cout << this->str(false) << endl;
+    out.clear(); out.insert(in.begin(), in.end());
+    Node::emitVLabSet(out);
+    return false;
+}
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -520,6 +621,36 @@ IfStatement::getvs(void)
     return n;
 }
 
+bool
+IfStatement::rdgo(const vlabmap &in, vlabmap &out)
+{
+    vlabmap tout, ifout, elseout, tmp;
+
+    bool eup = this->_exprBlock->rdgo(in, tout);
+    bool bup = this->_ifBlock->rdgo(tout, ifout);
+    bool fup = this->_elseBlock->rdgo(tout, elseout);
+
+    out.clear();
+    set_union(ifout.begin(),
+              ifout.end(),
+              elseout.begin(),
+              elseout.end(),
+              inserter(out, out.end()));
+
+    set_union(tout.begin(),
+              tout.end(),
+              out.begin(),
+              out.end(),
+              inserter(tmp, tmp.end()));
+
+    out.clear(); out.insert(tmp.begin(), tmp.end());
+
+    this->_entry = in;
+    this->_exit = out;
+
+    return eup || bup || fup;
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 WhileStatement::WhileStatement(Block *expr, Block *bodyBlock)
@@ -594,9 +725,28 @@ vset
 WhileStatement::getvs(void)
 {
     vset n, t;
+
     t = this->_exprBlock->getvs();
     n.insert(t.begin(), t.end());
     t = this->_bodyBlock->getvs();
     n.insert(t.begin(), t.end());
+
     return n;
+}
+
+bool
+WhileStatement::rdgo(const vlabmap &in, vlabmap &out)
+{
+    vlabmap tout;
+
+    bool eup = this->_exprBlock->rdgo(in, tout);
+    bool bup = this->_bodyBlock->rdgo(tout, tout);
+    bool fup = this->_exprBlock->rdgo(tout, tout);
+
+    out.clear(); out.insert(tout.begin(), tout.end());
+
+    this->_entry = in;
+    this->_exit = out;
+
+    return eup || bup || fup;
 }
