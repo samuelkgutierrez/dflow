@@ -75,7 +75,14 @@ Node::emitVLabSet(const vlabmap &s)
 {
     cout << "{";
     for (const auto &i : s) {
-        cout << " (" << i.first << ", " << i.second << ")";
+        cout << " (" << i.first << ", ";
+        if (-1 == i.second) {
+            cout << "?";
+        }
+        else {
+            cout << i.second;
+        }
+        cout << ")";
     }
     cout << " }" << endl;
 }
