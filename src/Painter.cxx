@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Painter.hxx"
 #include "Base.hxx"
 #include "Constants.hxx"
 #include "DFlowException.hxx"
@@ -29,6 +28,8 @@
 
 #include <string.h>
 #include <ctype.h>
+
+#include "Painter.hxx"
 
 #define ARGC 3
 #define MAX_LEN 4096
@@ -47,9 +48,9 @@ Painter::Painter(string prefix, string type)
     for (unsigned i = 0; i < ARGC; ++i) {
         this->config[i] = (char *)calloc(MAX_LEN, sizeof(char));
     }
-    std::strncpy(this->config[0], (char *)"dot", MAX_LEN - 1);
-    std::strncpy(this->config[1], (char *)ftype.c_str(), MAX_LEN - 1);
-    std::strncpy(this->config[2], (char *)fname.c_str(), MAX_LEN - 1);
+    strncpy(this->config[0], (char *)"dot", MAX_LEN - 1);
+    strncpy(this->config[1], (char *)ftype.c_str(), MAX_LEN - 1);
+    strncpy(this->config[2], (char *)fname.c_str(), MAX_LEN - 1);
 
     /* set up a graphviz context */
     this->gvc = gvContext();
