@@ -89,7 +89,9 @@ Node::rdgo(const vlabmap &in, vlabmap &out)
 void
 Node::emitrd(void) const
 {
-    ;
+    Node::emitVLabSet(this->_entry);
+    cout << this->str(true);
+    Node::emitVLabSet(this->_exit);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -189,12 +191,6 @@ AssignmentExpression::rdgo(const vlabmap &in, vlabmap &out)
     return false;
 }
 
-void
-AssignmentExpression::emitrd(void) const
-{
-    cout << this->str(true);
-}
-
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 ArithmeticExpression::ArithmeticExpression(Expression *l,
@@ -282,14 +278,6 @@ LogicalExpression::rdgo(const vlabmap &in, vlabmap &out)
     return b4 != after;
 }
 
-void
-LogicalExpression::emitrd(void) const
-{
-    Node::emitVLabSet(this->_entry);
-    cout << this->str(true) << endl;
-    Node::emitVLabSet(this->_exit);
-}
-
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 Statement::Statement(Expression *expression)
@@ -352,15 +340,6 @@ Statement::rdgo(const vlabmap &in, vlabmap &out)
     //Node::emitVLabSet(out);
 
     return b4 != after;
-}
-
-void
-Statement::emitrd(void) const
-{
-    Node::emitVLabSet(this->_entry);
-    this->_expr->emitrd();
-    if (!this->_exprStatement) cout << endl;
-    Node::emitVLabSet(this->_exit);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -488,11 +467,6 @@ Block::rdcalc(void)
     auto sset = this->genStartSet();
 
     this->rdgo(sset, sset);
-    this->emitrd();
-}
-
-void Block::emitrd(void) const
-{
     for (Statement *s : this->_statements) {
         s->emitrd();
     }
@@ -684,14 +658,6 @@ IfStatement::rdgo(const vlabmap &in, vlabmap &out)
     this->_exit = out;
 
     return eup || bup || fup;
-}
-
-void
-IfStatement::emitrd(void) const
-{
-    this->_exprBlock->emitrd();
-    this->_ifBlock->emitrd();
-    this->_elseBlock->emitrd();
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */

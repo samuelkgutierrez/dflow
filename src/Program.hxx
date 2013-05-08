@@ -220,8 +220,6 @@ public:
     virtual void cfgPrep(Painter *p);
 
     virtual bool rdgo(const vlabmap &in, vlabmap &out);
-
-    virtual void emitrd(void) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -280,8 +278,6 @@ public:
     virtual void cfgPrep(Painter *p);
 
     virtual bool rdgo(const vlabmap &in, vlabmap &out);
-
-    virtual void emitrd(void) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -338,8 +334,6 @@ public:
     virtual vset getvs(void);
 
     virtual bool rdgo(const vlabmap &in, vlabmap &out);
-
-    virtual void emitrd(void) const;
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;
@@ -403,8 +397,6 @@ public:
     void rdcalc(void);
 
     bool rdgo(const vlabmap &in, vlabmap &out);
-
-    virtual void emitrd(void) const;
 };
 typedef std::vector<Block> Blocks;
 
@@ -463,8 +455,6 @@ public:
     virtual vset getvs(void);
 
     bool rdgo(const vlabmap &in, vlabmap &out);
-
-    virtual void emitrd(void) const;
 };
 
 class WhileStatement : public Statement {
