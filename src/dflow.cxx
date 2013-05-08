@@ -98,6 +98,7 @@ main(int argc, char **argv)
         programRoot->varclean();
         cout << "> -- " << programRoot->nvars() << " found ..." << endl;
         cout << "> -- "; programRoot->emitVars();
+        cout << "> -- starting fixed point iteration ..." << endl;
         programRoot->rdcalc();
     }
     catch (DFlowException &e) {
