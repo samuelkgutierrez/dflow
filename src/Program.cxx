@@ -73,11 +73,10 @@ Node::genStartSet(void) const
 void
 Node::emitVLabSet(const vlabmap &s)
 {
-    cout << "{";
     for (const auto &i : s) {
         cout << " (" << i.first << ", " << i.second << ")";
     }
-    cout << " }" << endl;
+    cout << endl;
 }
 
 bool
