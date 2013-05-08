@@ -28,6 +28,7 @@
 
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
 
 #include "Painter.hxx"
 
@@ -39,6 +40,7 @@ using namespace std;
 /* ////////////////////////////////////////////////////////////////////////// */
 Painter::Painter(string prefix, string type)
 {
+#if 0 /* only needed when using GVC and such */
     string ftype = "-T" + type;
     string fname = "-o" + prefix + "." + type;
 
@@ -51,11 +53,13 @@ Painter::Painter(string prefix, string type)
     strncpy(this->config[0], (char *)"dot", MAX_LEN - 1);
     strncpy(this->config[1], (char *)ftype.c_str(), MAX_LEN - 1);
     strncpy(this->config[2], (char *)fname.c_str(), MAX_LEN - 1);
-
     /* set up a graphviz context */
-    //this->gvc = gvContext();
+    this->gvc = gvContext();
     /* set output and layout engine */
-    //gvParseArgs(this->gvc, ARGC, this->config);
+    gvParseArgs(this->gvc, ARGC, this->config);
+#endif
+    this->ftype = type;
+    this->fprefix = prefix;
     /* prep graph so nodes and edges can be added later */
     this->graph = agopen((char *)"ast", Agdirected, 0);
     /* used to generate uniq ids */
@@ -69,12 +73,14 @@ Painter::~Painter(void)
     agclose(graph);
     //gvFreeContext(gvc);
 
+#if 0
     if (this->config) {
         for (unsigned i = 0; i < ARGC; ++i) {
             if (this->config[i]) free(this->config[i]);
         }
         free(this->config);
     }
+#endif
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -85,10 +91,16 @@ Painter::renderAST(void)
     gvLayoutJobs(gvc, graph);
     gvRenderJobs(gvc, graph);
 #endif 
+    FILE *fp = NULL;
+    string fullnam = this->fprefix + "." + this->ftype;
 
-    FILE *test = fopen("/tmp/test.TEST", "w+");
-    if (NULL == test) cout << "BOOOOOOOOOO" << endl;
-    agwrite(this->graph, test);
+    if (NULL == (fp = fopen(fullnam.c_str(), "w+"))) {
+        int err = errno;
+        string estr = "cannot open: " + fullnam + ". why: " +
+                      strerror(err) + ".";
+        throw DFlowException(DFLOW_WHERE, estr);
+    }
+    agwrite(this->graph, fdopen(fileno(stdout), "w"));
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */

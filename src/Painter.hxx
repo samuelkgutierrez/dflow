@@ -27,7 +27,9 @@
 #include <iostream>
 
 #include "cgraph.h"
-//#include "gvc.h"
+#if 0 /* gvc stuff */
+#include "gvc.h"
+#endif
 
 typedef Agnode_t* PNode;
 typedef Agedge_t* PEdge;
@@ -35,12 +37,16 @@ typedef Agedge_t* PEdge;
 class Painter {
 private:
     int id;
-    /* context */
-    //GVC_t *gvc;
+    std::string ftype;
+    std::string fprefix;
     /* graph */
     Agraph_t *graph;
+#if 0 /* gvc stuff */
+    /* context */
+    GVC_t *gvc;
     /* config argv */
     char **config;
+#endif
 
     Painter(void) { ; }
 
