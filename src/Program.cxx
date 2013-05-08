@@ -86,6 +86,14 @@ Node::rdgo(const vlabmap &in, vlabmap &out)
     return false;
 }
 
+void
+Node::emitrd(void) const
+{
+    Node::emitVLabSet(this->_entry);
+    cout << this->str(true);
+    Node::emitVLabSet(this->_exit);
+}
+
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ////////////////////////////////////////////////////////////////////////// */
 void
@@ -314,12 +322,14 @@ Statement::rdgo(const vlabmap &in, vlabmap &out)
 {
     this->_entry = in;
 
+#if 0
     Node::emitVLabSet(in);
 
     cout << this->str(false);
     if (this->_exprStatement) {
         cout << endl;
     }
+#endif
 
     out.clear();
     auto b4 = this->_exit;
@@ -327,7 +337,7 @@ Statement::rdgo(const vlabmap &in, vlabmap &out)
     auto after = this->_exit;
     out = this->_exit;
 
-    Node::emitVLabSet(out);
+    //Node::emitVLabSet(out);
 
     return b4 != after;
 }
@@ -457,6 +467,9 @@ Block::rdcalc(void)
     auto sset = this->genStartSet();
 
     this->rdgo(sset, sset);
+    for (Statement *s : this->_statements) {
+        s->emitrd();
+    }
 }
 
 bool
@@ -465,21 +478,17 @@ Block::rdgo(const vlabmap &in, vlabmap &out)
     vlabmap ine, oute;
     bool first = true, update = false;
 
-    /* this is where we run the fixed-point op on each block */
-    do {
-        update = false;
-        for (Statement *s : this->_statements) {
-            if (first) {
-                update = s->rdgo(in, oute) || update;
-                first = false;
-                ine = oute;
-            }
-            else {
-                update = s->rdgo(ine, oute) || update;
-                ine = oute;
-            }
+    for (Statement *s : this->_statements) {
+        if (first) {
+            update = s->rdgo(in, oute) || update;
+            first = false;
+            ine = oute;
         }
-    } while (update);
+        else {
+            update = s->rdgo(ine, oute) || update;
+            ine = oute;
+        }
+    }
     out.clear(); out.insert(oute.begin(), oute.end());
 
     return update;
@@ -519,10 +528,10 @@ Skip::cfgPrep(Painter *p)
 bool
 Skip::rdgo(const vlabmap &in, vlabmap &out)
 {
-    Node::emitVLabSet(in);
-    cout << this->str(false) << endl;
+    //Node::emitVLabSet(in);
+    //cout << this->str(false) << endl;
     out.clear(); out.insert(in.begin(), in.end());
-    Node::emitVLabSet(out);
+    //Node::emitVLabSet(out);
     return false;
 }
 
@@ -738,10 +747,14 @@ bool
 WhileStatement::rdgo(const vlabmap &in, vlabmap &out)
 {
     vlabmap tout;
+    bool eup = false, bup = false, fup = false;
 
-    bool eup = this->_exprBlock->rdgo(in, tout);
-    bool bup = this->_bodyBlock->rdgo(tout, tout);
-    bool fup = this->_exprBlock->rdgo(tout, tout);
+    tout = in;
+    do {
+        eup = this->_exprBlock->rdgo(tout, tout);
+        bup = this->_bodyBlock->rdgo(tout, tout);
+        fup = this->_exprBlock->rdgo(tout, tout);
+    } while (eup || bup || fup);
 
     out.clear(); out.insert(tout.begin(), tout.end());
 

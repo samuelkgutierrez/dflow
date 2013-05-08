@@ -103,6 +103,8 @@ public:
     static void emitVLabSet(const vlabmap &s);
 
     virtual bool rdgo(const vlabmap &in, vlabmap &out);
+
+    virtual void emitrd(void) const;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
