@@ -1,8 +1,9 @@
 a = true;
 b = !a;
-c = b;
+c = !b;
+d = 0;
+
 while c do
-    d = 0;
     if d < 10 then
         d = d + 1;
     else

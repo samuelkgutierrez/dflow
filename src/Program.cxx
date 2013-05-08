@@ -73,10 +73,11 @@ Node::genStartSet(void) const
 void
 Node::emitVLabSet(const vlabmap &s)
 {
+    cout << "{";
     for (const auto &i : s) {
         cout << " (" << i.first << ", " << i.second << ")";
     }
-    cout << endl;
+    cout << " }" << endl;
 }
 
 bool
@@ -84,14 +85,6 @@ Node::rdgo(const vlabmap &in, vlabmap &out)
 {
     out = in;
     return false;
-}
-
-void
-Node::emitrd(void) const
-{
-    Node::emitVLabSet(this->_entry);
-    cout << this->str(true);
-    Node::emitVLabSet(this->_exit);
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -469,9 +462,7 @@ Block::rdcalc(void)
     auto sset = this->genStartSet();
 
     this->rdgo(sset, sset);
-    for (Statement *s : this->_statements) {
-        s->emitrd();
-    }
+    this->emitrd();
 }
 
 bool

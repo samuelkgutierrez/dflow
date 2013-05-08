@@ -107,7 +107,7 @@ public:
 
     virtual bool rdgo(const vlabmap &in, vlabmap &out);
 
-    virtual void emitrd(void) const;
+    virtual void emitrd(void) const = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -123,6 +123,8 @@ public:
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
 
     void notit(void) { this->_not = !this->_not; }
+
+    virtual void emitrd(void) const = 0;
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -147,6 +149,10 @@ public:
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
     virtual vset getvs(void) { vset n; n.insert(this->_id); return n; }
+
+    virtual void emitrd(void) const {
+        std::cout << this->str(false);
+    }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -165,6 +171,10 @@ public:
     std::string str(bool a) const { return Base::int2string(this->_value); }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void emitrd(void) const {
+        std::cout << this->str(false);
+    }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -184,6 +194,9 @@ public:
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
+    virtual void emitrd(void) const {
+        std::cout << this->str(false);
+    }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -206,6 +219,10 @@ public:
     }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void emitrd(void) const {
+        std::cout << this->str(false);
+    }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -235,6 +252,10 @@ public:
     virtual void cfgPrep(Painter *p);
 
     virtual bool rdgo(const vlabmap &in, vlabmap &out);
+
+    virtual void emitrd(void) const {
+        std::cout << this->str(false);
+    }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -262,6 +283,10 @@ public:
     }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
+
+    virtual void emitrd(void) const {
+        std::cout << this->str(false);
+    }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -293,6 +318,10 @@ public:
     virtual void cfgPrep(Painter *p);
 
     virtual bool rdgo(const vlabmap &in, vlabmap &out);
+
+    virtual void emitrd(void) const {
+        std::cout << this->str(false);
+    }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -349,23 +378,15 @@ public:
     virtual vset getvs(void);
 
     virtual bool rdgo(const vlabmap &in, vlabmap &out);
+
+    virtual void emitrd(void) const {
+        Node::emitVLabSet(this->_entry);
+        this->_expr->emitrd(); std::cout << std::endl;
+        Node::emitVLabSet(this->_exit);
+    }
 };
 typedef std::vector<Statement> Statements;
 typedef std::vector<Statement *> Statementps;
-
-/* ////////////////////////////////////////////////////////////////////////// */
-class MergeNode : public Node {
-
-public:
-    MergeNode(void) : Node() { ; }
-
-    virtual ~MergeNode(void) { ; }
-
-    MergeNode(Node *lNode, Node *rNode) {
-        this->l = lNode;
-        this->r = rNode;
-    }
-};
 
 /* ////////////////////////////////////////////////////////////////////////// */
 class Block : public Node {
@@ -412,6 +433,12 @@ public:
     void rdcalc(void);
 
     bool rdgo(const vlabmap &in, vlabmap &out);
+
+    virtual void emitrd(void) const {
+        for (Statement *s : this->_statements) {
+            s->emitrd();
+        }
+    }
 };
 typedef std::vector<Block> Blocks;
 
@@ -434,6 +461,10 @@ public:
     }
 
     bool rdgo(const vlabmap &in, vlabmap &out);
+
+    virtual void emitrd(void) const {
+        std::cout << "skip" << std::endl;
+    }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -470,6 +501,12 @@ public:
     virtual vset getvs(void);
 
     bool rdgo(const vlabmap &in, vlabmap &out);
+
+    virtual void emitrd(void) const {
+        this->_exprBlock->emitrd();
+        this->_ifBlock->emitrd();
+        this->_elseBlock->emitrd();
+    }
 };
 
 class WhileStatement : public Statement {
@@ -503,6 +540,11 @@ public:
     virtual vset getvs(void);
 
     virtual bool rdgo(const vlabmap &in, vlabmap &out);
+
+    virtual void emitrd(void) const {
+        this->_exprBlock->emitrd();
+        this->_bodyBlock->emitrd();
+    }
 };
 
 #endif
