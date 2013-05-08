@@ -487,7 +487,9 @@ Block::rdcalc(void)
 {
     auto sset = this->genStartSet();
 
+    cout << "> -- starting fixed point iteration ..." << endl;
     this->rdgo(sset, sset);
+    cout << "> -- done ..." << endl;
     this->emitrd();
 }
 
