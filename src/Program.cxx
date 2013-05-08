@@ -620,7 +620,7 @@ IfStatement::cfgStitch(Painter *p, void *in, void **out)
     PNode ifOut = NULL, elseOut = NULL;
     this->_ifBlock->cfgStitch(p, (PNode)this->cfgnode(), (void **)&ifOut);
     this->_elseBlock->cfgStitch(p, (PNode)this->cfgnode(), (void **)&elseOut);
-    PNode merge = Painter::newNode(p, "", 1);
+    PNode merge = Painter::newNode(p, " ", 1);
     Painter::newEdge(p, ifOut, merge, "", 1);
     Painter::newEdge(p, elseOut, merge, "", 1);
     *out = merge;
@@ -734,7 +734,7 @@ WhileStatement::cfgStitch(Painter *p, void *in, void **out)
     PNode wOut;
     this->_bodyBlock->cfgStitch(p, (PNode)this->cfgnode(), (void **)&wOut);
     Painter::newEdge(p, wOut, (PNode)this->cfgnode(), "", 1);
-    PNode merge = Painter::newNode(p, "", 1);
+    PNode merge = Painter::newNode(p, " ", 1);
     Painter::newEdge(p, (PNode)this->cfgnode(), merge, "", 1);
     *out = merge;
 }
