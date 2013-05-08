@@ -475,6 +475,7 @@ Block::rdcalc(void)
     cout << "> -- starting fixed point iteration ..." << endl;
     this->rdgo(sset, sset);
     cout << "> -- done ..." << endl;
+    cout << "> -- here are the rd sets ..." << endl;
     this->emitrd();
 }
 
@@ -767,7 +768,7 @@ WhileStatement::rdgo(const vlabmap &in, vlabmap &out)
 
     this->_entry = in;
     this->_exit = out;
-
+    /* fixup entry expr */
     this->_exprBlock->rdgo(out, esav);
 
     return eup || bup || fup;
