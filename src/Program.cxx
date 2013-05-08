@@ -536,7 +536,9 @@ Skip::rdgo(const vlabmap &in, vlabmap &out)
 {
     //Node::emitVLabSet(in);
     //cout << this->str(false) << endl;
+    this->_entry = in;
     out.clear(); out.insert(in.begin(), in.end());
+    this->_exit = out;
     //Node::emitVLabSet(out);
     return false;
 }

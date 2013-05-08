@@ -465,7 +465,9 @@ public:
     bool rdgo(const vlabmap &in, vlabmap &out);
 
     virtual void emitrd(void) const {
+        Node::emitVLabSet(this->_entry);
         std::cout << "skip" << std::endl;
+        Node::emitVLabSet(this->_exit);
     }
 };
 
@@ -546,6 +548,7 @@ public:
     virtual void emitrd(void) const {
         this->_exprBlock->emitrd();
         this->_bodyBlock->emitrd();
+        Node::emitVLabSet(this->_exit);
     }
 };
 
