@@ -74,14 +74,14 @@ statements : statement { $$ = new Block(); $$->add($1); }
 
 statement  : assignexpr SEND { $$ = new Statement($1); }
            | skipstat { $$ = $1; }
-           | IF bexpr THEN statements ELSE statements FI {
+           | IF expr THEN statements ELSE statements FI {
                  Block *exprBlock = new Block();
                  Statement *exprStatement = new Statement($2);
                  exprStatement->exprStatement(true);
                  exprBlock->add(exprStatement);
                  $$ = new IfStatement(exprBlock, $4, $6);
              }
-           | WHILE bexpr DO statements OD {
+           | WHILE expr DO statements OD {
                  Block *exprBlock = new Block();
                  Statement *exprStatement = new Statement($2);
                  exprStatement->exprStatement(true);
@@ -93,7 +93,7 @@ statement  : assignexpr SEND { $$ = new Statement($1); }
 expr : aexpr { $$ = $1; }
      | bexpr { $$ = $1; }
      | ident { $$ = $1; }
-     | NOT bexpr { $$ = $2; }
+     | NOT expr { $2->notit(); $$ = $2; }
      ;
 
 skipstat : SKIP SEND { $$ = new Skip(); }

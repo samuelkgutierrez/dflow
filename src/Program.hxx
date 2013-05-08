@@ -58,6 +58,8 @@ protected:
     vlabmap _entry;
     /* exit point */
     vlabmap _exit;
+    /* not */
+    bool _not;
 
 public:
     static const std::string BOGUS_VAR;
@@ -65,6 +67,7 @@ public:
     Node(void) { this->l = NULL;
                  this->r = NULL;
                  this->_cfgnode = NULL;
+                 this->_not = false;
                  this->_depth = 0;
                  this->_plabel = 0;
                  this->_label = 0; }
@@ -118,6 +121,8 @@ public:
     virtual std::string str(bool a) const = 0;
 
     virtual void buildAST(Painter *p, void *e, bool a) const = 0;
+
+    void notit(void) { this->_not = !this->_not; }
 };
 
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -132,7 +137,12 @@ public:
 
     Identifier(std::string id) : Expression(), _id(id) { ; }
 
-    std::string str(bool a) const { return this->_id; }
+    std::string str(bool a) const {
+        std::string out;
+        if (this->_not) out += "!";
+        out += this->_id;
+        return out;
+    }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 
@@ -188,7 +198,12 @@ public:
 
     Logical(const std::string &svalue) : _value(Base::string2bool(svalue)) { ; }
 
-    std::string str(bool a) const { return Base::bool2string(this->_value); }
+    std::string str(bool a) const {
+        std::string out;
+        if (this->_not) out += "!";
+        out += Base::bool2string(this->_value);
+        return out;
+    }
 
     virtual void buildAST(Painter *p, void *e, bool a) const;
 };

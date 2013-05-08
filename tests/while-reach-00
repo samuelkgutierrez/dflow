@@ -1,0 +1,11 @@
+a = true;
+b = !a;
+c = b;
+while c do
+    d = 0;
+    if d < 10 then
+        d = d + 1;
+    else
+        c = false;
+    fi
+od

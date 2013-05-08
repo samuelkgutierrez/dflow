@@ -238,9 +238,11 @@ string
 LogicalExpression::str(bool a) const
 {
     string out;
-    out = this->l->str(a);
+    if (this->_not) out += "!(";
+    out += this->l->str(a);
     out += " " + this->_op + " ";
     out += this->r->str(a);
+    if (this->_not) out += ")";
     return out;
 }
 
