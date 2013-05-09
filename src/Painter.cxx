@@ -107,7 +107,8 @@ Painter::renderAST(void)
                       "." + this->ftype + " " + fullnam;
 
     if (0 != system(cmd.c_str())) {
-        string estr = "\ncrud... \"" + cmd + "\" failed. try using dot on " + fullnam;
+        string estr = "\ncrud... \"" + cmd + "\" failed. try using dot on " +
+                      fullnam;
         throw DFlowException(DFLOW_WHERE, estr);
     }
 }
@@ -132,5 +133,5 @@ Painter::newEdge(Painter *p, PNode n1, PNode n2, string name, int j)
 string
 Painter::uniqID(Painter *p)
 {
-    return "__0xPrograMx0__" + Base::int2string(p->id++);
+    return "__0xdFl0wX0__" + Base::int2string(p->id++);
 }
