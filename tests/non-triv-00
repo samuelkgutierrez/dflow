@@ -1,0 +1,33 @@
+continue = true;
+a = 1 + 3.14;
+b = a * input;
+
+while continue do
+    if b > a then
+        b = b - 0.5;
+        c = a * b;
+        c = c / input;
+        while c == 8.675309 do
+            while input >= 1 do
+                c = c + 0.0001;
+                continue = true || continue;
+            od
+            if continue then
+                skip;
+            else
+                continue = !continue;
+            fi
+        od
+    else
+        skip;
+    fi
+    n = c - input;
+od
+
+y = x;
+z = 1;
+while y > 0 do
+    z = z * y;
+    y = y - 1;
+od
+y = 0;
