@@ -91,8 +91,9 @@ Painter::renderAST(void)
     gvLayoutJobs(gvc, graph);
     gvRenderJobs(gvc, graph);
 #endif 
+    /* first write the dot files */
     FILE *fp = NULL;
-    string fullnam = this->fprefix + "." + this->ftype;
+    string fullnam = this->fprefix + ".dot";
 
     if (NULL == (fp = fopen(fullnam.c_str(), "w+"))) {
         int err = errno;
@@ -100,7 +101,15 @@ Painter::renderAST(void)
                       strerror(err) + ".";
         throw DFlowException(DFLOW_WHERE, estr);
     }
-    agwrite(this->graph, fdopen(fileno(stdout), "w"));
+    agwrite(this->graph, fp);
+
+    std::string cmd = "dot -T" + this->ftype + " -o" + this->fprefix +
+                      "." + this->ftype + " " + fullnam;
+
+    if (0 != system(cmd.c_str())) {
+        string estr = "\ncrud... \"" + cmd + "\" failed. try using dot on " + fullnam;
+        throw DFlowException(DFLOW_WHERE, estr);
+    }
 }
 
 /* ////////////////////////////////////////////////////////////////////////// */
