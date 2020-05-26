@@ -49,7 +49,7 @@ fi
 AC_PROG_YACC
 AC_CHECK_PROGS([IYACC], [$YACC])
 if test "x$IYACC" = "x"; then
-    AC_MSG_ERROR([** binson/yacc is required but not found **])
+    AC_MSG_ERROR([** bison/yacc is required but not found **])
 fi
 
 AC_PROG_LIBTOOL
