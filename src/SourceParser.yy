@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 Samuel K. Gutierrez All rights reserved.
+ * Copyright (c) 2013-2020 Samuel K. Gutierrez All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+%defines "SourceParser.h"
 
 %error-verbose
 

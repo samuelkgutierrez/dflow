@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Samuel K. Gutierrez All rights reserved.
+# Copyright (c) 2013-2020 Samuel K. Gutierrez All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@ AC_CONFIG_MACRO_DIR([config])
 # If So, Build Using AM_SILENT_RULES
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-
 # note: -Wall -Werror are automake options.  they are NOT compiler flags
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+# -Wno-portability so we can use wildcards.
+AM_INIT_AUTOMAKE([-Wall -Werror -Wno-portability foreign])
 
 AM_CONFIG_HEADER([config.h])
 
@@ -42,7 +42,16 @@ AS_IF([test "x$HAVE_CXX11" != "x1"],
       [AC_MSG_ERROR([** A compiler with C++11 language features is required.])])
 
 AC_PROG_LEX
+if test "x$LEX" != xflex; then
+    AC_MSG_ERROR([** flex is required but not found **])
+fi
+
 AC_PROG_YACC
+AC_CHECK_PROGS([IYACC], [$YACC])
+if test "x$IYACC" = "x"; then
+    AC_MSG_ERROR([** binson/yacc is required but not found **])
+fi
+
 AC_PROG_LIBTOOL
 
 # checks for libraries.
@@ -52,10 +61,21 @@ dnl             [-lcgraph -lcdt])
 
 # checks for header files.
 AC_CHECK_HEADERS([\
-inttypes.h limits.h stdint.h stdlib.h string.h unistd.h
+inttypes.h limits.h stdint.h stdlib.h string.h unistd.h cgraph.h \
+graphviz/cgraph.h
 ])
 
-# checks for typedefs, structures, and compiler characteristics.
+################################################################################
+# External package dependencies
+################################################################################
+# Sets LIBGVC_CFLAGS
+#      LIBGVC_LIBS
+PKG_CHECK_MODULES(
+[LIBGVC],dnl
+[libgvc],dnl
+[], dnl
+[AC_MSG_ERROR([libgvc pkg-config not found. ***])]
+)
 
 # checks for library functions.
 AC_FUNC_MALLOC
@@ -65,7 +85,7 @@ AC_CONFIG_FILES([Makefile src/Makefile])
 
 AC_OUTPUT
 
-# let the user know the configuration 
+# let the user know the configuration
 
 cat << EOF
 
@@ -78,5 +98,7 @@ dflow configuration
 | LIBS      : $LIBS
 | CPPFLAGS  : $CPPFLAGS
 | CPP       : $CPP
+| LEX       : $LEX
+| YACC      : $YACC
 
 EOF

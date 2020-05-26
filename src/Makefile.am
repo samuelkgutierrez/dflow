@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Samuel K. Gutierrez All rights reserved.
+# Copyright (c) 2013-2020 Samuel K. Gutierrez All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,10 +17,11 @@
 AM_YFLAGS=-d -t
 
 BUILT_SOURCES = \
-SourceParser.cc SourceParser.h SourceScanner.cc
+SourceParser.cc SourceParser.h \
+SourceScanner.cc
 
 CLEANFILES = \
-${BUILT_SOURCES} SourceParser.h
+${BUILT_SOURCES}
 
 bin_PROGRAMS = \
 dflow
@@ -34,6 +35,12 @@ DFlowException.hxx DFlowException.cxx \
 Painter.hxx Painter.cxx \
 Program.hxx Program.cxx \
 ${PARSER_FILES}
+
+dflow_CFLAGS = \
+@LIBGVC_CFLAGS@
+
+dflow_LDADD = \
+@LIBGVC_LIBS@
 
 dflow_SOURCES = \
 ${BASE_SRC} \
