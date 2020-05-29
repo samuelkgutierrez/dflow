@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-%defines "SourceParser.h"
+%defines "SourceParser.hh"
 
 %error-verbose
 

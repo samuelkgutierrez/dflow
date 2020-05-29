@@ -17,7 +17,7 @@
 AM_YFLAGS=-d -t
 
 BUILT_SOURCES = \
-SourceParser.cc SourceParser.h \
+SourceParser.hh SourceParser.cc \
 SourceScanner.cc
 
 CLEANFILES = \
@@ -26,7 +26,7 @@ ${BUILT_SOURCES}
 bin_PROGRAMS = \
 dflow
 
-PARSER_FILES = SourceParser.yy SourceParser.h SourceScanner.ll
+PARSER_FILES = SourceParser.yy SourceScanner.ll
 
 BASE_SRC = \
 Constants.hxx \
@@ -34,7 +34,8 @@ Base.hxx Base.cxx \
 DFlowException.hxx DFlowException.cxx \
 Painter.hxx Painter.cxx \
 Program.hxx Program.cxx \
-${PARSER_FILES}
+${PARSER_FILES} \
+${BBUILT_SOURCES}
 
 dflow_CFLAGS = \
 @LIBGVC_CFLAGS@

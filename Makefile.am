@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Samuel K. Gutierrez All rights reserved.
+# Copyright (c) 2013-2020 Samuel K. Gutierrez All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,6 +16,6 @@
 ACLOCAL_AMFLAGS = -I config
 
 EXTRA_DIST = \
-AUTHORS README COPYRIGHT autogen tests doconfig
+AUTHORS.txt README.md COPYRIGHT.txt autogen tests
 
 SUBDIRS = src

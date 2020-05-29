@@ -29,7 +29,7 @@
 #include <string>
 
 #include "Program.hxx"
-#include "SourceParser.h"
+#include "SourceParser.hh"
 
 #define SAVE_STOKEN                                                            \
 do {                                                                           \
