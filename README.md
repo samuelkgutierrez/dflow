@@ -52,9 +52,9 @@ skip
 ```
 
 ## Helpful Resources
-[Data-flow analysis: reaching definitions](http://www.csd.uwo.ca/~moreno/CS447/Lectures/CodeOptimization.html/node7.html)
-[Control Flow Graphs](http://www.cs.utexas.edu/~pingali/CS380C/2013/lectures/CFG.pdf)
-[Basic block](http://en.wikipedia.org/wiki/Basic_block)
-[ANSI C Yacc grammar](http://www.lysator.liu.se/c/ANSI-C-grammar-y.html#expression)
-[Semantic Analysis Phases of Compilation](http://www.cs.sunysb.edu/~cse304/Fall08/Lectures/ast-handout.pdf)
-[Classical Dataflow Optimizations](http://www.cs.cmu.edu/afs/cs/academic/class/15745-s06/web/handouts/04.pdf)
+* [Data-flow analysis: reaching definitions](http://www.csd.uwo.ca/~moreno/CS447/Lectures/CodeOptimization.html/node7.html)
+* [Control Flow Graphs](http://www.cs.utexas.edu/~pingali/CS380C/2013/lectures/CFG.pdf)
+* [Basic block](http://en.wikipedia.org/wiki/Basic_block)
+* [ANSI C Yacc grammar](http://www.lysator.liu.se/c/ANSI-C-grammar-y.html#expression)
+* [Semantic Analysis Phases of Compilation](http://www.cs.sunysb.edu/~cse304/Fall08/Lectures/ast-handout.pdf)
+* [Classical Dataflow Optimizations](http://www.cs.cmu.edu/afs/cs/academic/class/15745-s06/web/handouts/04.pdf)
